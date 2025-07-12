@@ -1,13 +1,16 @@
-module.exports = async function (context, req) {
-    const id = req.query.id || (req.body && req.body.id);
-
-    context.res = {
-        status: 200,
-        body: `Provisionando localidade com ID: ${id}`
-    };
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["get", "post"]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
 }
-
-
-
-
-add provisionar function
