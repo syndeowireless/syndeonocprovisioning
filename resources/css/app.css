@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom Sidebar Styles */
+.sidebar {
+    background-color: #1a202c; /* Cor de fundo do menu lateral */
+}
+
+.sidebar a,
+.sidebar button {
+    color: #cbd5e0; /* Cor do texto dos links e botões */
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
+    background-color: #2d3748; /* Cor de fundo ao passar o mouse */
+    color: #ffffff; /* Cor do texto ao passar o mouse */
+}
+
+.sidebar .active {
+    background-color: #4a5568; /* Cor de fundo do item ativo */
+    color: #ffffff; /* Cor do texto do item ativo */
+}
+
+.dropdown-menu {
+    background-color: #2d3748; /* Cor de fundo do submenu */
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.transition {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+
