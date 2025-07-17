@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Provisioning App</title>
+</head>
+<body>
+  <h1>Bem-vindoss ao Provisioning App</h1>
+  <p>Deploy automático via Azure Static Web App + GitHub!</p>
+
+  <button onclick="provisionar()">Provisionar Localidade</button>
+  <p id="resultado"></p>
+
+  <script>
+    async function provisionar() {
+      const res = await fetch('/api/provisionar?id=123');
+      const txt = await res.text();
+      document.getElementById('resultado').innerText = txt;
+    }
+  </script>
+</body>
+</html>
