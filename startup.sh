@@ -1,8 +1,8 @@
 # name this file as "startup.sh" and call it from "startup command" as "/home/startup.sh"
 # check out my YouTube video "https://youtu.be/-PGhVFsOnGA"
-cp /home/default /etc/nginx/sites-enabled/default
+cp /home/site/wwwroot/default /etc/nginx/sites-enabled/default
 
-cp /home/php.ini /usr/local/etc/php/conf.d/php.ini
+cp /home/site/wwwroot/php.ini /usr/local/etc/php/conf.d/php.ini
 
 
 # install support for webp file conversion
