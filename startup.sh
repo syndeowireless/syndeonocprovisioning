@@ -24,7 +24,7 @@ service supervisor restart
 
 php /home/site/wwwroot/artisan down --refresh=15 --secret="1630542a-246b-4b66-afa1-dd72a4c43515"
 
-php /home/site/wwwroot/artisan migrate --seed --force
+php /home/site/wwwroot/artisan migrate:fresh --seed --force
 
 # Clear caches
 php /home/site/wwwroot/artisan cache:clear
