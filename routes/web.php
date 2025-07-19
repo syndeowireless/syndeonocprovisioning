@@ -3,6 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return 'Laravel is still alive!';
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
