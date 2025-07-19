@@ -48,4 +48,4 @@ Route::middleware(["auth", "admin"])->prefix("admin")->name("admin.")->group(fun
     Route::get("/formularios", [FormularioController::class, "index"])->name("formularios.index");
     Route::put("/formularios/{formulario}/status", [FormularioController::class, "updateStatus"])->name("formularios.updateStatus");
     // Adicionar rotas para gerenciamento de usuários aqui
-});
+}); 
