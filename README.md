@@ -1,0 +1,1 @@
+- Everything outside /home will be restarted everytime.
