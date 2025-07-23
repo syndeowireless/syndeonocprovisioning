@@ -12,8 +12,8 @@ class FormularioController extends Controller
      */
     public function index()
     {
-        $formularios = Formulario::with(\'user\')->latest()->paginate(10);
-        return view(\'formularios.index\', compact(\'formularios\'));
+        $formularios = Formulario::with('user')->latest()->paginate(10);
+        return view('formularios.index', compact('formularios'));
     }
 
     /**
@@ -21,7 +21,7 @@ class FormularioController extends Controller
      */
     public function create()
     {
-        return view(\'formularios.create\');
+        return view('formularios.create');
     }
 
     /**
@@ -30,19 +30,19 @@ class FormularioController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            \'titulo\' => \'required|string|max:255\',
-            \'descricao\' => \'required|string\',
-            \'categoria\' => \'required|string|in:geral,suporte,sugestao,reclamacao\',
-            \'prioridade\' => \'required|string|in:baixa,media,alta\',
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'categoria' => 'required|string|in:geral,suporte,sugestao,reclamacao',
+            'prioridade' => 'required|string|in:baixa,media,alta',
         ]);
 
-        $validatedData[\'user_id\'] = auth()->id();
-        $validatedData[\'status\'] = \'pendente\';
+        $validatedData['user_id'] = auth()->id();
+        $validatedData['status'] = 'pendente';
 
         Formulario::create($validatedData);
 
-        return redirect()->route(\'formularios.create\')
-            ->with(\'success\', \'Formulário enviado com sucesso!\');
+        return redirect()->route('formularios.create')
+            ->with('success', 'Formulário enviado com sucesso!');
     }
 
     /**
@@ -52,10 +52,10 @@ class FormularioController extends Controller
     {
         // Usuários comuns só podem ver seus próprios formulários
         if (!auth()->user()->isAdmin() && $formulario->user_id !== auth()->id()) {
-            abort(403, \'Você não tem permissão para visualizar este formulário.\');
+            abort(403, 'Você não tem permissão para visualizar este formulário.');
         }
 
-        return view(\'formularios.show\', compact(\'formulario\'));
+        return view('formularios.show', compact('formulario'));
     }
 
     /**
@@ -63,11 +63,11 @@ class FormularioController extends Controller
      */
     public function meus()
     {
-        $formularios = Formulario::where(\'user_id\', auth()->id())
+        $formularios = Formulario::where('user_id', auth()->id())
             ->latest()
             ->paginate(10);
         
-        return view(\'formularios.meus\', compact(\'formularios\'));
+        return view('formularios.meus', compact('formularios'));
     }
 
     /**
@@ -76,19 +76,19 @@ class FormularioController extends Controller
     public function updateStatus(Request $request, Formulario $formulario)
     {
         $request->validate([
-            \'status\' => \'required|string|in:pendente,em_andamento,resolvido,rejeitado\',
-            \'resposta_admin\' => \'nullable|string\',
+            'status' => 'required|string|in:pendente,em_andamento,resolvido,rejeitado',
+            'resposta_admin' => 'nullable|string',
         ]);
 
         $formulario->update([
-            \'status\' => $request->status,
-            \'resposta_admin\' => $request->resposta_admin,
-            \'respondido_por\' => auth()->id(),
-            \'respondido_em\' => now(),
+            'status' => $request->status,
+            'resposta_admin' => $request->resposta_admin,
+            'respondido_por' => auth()->id(),
+            'respondido_em' => now(),
         ]);
 
-        return redirect()->route(\'formularios.show\', $formulario)
-            ->with(\'success\', \'Status atualizado com sucesso!\');
+        return redirect()->route('formularios.show', $formulario)
+            ->with('success', 'Status atualizado com sucesso!');
     }
 }
 
