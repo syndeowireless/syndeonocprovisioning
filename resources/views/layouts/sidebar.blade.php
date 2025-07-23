@@ -43,8 +43,8 @@
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="javascript: void(0);" class="has-arrow">Network mgmt.</a>
                                         <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="javascript: void(0);">New Provisioning</a></li>
-                                            <li><a href="javascript: void(0);">Search Provisioning</a></li>
+                                            <li><a href="{{ url('/create') }}">New Provisioning</a></li>
+                                            <li><a href="">Search Provisioning</a></li>
                                         </ul>
                                     </li>
                                 </ul>

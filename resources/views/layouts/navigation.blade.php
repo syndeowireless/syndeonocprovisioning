@@ -2,13 +2,13 @@
     <div class="navbar-header">
         <div class="d-flex">
             <!-- LOGO -->
-            <div class="navbar-brand-box">
+            <div class="navbar-brand-box" style="background:#13395d">
                 <a href="index.html" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="assets/images/logo-sm.png" alt="" height="22">
+                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/Icon%20Colour%20.png" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="assets/images/logo-dark.png" alt="" height="17">
+                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/JIRA%20Colour%20-%20Standard_Colour%20-%20Standard.png" alt="" height="17">
                     </span>
                 </a>
 
@@ -27,12 +27,12 @@
             </button>
 
             <div class="d-none d-sm-block">
-                <div> 
-                    <h2>Home</h2>   
-                </div>
+            </div>
+            <div style="display: flex;  justify-content: center;  align-items: center;      height: 100vh;"> 
+                <h2>Home</h2>   
             </div>
         </div>
-
+            
         <div class="d-flex">
             <div class="dropdown d-none d-lg-inline-block">
                 <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
