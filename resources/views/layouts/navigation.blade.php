@@ -27,10 +27,9 @@
             </button>
 
             <div class="d-none d-sm-block">
+                <h2>Home</h2> 
             </div>
-            <div style="display: flex;  justify-content: center;  align-items: center;      height: 100vh;"> 
-                <h2>Home</h2>   
-            </div>
+
         </div>
             
         <div class="d-flex">
