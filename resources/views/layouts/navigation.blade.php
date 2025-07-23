@@ -2,13 +2,13 @@
     <div class="navbar-header">
         <div class="d-flex">
             <!-- LOGO -->
-            <div class="navbar-brand-box" style="background: #13395d">
+            <div class="navbar-brand-box">
                 <a href="index.html" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/Icon%20Colour%20.png" alt="" height="22">
+                        <img src="assets/images/logo-sm.png" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/JIRA%20Colour%20-%20Standard_Colour%20-%20Standard.png" alt="" height="17">
+                        <img src="assets/images/logo-dark.png" alt="" height="17">
                     </span>
                 </a>
 
@@ -26,7 +26,7 @@
                 <i class="mdi mdi-menu"></i>
             </button>
 
-            <div style="display: flex;justify-content: center;align-items: center;height: 100vh;">
+            <div class="d-none d-sm-block">
                 <div> 
                     <h2>Home</h2>   
                 </div>
