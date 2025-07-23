@@ -8,7 +8,7 @@
             <!-- LOGO -->
             <div class="navbar-brand-box" style="background-color: #3e3e3f;
     padding-top: 20px;" >
-                <a href="{{ route('logo.redirect') }}" class="logo logo-dark" >
+                <a href="" class="logo logo-dark" >
                     <span class="logo-sm">
                         <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="22">
                     </span>
@@ -17,7 +17,7 @@
                     </span>
                 </a>
 
-                <a href="{{ route('logo.redirect') }}" class="logo logo-light">
+                <a href="" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="22" style="padding-top: 20%;">
                     </span>
