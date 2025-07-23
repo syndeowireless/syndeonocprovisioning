@@ -26,9 +26,9 @@
                 <i class="mdi mdi-menu"></i>
             </button>
 
-            <div class="d-none d-sm-block">
+            <div style="display: flex;justify-content: center;align-items: center;height: 100vh;">
                 <div> 
-                    <h3>Home</h3>   
+                    <h2>Home</h2>   
                 </div>
             </div>
         </div>
@@ -74,3 +74,6 @@
         </div>
     </div>
 </header>
+
+
+  

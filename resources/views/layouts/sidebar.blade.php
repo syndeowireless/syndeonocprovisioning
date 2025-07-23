@@ -7,18 +7,17 @@
                     <div id="sidebar-menu">
                         <!-- Left Menu Start -->
                         <ul class="metismenu list-unstyled" id="side-menu">
-                            <li class="menu-title">Main</li>
+                            
 
                             <li>
                                 <a href="index.html" class="waves-effect">
                                     <i class="mdi mdi-home"></i>
-                                    <span class="badge rounded-pill bg-primary float-end">2</span>
                                     <span>Home</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="mdi mdi-square-inc-cash"></i>
+                                    <i class="mdi mdi-cash-multiple"></i>
                                     <span>Sales</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="true">
