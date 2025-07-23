@@ -1,5 +1,5 @@
             <!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu">
+            <div class="vertical-menu" style="background: #13395d">
 
                 <div data-simplebar class="h-100">
 
@@ -7,7 +7,7 @@
                     <div id="sidebar-menu">
                         <!-- Left Menu Start -->
                         <ul class="metismenu list-unstyled" id="side-menu">
-                            
+                            <li class="menu-title">Main</li>
 
                             <li>
                                 <a href="index.html" class="waves-effect">
