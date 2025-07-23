@@ -51,6 +51,6 @@ Route::middleware(["auth", "admin"])->prefix("admin")->name("admin.")->group(fun
     // Adicionar rotas para gerenciamento de usuários aqui
 }); 
 
-Route::get('/formularios/criar', function () {
+Route::get('/formularios/create', function () {
     return view('formularios.create'); 
 })->name('formularios.create'); 
