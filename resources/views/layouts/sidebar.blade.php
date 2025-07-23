@@ -1,12 +1,12 @@
             <!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu" style="background: #13395d">
+            <div class="vertical-menu">
 
                 <div data-simplebar class="h-100">
 
                     <!--- Sidemenu -->
                     <div id="sidebar-menu">
                         <!-- Left Menu Start -->
-                        <ul class="metismenu list-unstyled" id="side-menu">
+                        <ul class="metismenu list-unstyled" id="side-menu" style="background: #13395d">
                             <li class="menu-title">Main</li>
 
                             <li>

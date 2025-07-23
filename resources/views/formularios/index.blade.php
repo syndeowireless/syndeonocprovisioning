@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __(\'Gerenciar Formulários\') }}
+            {{ __('Gerenciar Formulários') }}
         </h2>
     </x-slot>
 
@@ -11,9 +11,9 @@
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Todos os Formulários</h3>
 
-                    @if (session(\'success\'))
+                    @if (session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                            <span class="block sm:inline">{{ session(\'success\') }}</span>
+                            <span class="block sm:inline">{{ session('success') }}</span>
                         </div>
                     @endif
 
@@ -40,7 +40,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $formulario->prioridade_formatada }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $formulario->status_formatado }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route(\'formularios.show\', $formulario) }}" class="text-indigo-600 hover:text-indigo-900">Ver</a>
+                                            <a href="{{ route('formularios.show', $formulario) }}" class="text-indigo-600 hover:text-indigo-900">Ver</a>
                                         </td>
                                     </tr>
                                 @empty
