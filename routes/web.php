@@ -49,3 +49,7 @@ Route::middleware(["auth", "admin"])->prefix("admin")->name("admin.")->group(fun
     Route::put("/formularios/{formulario}/status", [FormularioController::class, "updateStatus"])->name("formularios.updateStatus");
     // Adicionar rotas para gerenciamento de usuários aqui
 }); 
+
+Route::get('/formularios/criar', function () {
+    return view('formularios.create'); 
+})->name('formularios.create'); 
