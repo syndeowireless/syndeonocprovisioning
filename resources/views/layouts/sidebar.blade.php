@@ -9,7 +9,7 @@
                             <li class="menu-title">Sales</li>
 
                             <li>
-                                <a class="waves-effect" href="{{ route('sales.rom-generator.create') }}">
+                                <a class="waves-effect" href="">
                                     <i class="ion ion-md-add-circle"></i>
                                     <!-- <span class="badge rounded-pill bg-primary float-end">2</span> -->
                                     <span>ROM Generator</span>
@@ -18,7 +18,7 @@
                             </li>
 
                             <li>
-                                <a class=" waves-effect" href="{{ route('sales.rom-generator.search') }}">
+                                <a class=" waves-effect" href="">
                                     <i class="ion ion-md-search"></i>
                                     <span>Search ROM</span>
                                 </a>
