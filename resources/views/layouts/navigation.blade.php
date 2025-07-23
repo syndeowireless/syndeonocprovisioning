@@ -5,19 +5,19 @@
             <div class="navbar-brand-box" style="background:#13395d">
                 <a href="index.html" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/Icon%20Colour%20.png" alt="" height="22">
+                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/Icon%20Colour%20.png" alt="2" height="2">
                     </span>
                     <span class="logo-lg">
-                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/JIRA%20Colour%20-%20Standard_Colour%20-%20Standard.png" alt="" height="17">
+                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/JIRA%20Colour%20-%20Standard_Colour%20-%20Standard.png" alt="2" height="2">
                     </span>
                 </a>
 
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/Icon%20Colour%20.png" alt="" height="22">
+                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/Icon%20Colour%20.png" alt="2" height="2">
                     </span>
                     <span class="logo-lg">
-                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/JIRA%20Colour%20-%20Standard_Colour%20-%20Standard.png" alt="" height="18">
+                        <img src="https://raw.githubusercontent.com/syndeowireless/logos/refs/heads/main/JIRA%20Colour%20-%20Standard_Colour%20-%20Standard.png" alt="2" height="2">
                     </span>
                 </a>
             </div>
