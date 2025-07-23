@@ -1,0 +1,41 @@
+
+//
+// Range slider
+//
+
+.irs--modern{
+  .irs-bar, .irs-to, .irs-from, .irs-single {
+    background: var(--#{$prefix}primary) !important;
+    font-size: 11px;
+  }
+  .irs-to, .irs-from, .irs-single{
+    &:before{
+      border-top-color: var(--#{$prefix}primary);
+    }
+  }
+
+  .irs-line{
+    background: var(--#{$prefix}tertiary-bg);
+    border-color: var(--#{$prefix}border-color);
+  }
+  .irs-grid-text{
+    font-size: 11px;
+    color: $gray-400;
+  }
+  .irs-min, .irs-max{
+    color: $gray-500;
+    background: var(--#{$prefix}tertiary-bg);
+    font-size: 11px;
+  }
+
+  .irs-handle{
+    width: 12px;
+    height: 12px;
+    top: 37px;
+    background-color: var(--#{$prefix}tertiary-bg) !important;
+      > i:nth-child(1) {
+        width: 8px;
+        height: 8px;
+    }
+  }
+}

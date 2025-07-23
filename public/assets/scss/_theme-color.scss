@@ -1,0 +1,67 @@
+
+//  default
+[data-theme-mode="default"] {
+    --bs-danger: #ef6767 !important;
+    --bs-danger-rgb: 239,103,103 !important;
+}
+
+
+// Red
+[data-theme-mode="red"] {
+    --bs-primary: #d95a6f !important;
+    --bs-primary-rgb: 217, 90, 111 !important;
+
+    --bs-danger: #7a6fbe !important;
+    --bs-danger-rgb: 122,111,190 !important;
+
+    --bs-info: #f5b225 !important;
+    --bs-info-rgb: 245,178,37 !important;
+
+    --bs-warning: #0dcaf0 !important;
+    --bs-warning-rgb: 13,202,240 !important;
+
+    
+    .btn-danger {
+        background-color: var(--bs-danger);
+        border-color: var(--bs-danger);
+    
+        &:hover,
+        &:focus,
+        &:active,
+        &.disabled,
+        &:disabled {
+            background-color: var(--bs-danger);
+            border-color: var(--bs-danger);
+            &:focus {
+                box-shadow: 0 0 0 $btn-focus-width var(--bs-danger);
+            }
+        }
+    }
+    
+    .btn-outline-danger {
+        color: var(--bs-danger);
+        border-color: var(--bs-danger);
+        &:hover,
+        &:focus,
+        &:active,
+        &.disabled,
+        &:disabled {
+            background-color: var(--bs-danger);
+            border-color: var(--bs-danger);
+            color: $white;
+            &:focus {
+                box-shadow: 0 0 0 $btn-focus-width var(--bs-danger);
+            }
+        }
+    }
+    }
+
+
+// Teal
+[data-theme-mode="teal"] {
+    --bs-primary: #3eb7ba !important;
+    --bs-primary-rgb: 62, 183, 186 !important;
+
+    --bs-info: #36508b !important;
+    --bs-info-rgb: 54, 80, 139 !important;
+}

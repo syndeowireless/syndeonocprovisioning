@@ -1,0 +1,73 @@
+// 
+// Kanbanboard . scss
+// 
+
+
+// task
+
+.task-board{
+  display: flex;
+  white-space: nowrap;
+  overflow-x: auto;
+  align-items: stretch;
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+  }
+
+  &::-webkit-scrollbar:vertical {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar:horizontal {
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba($dark, .2);
+    border-radius: 10px;
+    border: 2px solid var(--#{$prefix}border-color);
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;  
+    background-color: $white; 
+  }
+}
+
+.tasks{
+  min-height: 300px;
+}
+
+.task-list{
+  min-width: 280px;
+  white-space: normal;
+
+  @media (min-width: 576px) {
+    width: 388px;
+    min-width: 388px;
+  }
+  
+  
+  &:not(:last-child) {
+      margin-right: 20px;
+  }
+
+  .tasklist-content{
+    max-height: calc(100vh - 390px);
+  }
+
+  .task-box{
+      border: 1px solid var(--#{$prefix}border-color);
+
+      &:last-child{
+          margin-bottom: 0;
+      }
+  }
+  
+}
+
+.gu-transit {
+    border: 1px dashed var(--#{$prefix}border-color) !important;
+    background-color: var(--#{$prefix}border-color) !important;
+}

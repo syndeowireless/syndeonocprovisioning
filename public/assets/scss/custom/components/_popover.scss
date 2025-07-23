@@ -1,0 +1,12 @@
+
+// 
+// _popover.scss
+//
+
+.popover {
+  box-shadow: $popover-box-shadow;
+}
+
+.popover-body {
+    color: var(--#{$prefix}body-color) !important;
+}

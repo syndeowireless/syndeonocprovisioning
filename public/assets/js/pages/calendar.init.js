@@ -1,1 +1,192 @@
-!function(g){"use strict";function e(){}e.prototype.init=function(){var l=g("#event-modal"),t=g("#modal-title"),a=g("#form-event"),i=null,r=null,s=document.getElementsByClassName("needs-validation"),i=null,r=null,e=new Date,n=e.getDate(),d=e.getMonth(),o=e.getFullYear();new FullCalendarInteraction.Draggable(document.getElementById("external-events"),{itemSelector:".external-event",eventData:function(e){return{title:e.innerText,className:g(e).data("class")}}});var c=[{title:"All Day Event",start:new Date(o,d,1)},{title:"Long Event",start:new Date(o,d,n-5),end:new Date(o,d,n-2),className:"bg-warning"},{id:999,title:"Repeating Event",start:new Date(o,d,n-3,16,0),allDay:!1,className:"bg-info"},{id:999,title:"Repeating Event",start:new Date(o,d,n+4,16,0),allDay:!1,className:"bg-primary"},{title:"Meeting",start:new Date(o,d,n,10,30),allDay:!1,className:"bg-success"},{title:"Lunch",start:new Date(o,d,n,12,0),end:new Date(o,d,n,14,0),allDay:!1,className:"bg-danger"},{title:"Birthday Party",start:new Date(o,d,n+1,19,0),end:new Date(o,d,n+1,22,30),allDay:!1,className:"bg-success"},{title:"Click for Google",start:new Date(o,d,28),end:new Date(o,d,29),url:"http://google.com/",className:"bg-dark"}],v=(document.getElementById("external-events"),document.getElementById("calendar"));function u(e){l.modal("show"),a.removeClass("was-validated"),a[0].reset(),g("#event-title").val(),g("#event-category").val(),t.text("Add Event"),r=e}var m=new FullCalendar.Calendar(v,{plugins:["bootstrap","interaction","dayGrid","timeGrid"],editable:!0,droppable:!0,selectable:!0,defaultView:"dayGridMonth",themeSystem:"bootstrap",header:{left:"prev,next today",center:"title",right:"dayGridMonth,timeGridWeek,timeGridDay,listMonth"},eventClick:function(e){l.modal("show"),a[0].reset(),i=e.event,g("#event-title").val(i.title),g("#event-category").val(i.classNames[0]),r=null,t.text("Edit Event"),r=null},dateClick:function(e){u(e)},events:c});m.render(),g(a).on("submit",function(e){e.preventDefault();g("#form-event :input");var t,a=g("#event-title").val(),n=g("#event-category").val();!1===s[0].checkValidity()?(event.preventDefault(),event.stopPropagation(),s[0].classList.add("was-validated")):(i?(i.setProp("title",a),i.setProp("classNames",[n])):(t={title:a,start:r.date,allDay:r.allDay,className:n},m.addEvent(t)),l.modal("hide"))}),g("#btn-delete-event").on("click",function(e){i&&(i.remove(),i=null,l.modal("hide"))}),g("#btn-new-event").on("click",function(e){u({date:new Date,allDay:!0})})},g.CalendarPage=new e,g.CalendarPage.Constructor=e}(window.jQuery),function(){"use strict";window.jQuery.CalendarPage.init()}();
+/*
+Template Name: Lexa - Admin & Dashboard Template
+Author: Themesbrand
+Website: https://themesbrand.com/
+Contact: themesbrand@gmail.com
+File: Calendar
+*/
+!function($) {
+    "use strict";
+
+    var CalendarPage = function() {};
+
+    CalendarPage.prototype.init = function() {
+
+
+                       
+            var addEvent=$("#event-modal");
+            var modalTitle = $("#modal-title");
+            var formEvent = $("#form-event");
+            var selectedEvent = null;
+            var newEventData = null;
+            var forms = document.getElementsByClassName('needs-validation');
+            var selectedEvent = null;
+            var newEventData = null;
+            var eventObject = null;
+            /* initialize the calendar */
+
+            var date = new Date();
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+            var Draggable = FullCalendarInteraction.Draggable;
+            var externalEventContainerEl = document.getElementById('external-events');
+            // init dragable
+            new Draggable(externalEventContainerEl, {
+                itemSelector: '.external-event',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText,
+                        className: $(eventEl).data('class')
+                    };
+                }
+            });
+            var defaultEvents = [{
+                title: 'All Day Event',
+                start: new Date(y, m, 1)
+                },
+                {
+                    title: 'Long Event',
+                    start: new Date(y, m, d-5),
+                    end: new Date(y, m, d-2),
+                    className: 'bg-warning'
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: new Date(y, m, d-3, 16, 0),
+                    allDay: false,
+                    className: 'bg-info'
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: new Date(y, m, d+4, 16, 0),
+                    allDay: false,
+                    className: 'bg-primary'
+                },
+                {
+                    title: 'Meeting',
+                    start: new Date(y, m, d, 10, 30),
+                    allDay: false,
+                    className: 'bg-success'
+                },
+                {
+                    title: 'Lunch',
+                    start: new Date(y, m, d, 12, 0),
+                    end: new Date(y, m, d, 14, 0),
+                    allDay: false,
+                    className: 'bg-danger'
+                },
+                {
+                    title: 'Birthday Party',
+                    start: new Date(y, m, d+1, 19, 0),
+                    end: new Date(y, m, d+1, 22, 30),
+                    allDay: false,
+                    className: 'bg-success'
+                },
+                {
+                    title: 'Click for Google',
+                    start: new Date(y, m, 28),
+                    end: new Date(y, m, 29),
+                    url: 'http://google.com/',
+                    className: 'bg-dark'
+            }];
+
+            var draggableEl = document.getElementById('external-events');
+            var calendarEl = document.getElementById('calendar');
+
+            function addNewEvent(info) {
+                addEvent.modal('show');
+                formEvent.removeClass("was-validated");
+                formEvent[0].reset();
+
+                $("#event-title").val();
+                $('#event-category').val();
+                modalTitle.text('Add Event');
+                newEventData = info;
+            }
+            
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid'],
+                editable: true,
+                droppable: true,
+                selectable: true,
+                defaultView: 'dayGridMonth',
+                themeSystem: 'bootstrap',
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                },
+                eventClick: function(info) {
+                    addEvent.modal('show');
+                    formEvent[0].reset();
+                    selectedEvent = info.event;
+                    $("#event-title").val(selectedEvent.title);
+                    $('#event-category').val(selectedEvent.classNames[0]);
+                    newEventData = null;
+                    modalTitle.text('Edit Event');
+                    newEventData = null;
+                },
+                dateClick: function(info) {
+                    addNewEvent(info);
+                },
+                events : defaultEvents
+            });
+            calendar.render();
+            
+             /*Add new event*/
+            // Form to add new event
+
+            $(formEvent).on('submit', function(ev) {
+                ev.preventDefault();
+                var inputs = $('#form-event :input');
+                var updatedTitle = $("#event-title").val();
+                var updatedCategory =  $('#event-category').val();
+                
+                // validation
+                if (forms[0].checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        forms[0].classList.add('was-validated');
+                } else {
+                    if(selectedEvent){
+                        selectedEvent.setProp("title", updatedTitle);
+                        selectedEvent.setProp("classNames", [updatedCategory]);
+                    } else {
+                        var newEvent = {
+                            title: updatedTitle,
+                            start: newEventData.date,
+                            allDay: newEventData.allDay,
+                            className: updatedCategory
+                        }
+                        calendar.addEvent(newEvent);
+                    }
+                    addEvent.modal('hide');
+                }
+            });
+
+            $("#btn-delete-event").on('click', function(e) {
+                if (selectedEvent) {
+                    selectedEvent.remove();
+                    selectedEvent = null;
+                    addEvent.modal('hide');
+                }
+            });
+
+            $("#btn-new-event").on('click', function(e) {
+                addNewEvent({date: new Date(), allDay: true});
+            });
+
+    },
+    //init
+    $.CalendarPage = new CalendarPage, $.CalendarPage.Constructor = CalendarPage
+}(window.jQuery),
+
+//initializing 
+function($) {
+    "use strict";
+    $.CalendarPage.init()
+}(window.jQuery);
