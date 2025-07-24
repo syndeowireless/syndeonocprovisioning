@@ -54,3 +54,9 @@ Route::middleware(["auth", "admin"])->prefix("admin")->name("admin.")->group(fun
 Route::get('/formularios/create', function () {
     return view('formularios.create'); 
 })->name('formularios.create'); 
+
+Route::get('/formularios/create', [FormularioController::class, 'create'])
+     ->name('formularios.create');
+     
+Route::post('/formularios', [FormularioController::class, 'store'])
+     ->name('formularios.store');

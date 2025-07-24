@@ -16,6 +16,8 @@
 
 @extends("layouts.app")
 
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+
 @section("content")
 <div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
     <div class="w-full max-w-4xl px-4 py-8">
