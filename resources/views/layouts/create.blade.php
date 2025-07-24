@@ -136,8 +136,8 @@
                 <div class="form-group pt-6 text-center">
                     <button type="submit" 
                             class="px-8 py-3 font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all"
-                            style="background-color: #d9ff35; color: black;">
-                        Create ROM
+                           style="background-color: #13395d;color: white;border: 2px solid #fbbf0f;padding-right: 10px;padding-left: 10px;">
+                        Create
                     </button>
                 </div>
             </form>
