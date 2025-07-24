@@ -48,12 +48,18 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <x-dropdown-link :href="route('profile.edit')" class="dropdown-item"><i class="mdi mdi-cog font-size-17 text-muted align-middle me-1"></i> {{ __('Settings') }}</x-dropdown-link>
+                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                        <i class="mdi mdi-cog font-size-17 text-muted align-middle me-1"></i> {{ __('Settings') }}
+                    </a>
                     
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger px-4" :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i>{{ __('Log Out') }}</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-danger px-4">
+                            <i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i>
+                            {{ __('Log Out') }}
+                        </button>
+                    </form>
                 </div>
             </div>
             

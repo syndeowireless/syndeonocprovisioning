@@ -20,7 +20,7 @@
 
 @section("content")
 <div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
-    <div class="w-full max-w-4xl px-4 py-8">
+    <div class="max-w-4xl px-4 py-8" style="width: 80%;padding-top: 5%;">
         <div class="bg-white rounded-xl shadow-lg p-8">
             <h1 class="text-2xl font-bold mb-8 text-center text-black">Create Network Provisioning</h1>
 
