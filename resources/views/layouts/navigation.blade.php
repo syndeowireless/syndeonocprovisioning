@@ -54,18 +54,29 @@
                 </button>
             </div>
             
-            <div class="">
+            <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="new-cog-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="mdi mdi-cog"></i> <!-- Ícone de engrenagem sem rotação -->
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
-                    <!-- Exemplo de item no dropdown -->
-                    <a class="dropdown-item" href="#">Opção 1</a>
-                    <a class="dropdown-item" href="#">Opção 2</a>
+                    <!-- item: Settings -->
+                    <a class="dropdown-item" href="{{ route(\'profile.edit\') }}">
+                        <i class="mdi mdi-cog font-size-17 text-muted align-middle me-1"></i> {{ __(\'Settings\') }}
+                    </a>
+            
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Opção 3</a>
+            
+                    <!-- item: Log Out -->
+                    <form method="POST" action="{{ route(\'logout\') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-danger px-4">
+                            <i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i>
+                            {{ __(\'Log Out\') }}
+                        </button>
+                    </form>
                 </div>
             </div>
+
         </div>
     </div>
 </header>
