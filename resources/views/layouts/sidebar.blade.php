@@ -43,7 +43,7 @@
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="javascript: void(0);" class="has-arrow">Network mgmt.</a>
                                         <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('formularios.create') }}">New Provisioning</a></li>
+                                            <li><a href="{{ route('layouts.create') }}">New Provisioning</a></li>
                                             <li><a href="">Search Provisioning</a></li>
                                         </ul>
                                     </li>

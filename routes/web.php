@@ -52,9 +52,10 @@ Route::middleware(["auth", "admin"])->prefix("admin")->name("admin.")->group(fun
 }); 
 
 Route::middleware(['auth'])->group(function () {
+
     Route::get('/formularios/create', [FormularioController::class, 'create'])
-         ->name('formularios.create');
-         
+         ->name('layouts.create'); 
+   
     Route::post('/formularios', [FormularioController::class, 'store'])
          ->name('formularios.store');
 });

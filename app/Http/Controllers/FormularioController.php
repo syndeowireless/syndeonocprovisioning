@@ -12,7 +12,7 @@ class FormularioController extends Controller
 
     public function create()
 {
-    return view("formularios.create");
+    return view('layouts.create');
 }
 
 
