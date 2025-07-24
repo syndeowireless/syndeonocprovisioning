@@ -53,9 +53,9 @@ Route::middleware(["auth", "admin"])->prefix("admin")->name("admin.")->group(fun
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/formularios/create', [FormularioController::class, 'create'])
-         ->name('layouts.create'); 
-   
-    Route::post('/formularios', [FormularioController::class, 'store'])
-         ->name('formularios.store');
+    Route::get('/create-form', [FormularioController::class, 'create'])
+         ->name('create.form'); // Nomeie a rota conforme sua lógica
+         
+    Route::post('/submit-form', [FormularioController::class, 'store'])
+         ->name('submit.form');
 });
