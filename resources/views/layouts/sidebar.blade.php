@@ -12,7 +12,7 @@
                             <li>
                                 <a href="index.html" class="waves-effect" style="color: white;">
                                     <i class="mdi mdi-home" style="color: white;"></i>
-                                    <span class="badge rounded-pill bg-primary float-end" style="color: white;">2</span>
+                                    
                                     <span>Home</span>
                                 </a>
                             </li>
@@ -57,9 +57,9 @@
                                 </a>
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="javascript: void(0);" style="color: white;">Update ROM (STAFF)</a></li>
-                                    <li><a href="javascript: void(0);" class="has-arrow" style="color: white;"> Create New User</a></li>
-                                    <li><a href="javascript: void(0);" class="has-arrow" style="color: white;"> Lock page</a></li>
-                                    <li><a href="javascript: void(0);" class="has-arrow" style="color: white;"> System Users</a></li>
+                                    <li><a href="javascript: void(0);" style="color: white;"> Create New User</a></li>
+                                    <li><a href="javascript: void(0);" style="color: white;"> Lock page</a></li>
+                                    <li><a href="javascript: void(0);" style="color: white;"> System Users</a></li>
                                 </ul>
                             </li>
 

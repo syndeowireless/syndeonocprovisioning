@@ -54,24 +54,16 @@
                 </button>
             </div>
             
-            <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="mdi mdi-spin mdi-cog"></i>
+            <div class="">
+                <button type="button" class="btn header-item waves-effect" id="new-cog-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="mdi mdi-cog"></i> <!-- Ícone de engrenagem sem rotação -->
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
-                    <!-- item-->
-                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                        <i class="mdi mdi-cog font-size-17 text-muted align-middle me-1"></i> {{ __('Settings') }}
-                    </a>
-
+                    <!-- Exemplo de item no dropdown -->
+                    <a class="dropdown-item" href="#">Opção 1</a>
+                    <a class="dropdown-item" href="#">Opção 2</a>
                     <div class="dropdown-divider"></div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="dropdown-item text-danger px-4">
-                            <i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i>
-                            {{ __('Log Out') }}
-                        </button>
-                    </form>
+                    <a class="dropdown-item" href="#">Opção 3</a>
                 </div>
             </div>
         </div>
