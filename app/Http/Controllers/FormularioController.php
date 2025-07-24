@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class RomGeneratorController extends Controller
+class FormularioController extends Controller
 {
 
     public function create()
