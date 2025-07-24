@@ -22,7 +22,7 @@
         <div class="bg-white rounded-xl shadow-lg p-8">
             <h1 class="text-2xl font-bold mb-8 text-center text-black">Create Network Provisioning</h1>
 
-            <form method="POST" action="{{ route('sales.rom-generator.store') }}" class="space-y-6">
+            <form method="POST" action="" class="space-y-6">
                 @csrf
 
                 <!-- Linha 1: Property Name / OEM -->
