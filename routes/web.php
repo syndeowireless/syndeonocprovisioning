@@ -62,5 +62,5 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/pfsense', function () {
-    return view('pfsense');
+    return view('layouts.pfsense');
 })->name('pfsense');
