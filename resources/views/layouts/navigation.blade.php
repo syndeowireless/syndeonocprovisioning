@@ -54,24 +54,19 @@
                 </button>
             </div>
             
-            <div class="">
-                <button type="button" class="btn header-item waves-effect" id="new-cog-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="mdi mdi-cog"></i> <!-- Ícone de engrenagem sem rotação -->
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user" src="assets/images/users/user-4.jpg"
+                        alt="Header Avatar">
                 </button>
-                <div class="">
-                    <!-- item: Settings -->
-                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                        <i class="mdi mdi-cog font-size-17 text-muted align-middle me-1"></i> {{ __('Settings') }}
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-
-                    <!-- item: Log Out -->
+                <div class="dropdown-menu dropdown-menu-end">
+                    <!-- item-->
+                    <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle font-size-17 text-muted align-middle me-1"></i>{{ __('Settings') }}</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="dropdown-item text-danger px-4">
-                            <i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i>
-                            {{ __('Log Out') }}
+                        <button type="submit" class="">
+                        <a class="dropdown-item text-danger" href="#"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> {{ __('Log Out') }}</a>
                         </button>
                     </form>
                 </div>
@@ -83,3 +78,4 @@
 
 
   
+
