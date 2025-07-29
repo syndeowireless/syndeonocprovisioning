@@ -52,15 +52,15 @@
     
     <!-- REMOVA ESTES SE NÃO FOR ESSENCIAIS (podem causar conflitos) -->
     <!--
+        <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
+        <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
+        <script src="{{ asset('assets/libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+        <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
+        <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
+        <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
+        -->
+        
     <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
-    <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
-    -->
-    
     <!-- Mantenha apenas estes se forem necessários -->
     <script src="{{ asset('assets/js/layout.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
