@@ -59,3 +59,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/submit-form', [FormularioController::class, 'store'])
          ->name('submit.form');
 });
+
+
+Route::get('/pfsense', function () {
+    return view('pfsense');
+})->name('pfsense');
