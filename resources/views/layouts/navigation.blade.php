@@ -46,24 +46,40 @@
             </div>
             
             
-            <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="assets/images/users/user-4.jpg"
-                        alt="Header Avatar">
-                </button>
-                <div class="dropdown-menu dropdown-menu-end">
-                    <!-- item-->
-                    <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle font-size-17 text-muted align-middle me-1"></i>{{ __('Settings') }}</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="">
-                        <a class="dropdown-item text-danger" href="#"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> {{ __('Log Out') }}</a>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
+<div class="dropdown d-inline-block">
+    <button 
+        type="button" 
+        class="btn header-item waves-effect" 
+        id="page-header-user-dropdown"
+        data-bs-toggle="dropdown" 
+        aria-expanded="false"    >
+        <img class="rounded-circle header-profile-user" 
+            src="assets/images/users/user-4.jpg"
+            alt="Header Avatar"
+        >
+    </button>
+    
+    <div class="dropdown-menu dropdown-menu-end">
+        <!-- Item normal -->
+        <a class="dropdown-item" href="#">
+            <i class="mdi mdi-account-circle font-size-17 text-muted align-middle me-1"></i>
+            {{ __('Settings') }}
+        </a>
+        
+        <!-- Formulário de Logout CORRIGIDO -->
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button 
+                type="submit" 
+                class="dropdown-item text-danger"  <!-- Classes movidas para o botão -->
+                style="cursor: pointer; width: 100%; text-align: left;"
+            >
+                <i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i>
+                {{ __('Log Out') }}
+            </button>
+        </form>
+    </div>
+</div>
         </div>
     </div>
 </header>
