@@ -9,6 +9,12 @@ fi
 
 
 cd /home/site/wwwroot
+
+echo "=== MIGRATION STATUS ==="
+php artisan migrate:status
+echo "========================"
+
+
 npm install --no-audit --progress=false
 npm run build  #BUILD FOR PRODUCTION, DEV FOR LOCAL#
 
