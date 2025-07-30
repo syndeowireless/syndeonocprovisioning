@@ -13,28 +13,28 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
- 
+   
     steps:
       - uses: actions/checkout@v4
- 
+     
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
- 
+     
       - name: Check if composer.json exists
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
           files: 'composer.json'
- 
+     
       - name: Run composer install if composer.json exists
         if: steps.check_files.outputs.files_exists == 'true'
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
- 
+     
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
- 
+     
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -47,15 +47,23 @@ jobs:
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
- 
+   
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: php-app
- 
+     
       - name: Unzip artifact for deployment
         run: unzip release.zip
+     
+      # CRITICAL FIX: Make startup script executable and copy to correct location
+      - name: Prepare startup script
+        run: |
+          chmod +x startup.sh
+          mkdir -p home
+          cp startup.sh home/startup.sh
+          chmod +x home/startup.sh
      
       - name: Login to Azure
         uses: azure/login@v2
@@ -63,7 +71,7 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_666CE156214141708144161A7FDC6CBB }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_057D58D36A4E498792EDA18456A1ED4B }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2EE9B03B82F84757911E69B91F6434E1 }}
- 
+     
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
@@ -71,4 +79,5 @@ jobs:
           app-name: 'syndeo-noc-provisioning-app'
           slot-name: 'Production'
           package: .
- 
+          # FORCE Azure to use our startup script
+          startup-command: '/home/startup.sh'
