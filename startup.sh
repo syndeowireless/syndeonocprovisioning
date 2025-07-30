@@ -39,3 +39,5 @@ echo "Application is ready to serve requests"
 # Don't start the server here - Azure will handle that
 # Azure App Service will automatically start PHP-FPM
 exit 0
+
+
