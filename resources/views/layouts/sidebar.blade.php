@@ -43,7 +43,7 @@
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="javascript: void(0);" class="has-arrow" style="color: white;">Network mgmt.</a>
                                         <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('create.form') }}" style="color: white;">New Provisioning</a></li>
+                                            <li><a href="{{ route('network-provisioning.create') }}" style="color: white;">New Provisioning</a></li>
                                             <li><a href="{{ route('pfsense') }}" style="color: white;">Search Provisioning</a></li>
                                         </ul>
                                     </li>

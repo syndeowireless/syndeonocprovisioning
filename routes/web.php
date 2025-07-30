@@ -64,3 +64,22 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/pfsense', function () {
     return view('layouts.pfsense');
 })->name('pfsense');
+
+
+// Network Provisioning Routes
+Route::prefix('network-provisioning')->name('network-provisioning.')->group(function () {
+    // Display all network provisionings
+    Route::get('/', [NetworkProvisioningController::class, 'index'])->name('index');
+    
+    // Show create form
+    Route::get('/create', [NetworkProvisioningController::class, 'create'])->name('create');
+    
+    // Store new network provisioning
+    Route::post('/store', [NetworkProvisioningController::class, 'store'])->name('store');
+    
+    // Show pfsense configuration page
+    Route::get('/pfsense', [NetworkProvisioningController::class, 'pfsense'])->name('pfsense');
+    
+    // Release IP range
+    Route::patch('/release-ip/{ipId}', [NetworkProvisioningController::class, 'releaseIp'])->name('release-ip');
+});
