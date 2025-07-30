@@ -23,3 +23,4 @@ php artisan view:cache
  
 echo "Starting server..."
 php -S 0.0.0.0:8080 -t public
+
