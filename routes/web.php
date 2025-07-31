@@ -3,6 +3,8 @@
 use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NetworkProvisioningController;
+
 
 Route::get('/', function () {
     return view('welcome');
