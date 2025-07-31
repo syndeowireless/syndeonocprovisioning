@@ -50,8 +50,8 @@ class NetworkProvisioningController extends Controller
             'remote_unit_quantity' => 'nullable|integer',
             'master_unit_quantity' => 'nullable|integer',
             'bda_quantity' => 'nullable|integer',
-            'latitude' => 'nullable|numeric|max:255', // Use numeric if your DB expects it, else string
-            'longitude' => 'nullable|numeric|max:255', // Use numeric if your DB expects it, else string
+            'latitude' => 'nullable|numeric|between:-90,90', // Use numeric if your DB expects it, else string
+            'longitude' => 'nullable|numeric|between:-180,180', // Use numeric if your DB expects it, else string
             'property_type' => 'nullable|string|max:255',
             'average_density' => 'nullable|string|max:255',
             'system_type' => 'nullable|string|max:255',
