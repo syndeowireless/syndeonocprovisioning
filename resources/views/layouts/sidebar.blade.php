@@ -75,5 +75,27 @@
                 .vertical-menu .metismenu a:hover {
                     background-color: #fbbf0f !important;
                 }
+                .logo-sm {
+                    display: none;
+                }
+                .logo-lg {
+                    display: inline-block;
+                }
+                
+                body:not(.sidebar-enable) .logo-sm {
+                    display: inline-block;
+                }
+                body:not(.sidebar-enable) .logo-lg {
+                    display: none;
+                }
+                
+                @media (max-width: 991.98px) {
+                    .logo-sm {
+                        display: inline-block !important;
+                    }
+                    .logo-lg {
+                        display: none !important;
+                    }
+                }
             </style>
 

@@ -2,9 +2,8 @@
     <div class="navbar-header">
         <div class="d-flex">
             <!-- LOGO -->
-            <div class="navbar-brand-box" style="background-color: #13395d;
-            padding-top: 20px;" >
-                <a href="" class="logo logo-dark" >
+            <div class="navbar-brand-box" style="background-color: #13395d; padding-top: 20px;">
+                <a href="" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="22">
                     </span>
@@ -14,11 +13,9 @@
                 </a>
             </div>
 
-            <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect vertical-menu-btn">
+            <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect vertical-menu-btn" id="vertical-menu-btn">
                 <i class="mdi mdi-menu"></i>
             </button>
-
-
         </div>
             
         <div class="d-flex">
@@ -35,7 +32,6 @@
                     <span class="badge text-bg-danger rounded-pill">3</span>
                 </button>
             </div>
-            
             
         <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -63,6 +59,54 @@
     </div>
 </header>
 
-
-  
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const verticalMenuBtn = document.getElementById('vertical-menu-btn');
+        const logoSm = document.querySelector('.logo-sm');
+        const logoLg = document.querySelector('.logo-lg');
+        const sidebar = document.querySelector('.vertical-menu');
+        
+        // Check initial state
+        if (document.body.classList.contains('sidebar-enable') && window.innerWidth >= 992) {
+            logoSm.style.display = 'none';
+            logoLg.style.display = 'inline-block';
+        } else {
+            logoSm.style.display = 'inline-block';
+            logoLg.style.display = 'none';
+        }
+        
+        // Handle click event
+        verticalMenuBtn.addEventListener('click', function() {
+            // Toggle the collapsed class on body (assuming your theme uses this)
+            document.body.classList.toggle('sidebar-enable');
+            
+            // Check window width to determine if we should switch logos
+            if (window.innerWidth >= 992) {
+                if (document.body.classList.contains('sidebar-enable')) {
+                    logoSm.style.display = 'none';
+                    logoLg.style.display = 'inline-block';
+                } else {
+                    logoSm.style.display = 'inline-block';
+                    logoLg.style.display = 'none';
+                }
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                if (document.body.classList.contains('sidebar-enable')) {
+                    logoSm.style.display = 'none';
+                    logoLg.style.display = 'inline-block';
+                } else {
+                    logoSm.style.display = 'inline-block';
+                    logoLg.style.display = 'none';
+                }
+            } else {
+                // On mobile, always show small logo when sidebar is hidden
+                logoSm.style.display = 'inline-block';
+                logoLg.style.display = 'none';
+            }
+        });
+    });
+</script>

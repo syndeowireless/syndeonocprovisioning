@@ -37,10 +37,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/profile/edit', function () {
-    return view('profile.edit');
-})->name('profile.edit');
-
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 
 
 // Rotas de Formulário
