@@ -1,139 +1,143 @@
-@if(session("success"))
-    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-        {{ session("success") }}
-    </div>
-@endif
+@extends('layouts.app')
 
-@extends("layouts.app")
-
-@vite(['resources/css/app.css', 'resources/js/app.js'])
-
-@section("content")
-<div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
-    <div class="max-w-6xl px-4 py-8" style="width: 90%;padding-top: 3%;">
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <h1 class="text-3xl font-bold mb-8 text-center text-black">pfSense Network Configuration</h1>
-            
-            <!-- Network Information Summary -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-                <h2 class="text-xl font-semibold mb-4 text-blue-800">Network Provisioning Details</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                        <span class="font-medium text-gray-700">Property Name:</span>
-                        <span class="text-gray-900">{{ $networkManagement->property_name }}</span>
+@section('content')
+<div class="bg-white rounded-3xl border-2 border-slate-200 p-10 max-w-5xl w-full mx-auto shadow-lg">
+    <h1 class="text-3xl font-bold text-slate-500 mb-10 tracking-wide">ALEXANDER HOTEL</h1>
+    <div class="flex flex-col md:flex-row gap-0 mb-10 items-stretch">
+        <!-- PFsense Config File Segment -->
+        <div class="flex-1 flex flex-col justify-between min-h-[300px] py-8 px-6">
+            <h2 class="text-lg font-semibold text-slate-500 mb-8 text-center">PFsense Config File</h2>
+            <div class="flex items-center gap-5 mb-8 flex-grow">
+                <div class="shrink-0">
+                    <!-- SVG Icon -->
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+                        <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="#2563eb" stroke-width="2" fill="#e0f2fe"/>
+                        <path d="M14 2V8H20" stroke="#2563eb" stroke-width="2" fill="none"/>
+                        <path d="M16 13H8" stroke="#2563eb" stroke-width="1.5"/>
+                        <path d="M16 17H8" stroke="#2563eb" stroke-width="1.5"/>
+                        <path d="M10 9H8" stroke="#2563eb" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <div class="flex-grow">
+                    <div class="flex justify-between items-center mb-4 py-2">
+                        <span class="text-sm text-slate-500 font-medium">user name</span>
+                        <span class="text-sm text-slate-900 font-medium">siteA</span>
                     </div>
-                    <div>
-                        <span class="font-medium text-gray-700">OEM:</span>
-                        <span class="text-gray-900">{{ $networkManagement->oem ?? 'N/A' }}</span>
-                    </div>
-                    <div>
-                        <span class="font-medium text-gray-700">Property Type:</span>
-                        <span class="text-gray-900">{{ $networkManagement->property_type ?? 'N/A' }}</span>
-                    </div>
-                    <div>
-                        <span class="font-medium text-gray-700">System Type:</span>
-                        <span class="text-gray-900">{{ $networkManagement->system_type ?? 'N/A' }}</span>
-                    </div>
-                    <div>
-                        <span class="font-medium text-gray-700">Average Density:</span>
-                        <span class="text-gray-900">{{ $networkManagement->average_density ?? 'N/A' }}</span>
-                    </div>
-                    <div>
-                        <span class="font-medium text-gray-700">Created:</span>
-                        <span class="text-gray-900">{{ $networkManagement->created_at->format('d/m/Y H:i') }}</span>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-sm text-slate-500 font-medium">password</span>
+                        <span class="text-sm text-slate-900 font-medium">••••••••••••••••••••••</span>
                     </div>
                 </div>
             </div>
+            <div class="flex gap-4 justify-center">
+                <button class="bg-blue-900 text-white border-2 border-amber-400 rounded-lg px-5 py-2 font-semibold flex items-center gap-2 min-w-[110px] justify-center hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[1px]">
+                    <!-- Download Icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-width="2"/>
+                        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 15V3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Download
+                </button>
+                <button class="bg-blue-900 text-white border-2 border-amber-400 rounded-lg px-5 py-2 font-semibold flex items-center gap-2 min-w-[110px] justify-center hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[1px]">
+                    <!-- Share Icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="currentColor" stroke-width="2"/>
+                        <path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 2V15" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Share
+                </button>
+            </div>
+        </div>
 
-            <!-- IP Allocation Information -->
-            <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-                <h2 class="text-xl font-semibold mb-4 text-green-800">Allocated IP Range</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg p-4 border border-green-300">
-                        <h3 class="font-semibold text-green-700 mb-2">First Usable IP</h3>
-                        <div class="text-2xl font-mono text-green-900 bg-green-100 p-3 rounded border">
-                            {{ $allocatedIp->first_usable_ip }}
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4 border border-green-300">
-                        <h3 class="font-semibold text-green-700 mb-2">Last Usable IP</h3>
-                        <div class="text-2xl font-mono text-green-900 bg-green-100 p-3 rounded border">
-                            {{ $allocatedIp->last_usable_ip }}
-                        </div>
-                    </div>
+        <!-- Divider -->
+        <div class="hidden md:block w-px bg-slate-300 my-2"></div>
+        <div class="block md:hidden h-px bg-slate-300 mx-0"></div>
+
+        <!-- DAS Master Unit IPs -->
+        <div class="flex-1 flex flex-col justify-between min-h-[300px] py-8 px-6">
+            <h2 class="text-lg font-semibold text-slate-500 mb-8 text-center">DAS Master Unit IPs</h2>
+            <div class="flex-grow mb-8">
+                <div class="grid grid-cols-3 gap-4 border-b last:border-b-0 py-3 items-center">
+                    <span class="text-sm text-slate-500 font-medium">Master Unit Sector 1</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">192.168.0.2</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">255.255.192</span>
                 </div>
-                <div class="mt-4">
-                    <div class="text-sm text-gray-600">
-                        <strong>Network Range:</strong> {{ $allocatedIp->network_range ?? 'N/A' }}
-                    </div>
-                    <div class="text-sm text-gray-600">
-                        <strong>Description:</strong> {{ $allocatedIp->description ?? 'N/A' }}
-                    </div>
+                <div class="grid grid-cols-3 gap-4 border-b last:border-b-0 py-3 items-center">
+                    <span class="text-sm text-slate-500 font-medium">Master Unit Sector 2</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">192.168.0.4</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">255.255.192</span>
+                </div>
+                <div class="grid grid-cols-3 gap-4 py-3 items-center">
+                    <span class="text-sm text-slate-500 font-medium">Master Unit Sector 3</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">192.168.0.4</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">255.255.192</span>
                 </div>
             </div>
+            <div class="flex gap-4 justify-center">
+                <button class="bg-blue-900 text-white border-2 border-amber-400 rounded-lg px-5 py-2 font-semibold flex items-center gap-2 min-w-[110px] justify-center hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[1px]">
+                    <!-- Download Icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-width="2"/>
+                        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 15V3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Download
+                </button>
+                <button class="bg-blue-900 text-white border-2 border-amber-400 rounded-lg px-5 py-2 font-semibold flex items-center gap-2 min-w-[110px] justify-center hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[1px]">
+                    <!-- Share Icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="currentColor" stroke-width="2"/>
+                        <path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 2V15" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Share
+                </button>
+            </div>
+        </div>
 
-            <!-- pfSense Configuration Commands -->
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">pfSense Configuration Commands</h2>
-                <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                    <div class="mb-2"># Configure interface with allocated IP range</div>
-                    <div class="mb-2">ifconfig em0 {{ $allocatedIp->first_usable_ip }}/24</div>
-                    <div class="mb-2"># Set up DHCP pool</div>
-                    <div class="mb-2">dhcp-range={{ $allocatedIp->first_usable_ip }},{{ $allocatedIp->last_usable_ip }},24h</div>
-                    <div class="mb-2"># Configure firewall rules</div>
-                    <div>pass in on em0 from {{ $allocatedIp->network_range ?? $allocatedIp->first_usable_ip.'/24' }} to any</div>
+        <!-- Divider -->
+        <div class="hidden md:block w-px bg-slate-300 my-2"></div>
+        <div class="block md:hidden h-px bg-slate-300 mx-0"></div>
+
+        <!-- ERRCS BDA IPs -->
+        <div class="flex-1 flex flex-col justify-between min-h-[300px] py-8 px-6">
+            <h2 class="text-lg font-semibold text-slate-500 mb-8 text-center">ERRCS BDA IPs</h2>
+            <div class="flex-grow mb-8">
+                <div class="grid grid-cols-3 gap-4 py-3 items-center">
+                    <span class="text-sm text-slate-500 font-medium">ERRCS BDA</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">192.168.0.5</span>
+                    <span class="text-sm text-slate-900 font-medium text-center">255.255.192</span>
                 </div>
             </div>
-
-            <!-- Equipment Summary -->
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-                <h2 class="text-xl font-semibold mb-4 text-yellow-800">Equipment Summary</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="text-center bg-white rounded-lg p-4 border border-yellow-300">
-                        <div class="text-3xl font-bold text-yellow-700">{{ $networkManagement->remote_unit_quantity ?? 0 }}</div>
-                        <div class="text-sm text-gray-600">Remote Units</div>
-                    </div>
-                    <div class="text-center bg-white rounded-lg p-4 border border-yellow-300">
-                        <div class="text-3xl font-bold text-yellow-700">{{ $networkManagement->master_unit_quantity ?? 0 }}</div>
-                        <div class="text-sm text-gray-600">Master Units</div>
-                    </div>
-                    <div class="text-center bg-white rounded-lg p-4 border border-yellow-300">
-                        <div class="text-3xl font-bold text-yellow-700">{{ $networkManagement->bda_quantity ?? 0 }}</div>
-                        <div class="text-sm text-gray-600">BDA Units</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Location Information -->
-            @if($networkManagement->latitude && $networkManagement->longitude)
-            <div class="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-8">
-                <h2 class="text-xl font-semibold mb-4 text-purple-800">Location Information</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <span class="font-medium text-gray-700">Address:</span>
-                        <span class="text-gray-900">{{ $networkManagement->property_address ?? 'N/A' }}</span>
-                    </div>
-                    <div>
-                        <span class="font-medium text-gray-700">Coordinates:</span>
-                        <span class="text-gray-900">{{ $networkManagement->latitude }}, {{ $networkManagement->longitude }}</span>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            <!-- Action Buttons -->
-            <div class="flex justify-center space-x-4">
-                <a href="{{ route('network-provisioning.create') }}" 
-                   class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    Create New Provisioning
-                </a>
-                <a href="{{ route('network-provisioning.index') }}" 
-                   class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                    View All Provisionings
-                </a>
+            <div class="flex gap-4 justify-center">
+                <button class="bg-blue-900 text-white border-2 border-amber-400 rounded-lg px-5 py-2 font-semibold flex items-center gap-2 min-w-[110px] justify-center hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[1px]">
+                    <!-- Download Icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-width="2"/>
+                        <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 15V3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Download
+                </button>
+                <button class="bg-blue-900 text-white border-2 border-amber-400 rounded-lg px-5 py-2 font-semibold flex items-center gap-2 min-w-[110px] justify-center hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[1px]">
+                    <!-- Share Icon -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="currentColor" stroke-width="2"/>
+                        <path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 2V15" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Share
+                </button>
             </div>
         </div>
     </div>
+    <!-- Main Action Button -->
+    <div class="flex justify-center mt-5">
+        <button class="bg-blue-900 text-white border-4 border-amber-400 rounded-xl px-10 py-4 text-xl font-bold min-w-[250px] hover:bg-blue-800 hover:border-amber-500 transition-all shadow hover:-translate-y-[2px]">
+            Start Provisioning
+        </button>
+    </div>
 </div>
 @endsection
-
