@@ -106,7 +106,7 @@
     }
 </style>
 <div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%">
-    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">Provisioning</h1>
+    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">PROPERTY NAME</h1>
     <div class="pfsense-row">
         <!-- PFsense Config File Segment -->
         <div class="pfsense-segment">
@@ -146,18 +146,18 @@
             <div style="flex-grow:1;margin-bottom:2rem;">
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">Master Unit Sector 1</span>
-                    <span class="pfsense-value" style="text-align:center;">192.168.0.2</span>
-                    <span class="pfsense-value" style="text-align:center;">255.255.192</span>
+                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 1 FIRST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 1 LAST USABLE IP</span>
                 </div>
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">Master Unit Sector 2</span>
-                    <span class="pfsense-value" style="text-align:center;">192.168.0.4</span>
-                    <span class="pfsense-value" style="text-align:center;">255.255.192</span>
+                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 2 FIRST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 2 LAST USABLE IP</span>
                 </div>
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">Master Unit Sector 3</span>
-                    <span class="pfsense-value" style="text-align:center;">192.168.0.4</span>
-                    <span class="pfsense-value" style="text-align:center;">255.255.192</span>
+                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 3 FIRST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 3 LAST USABLE IP</span>
                 </div>
             </div>
             <div class="pfsense-btn-group">
@@ -177,8 +177,8 @@
             <div style="flex-grow:1;margin-bottom:2rem;">
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">ERRCS BDA</span>
-                    <span class="pfsense-value" style="text-align:center;">192.168.0.5</span>
-                    <span class="pfsense-value" style="text-align:center;">255.255.192</span>
+                    <span class="pfsense-value" style="text-align:center;">ERRCS BDA FIRST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">ERRCS BDA LAST USABLE IP</span>
                 </div>
             </div>
             <div class="pfsense-btn-group">
