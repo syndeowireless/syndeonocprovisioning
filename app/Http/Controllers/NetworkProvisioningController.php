@@ -43,7 +43,23 @@ class NetworkProvisioningController extends Controller
         *return redirect()->back()->with('success', 'Network Provisioning created!');
 
         */
-        dd('STORE METHOD REACHED', $request->all());
+        $validated = $request->validate([
+            'property_name' => 'required|string|max:255',
+            'oem' => 'nullable|string|max:255',
+            'property_address' => 'nullable|string|max:255',
+            'remote_unit_quantity' => 'nullable|integer',
+            'master_unit_quantity' => 'nullable|integer',
+            'bda_quantity' => 'nullable|integer',
+            'latitude' => 'nullable|numeric|max:255', // Use numeric if your DB expects it, else string
+            'longitude' => 'nullable|numeric|max:255', // Use numeric if your DB expects it, else string
+            'property_type' => 'nullable|string|max:255',
+            'average_density' => 'nullable|string|max:255',
+            'system_type' => 'nullable|string|max:255',
+        ]);
+
+        \App\Models\NetworkManagement::create($validated);
+
+        return redirect()->back()->with('success', 'Network Provisioning created!');
 
     }
 }
