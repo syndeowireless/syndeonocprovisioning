@@ -3,6 +3,7 @@
 @section('content')
 <div class="bg-white rounded-3xl border-2 border-slate-200 p-10 max-w-5xl w-full mx-auto shadow-lg">
     <h1 class="text-3xl font-bold text-slate-500 mb-10 tracking-wide">ALEXANDER HOTEL</h1>
+    <!-- Flex row for segments (side by side on desktop, stacked on mobile) -->
     <div class="flex flex-col md:flex-row gap-0 mb-10 items-stretch">
         <!-- PFsense Config File Segment -->
         <div class="flex-1 flex flex-col justify-between min-h-[300px] py-8 px-6">
@@ -50,11 +51,9 @@
                 </button>
             </div>
         </div>
-
-        <!-- Divider -->
+        <!-- Vertical Divider Desktop, Horizontal Divider Mobile -->
         <div class="hidden md:block w-px bg-slate-300 my-2"></div>
         <div class="block md:hidden h-px bg-slate-300 mx-0"></div>
-
         <!-- DAS Master Unit IPs -->
         <div class="flex-1 flex flex-col justify-between min-h-[300px] py-8 px-6">
             <h2 class="text-lg font-semibold text-slate-500 mb-8 text-center">DAS Master Unit IPs</h2>
@@ -96,11 +95,9 @@
                 </button>
             </div>
         </div>
-
-        <!-- Divider -->
+        <!-- Vertical Divider Desktop, Horizontal Divider Mobile -->
         <div class="hidden md:block w-px bg-slate-300 my-2"></div>
         <div class="block md:hidden h-px bg-slate-300 mx-0"></div>
-
         <!-- ERRCS BDA IPs -->
         <div class="flex-1 flex flex-col justify-between min-h-[300px] py-8 px-6">
             <h2 class="text-lg font-semibold text-slate-500 mb-8 text-center">ERRCS BDA IPs</h2>
