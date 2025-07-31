@@ -66,20 +66,34 @@ Route::get('/pfsense', function () {
 })->name('pfsense');
 
 
+
+Route::get('/network-provisioning/create', function () {
+    return view('network-provisioning.create');
+});
+
+
+
 // Network Provisioning Routes
 Route::prefix('network-provisioning')->name('network-provisioning.')->group(function () {
     // Display all network provisionings
     Route::get('/', [NetworkProvisioningController::class, 'index'])->name('index');
     
-    // Show create form
-    Route::get('/create', [NetworkProvisioningController::class, 'create'])->name('create');
-    
     // Store new network provisioning
     Route::post('/store', [NetworkProvisioningController::class, 'store'])->name('store');
-    
-    // Show pfsense configuration page
-    Route::get('/pfsense', [NetworkProvisioningController::class, 'pfsense'])->name('pfsense');
     
     // Release IP range
     Route::patch('/release-ip/{ipId}', [NetworkProvisioningController::class, 'releaseIp'])->name('release-ip');
 });
+
+
+Route::get('/network-provisioning/create', function () {
+    return view('network-provisioning.create');
+})->name('network-provisioning.create');
+
+Route::get('/network-provisioning', function () {
+    return view('network-provisioning.index');
+})->name('network-provisioning.index');
+
+Route::get('/network-provisioning/pfsense', function () {
+    return view('network-provisioning.pfsense');
+})->name('network-provisioning.pfsense');
