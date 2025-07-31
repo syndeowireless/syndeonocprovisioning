@@ -74,19 +74,8 @@ Route::get('/network-provisioning/create', function () {
 });
 
 
-
-// Network Provisioning Routes
-Route::prefix('network-provisioning')->name('network-provisioning.')->group(function () {
-    // Display all network provisionings
-    Route::get('/', [NetworkProvisioningController::class, 'index'])->name('index');
-    
-    // Store new network provisioning
-    Route::post('/store', [NetworkProvisioningController::class, 'store'])->name('store');
-    
-    // Release IP range
-    Route::patch('/release-ip/{ipId}', [NetworkProvisioningController::class, 'releaseIp'])->name('release-ip');
-});
-
+Route::post('/network-provisioning/store', [NetworkProvisioningController::class, 'store'])
+    ->name('network-provisioning.store');
 
 Route::get('/network-provisioning/create', function () {
     return view('network-provisioning.create');

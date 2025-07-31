@@ -36,25 +36,5 @@ class NetworkManagement extends Model
         'allocated_ip_id',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'latitude' => 'decimal:8',
-        'longitude' => 'decimal:8',
-        'remote_unit_quantity' => 'integer',
-        'master_unit_quantity' => 'integer',
-        'bda_quantity' => 'integer',
-    ];
-
-    /**
-     * Get the allocated IP for this network management entry.
-     */
-    public function allocatedIp()
-    {
-        return $this->belongsTo(Ip::class, 'allocated_ip_id');
-    }
 }
 
