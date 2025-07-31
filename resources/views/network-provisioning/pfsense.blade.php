@@ -67,9 +67,9 @@
         margin-top: 1.5rem;
     }
     .pfsense-action-btn {
-        background-color: #1e40af;
+        background-color: #13395d;
         color: white;
-        border: 2px solid #fbbf24;
+        border: 2px solid #fbbf0f;
         border-radius: 8px;
         padding: 10px 20px;
         font-size: 14px;
@@ -83,13 +83,13 @@
         transition: all 0.2s;
     }
     .pfsense-action-btn:hover {
-        background-color: #1d4ed8;
-        border-color: #f59e0b;
+        background-color: #13395d;
+        border-color: #fbbf0f;
     }
     .pfsense-main-btn {
-        background-color: #1e40af;
+        background-color: #13395d;
         color: white;
-        border: 4px solid #fbbf24;
+        border: 4px solid #fbbf0f;
         border-radius: 16px;
         padding: 1rem 2.5rem;
         font-size: 1.25rem;
@@ -101,12 +101,12 @@
         transition: all 0.2s;
     }
     .pfsense-main-btn:hover {
-        background-color: #1d4ed8;
-        border-color: #f59e0b;
+        background-color: #13395d;
+        border-color: #fbbf0f;
     }
 </style>
-<div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg">
-    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">ALEXANDER HOTEL</h1>
+<div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%">
+    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">Provisioning</h1>
     <div class="pfsense-row">
         <!-- PFsense Config File Segment -->
         <div class="pfsense-segment">
@@ -114,7 +114,7 @@
             <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
                 <div style="flex-shrink:0;">
                     <!-- SVG Icon -->
-                    <svg width="60" height="60" fill="none"><path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="#2563eb" stroke-width="2" fill="#e0f2fe"/><path d="M14 2V8H20" stroke="#2563eb" stroke-width="2"/><path d="M16 13H8" stroke="#2563eb" stroke-width="1.5"/><path d="M16 17H8" stroke="#2563eb" stroke-width="1.5"/><path d="M10 9H8" stroke="#2563eb" stroke-width="1.5"/></svg>
+                    <svg width="90" height="90" fill="none"><path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="#2563eb" stroke-width="2" fill="#e0f2fe"/><path d="M14 2V8H20" stroke="#2563eb" stroke-width="2"/><path d="M16 13H8" stroke="#2563eb" stroke-width="1.5"/><path d="M16 17H8" stroke="#2563eb" stroke-width="1.5"/><path d="M10 9H8" stroke="#2563eb" stroke-width="1.5"/></svg>
                 </div>
                 <div style="flex-grow:1;">
                     <div class="pfsense-table-row">
