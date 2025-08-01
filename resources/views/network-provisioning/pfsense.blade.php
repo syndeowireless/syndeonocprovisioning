@@ -106,7 +106,7 @@
     }
 </style>
 <div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%">
-    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">PROPERTY NAME</h1>
+    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
     <div class="pfsense-row">
         <!-- PFsense Config File Segment -->
         <div class="pfsense-segment">
