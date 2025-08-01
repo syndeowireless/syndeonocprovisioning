@@ -146,18 +146,30 @@
             <div style="flex-grow:1;margin-bottom:2rem;">
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">Master Unit Sector 1</span>
-                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 1 FIRST USABLE IP</span>
-                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 1 LAST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['master_unit_1']->first_usable_ip ?? 'N/A' }}
+                    </span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['master_unit_1']->last_usable_ip ?? 'N/A' }}
+                    </span>
                 </div>
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">Master Unit Sector 2</span>
-                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 2 FIRST USABLE IP</span>
-                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 2 LAST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['master_unit_2']->first_usable_ip ?? 'N/A' }}
+                    </span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['master_unit_2']->last_usable_ip ?? 'N/A' }}
+                    </span>
                 </div>
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">Master Unit Sector 3</span>
-                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 3 FIRST USABLE IP</span>
-                    <span class="pfsense-value" style="text-align:center;">MASTER UNIT 3 LAST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['master_unit_3']->first_usable_ip ?? 'N/A' }}
+                    </span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['master_unit_3']->last_usable_ip ?? 'N/A' }}
+                    </span>
                 </div>
             </div>
             <div class="pfsense-btn-group">
@@ -177,8 +189,12 @@
             <div style="flex-grow:1;margin-bottom:2rem;">
                 <div class="pfsense-table-row">
                     <span class="pfsense-label">ERRCS BDA</span>
-                    <span class="pfsense-value" style="text-align:center;">ERRCS BDA FIRST USABLE IP</span>
-                    <span class="pfsense-value" style="text-align:center;">ERRCS BDA LAST USABLE IP</span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['errcs']->first_usable_ip ?? 'N/A' }}
+                    </span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        {{ $ipData['errcs']->last_usable_ip ?? 'N/A' }}
+                    </span>
                 </div>
             </div>
             <div class="pfsense-btn-group">

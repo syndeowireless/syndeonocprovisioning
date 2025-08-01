@@ -23,26 +23,6 @@ class NetworkProvisioningController extends Controller
      */
     public function store(Request $request)
     {
-        /** 
-        *\Log::info('STORE METHOD CALLED!', $request->all());
-        
-        *$validatedData = $request->validate([
-        *    'property_name' => 'required|string|max:255',
-        *    'oem' => 'nullable|string|max:100',
-        *    'property_address' => 'nullable|string',
-        *    'remote_unit_quantity' => 'nullable|integer|min:0',
-        *    'master_unit_quantity' => 'nullable|integer|min:0',
-        *    'bda_quantity' => 'nullable|integer|min:0',
-        *    'latitude' => 'nullable|numeric|between:-90,90',
-        *    'longitude' => 'nullable|numeric|between:-180,180',
-        *    'property_type' => 'nullable|string|in:Hotel,Factory,Office,Residencial,Others',
-        *    'average_density' => 'nullable|string|in:Low,Medium,High',
-        *    'system_type' => 'nullable|string|in:DAS,ERRCS,DAS & ERRCS',
-        *]);
-        *\App\Models\NetworkManagement::create($validated);
-        *return redirect()->back()->with('success', 'Network Provisioning created!');
-
-        */
         $validated = $request->validate([
             'property_name' => 'required|string|max:255',
             'oem' => 'nullable|string|max:255',
@@ -59,7 +39,34 @@ class NetworkProvisioningController extends Controller
 
         \App\Models\NetworkManagement::create($validated);
 
-        return redirect()->back()->with('success', 'Network Provisioning created!');
+                // Fetch 4 available IPs
+        $ipRows = Ip::where('in_use', false)->limit(4)->get();
+
+        if ($ipRows->count() < 4) {
+            return back()->with('error', 'Not enough available IP ranges.');
+        }
+
+        // Mark as used
+        foreach ($ipRows as $row) {
+            $row->in_use = true;
+            $row->save();
+        }
+
+        // Assign each IP row to its role
+        $ipData = [
+            'master_unit_1' => $ipRows[0],
+            'master_unit_2' => $ipRows[1],
+            'master_unit_3' => $ipRows[2],
+            'errcs'         => $ipRows[3],
+        ];
+
+        // === END: IP assignment logic ===
+
+        // Show the pfsense result page, passing data
+        return view('network-provisioning.pfsense', [
+            'propertyName' => $validated['property_name'],
+            'ipData' => $ipData,
+        ]);
 
     }
 }
