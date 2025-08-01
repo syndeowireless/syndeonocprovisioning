@@ -130,12 +130,12 @@
             <div class="pfsense-btn-group">
                 <button class="pfsense-action-btn">
                     <!-- Download Icon -->
-                    <svg width="16" height="16" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-width="2"/><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2"/><path d="M12 15V3" stroke="currentColor" stroke-width="2"/></svg>
+                    <i class="mdi mdi-download" style="color: white;"></i>
                     Download
                 </button>
                 <button class="pfsense-action-btn">
                     <!-- Share Icon -->
-                    <svg width="16" height="16" fill="none"><path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="currentColor" stroke-width="2"/><path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="2"/><path d="M12 2V15" stroke="currentColor" stroke-width="2"/></svg>
+                    <i class="mdi mdi-share-variant" style="color: white;"></i>
                     Share
                 </button>
             </div>
@@ -174,11 +174,11 @@
             </div>
             <div class="pfsense-btn-group">
                 <button class="pfsense-action-btn">
-                    <svg width="16" height="16" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-width="2"/><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2"/><path d="M12 15V3" stroke="currentColor" stroke-width="2"/></svg>
+                    <i class="mdi mdi-download" style="color: white;"></i>
                     Download
                 </button>
                 <button class="pfsense-action-btn">
-                    <svg width="16" height="16" fill="none"><path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="currentColor" stroke-width="2"/><path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="2"/><path d="M12 2V15" stroke="currentColor" stroke-width="2"/></svg>
+                    <i class="mdi mdi-share-variant" style="color: white;"></i>
                     Share
                 </button>
             </div>
@@ -199,11 +199,11 @@
             </div>
             <div class="pfsense-btn-group">
                 <button class="pfsense-action-btn">
-                    <svg width="16" height="16" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-width="2"/><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2"/><path d="M12 15V3" stroke="currentColor" stroke-width="2"/></svg>
+                    <i class="mdi mdi-download" style="color: white;"></i>
                     Download
                 </button>
                 <button class="pfsense-action-btn">
-                    <svg width="16" height="16" fill="none"><path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="currentColor" stroke-width="2"/><path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="2"/><path d="M12 2V15" stroke="currentColor" stroke-width="2"/></svg>
+                    <i class="mdi mdi-share-variant" style="color: white;"></i>
                     Share
                 </button>
             </div>
@@ -214,3 +214,5 @@
     </button>
 </div>
 @endsection
+
+
