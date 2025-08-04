@@ -62,12 +62,45 @@ class NetworkProvisioningController extends Controller
 
         // === END: IP assignment logic ===
 
-        // Show the pfsense result page, passing data
+
+        // 1. Buscar template do XML
+        $templateRow = \App\Models\TemplateTable::find($request->template_id); // Ajuste para sua tabela/model
+        $templateString = $templateRow ? $templateRow->template_string : '<config>#propertyName#</config>'; // Exemplo fallback
+
+        // 2. Substituir placeholders usando dados do formulário e IP
+        $placeholders = [
+            '#propertyName#' => $validated['property_name'],
+            '#ip#' => $ipData['ip'] ?? '',
+            '#mask#' => $ipData['mask'] ?? '',
+            // Adicione outros campos conforme necessário
+        ];
+        foreach ($placeholders as $key => $value) {
+            $templateString = str_replace($key, $value, $templateString);
+        }
+
+        // 3. Gerar senha aleatória para um campo no XML (se necessário)
+        $randomPassword = \Illuminate\Support\Str::random(12);
+        $templateString = str_replace('#password#', $randomPassword, $templateString);
+
+        // 4. Salvar arquivo XML no storage
+        $xmlFileName = 'config_' . uniqid() . '.xml';
+        \Illuminate\Support\Facades\Storage::disk('local')->put('xml/' . $xmlFileName, $templateString);
+
+        // 5. Passar o nome do XML para a view
         return view('network-provisioning.pfsense', [
             'propertyName' => $validated['property_name'],
             'ipData' => $ipData,
+            'xmlFile' => $xmlFileName, // Adicionado para o botão de download
         ]);
 
     }
+
+
+    public function downloadXml($fileName)
+{
+    return \Illuminate\Support\Facades\Storage::disk('local')->download('xml/' . $fileName, $fileName);
+}
+
+
 }
 

@@ -131,8 +131,14 @@
                 <button class="pfsense-action-btn">
                     <!-- Download Icon -->
                     <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
+                    @if(isset($xmlFile))
+                        <a href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" class="btn btn-primary">
+                            Download XML
+                        </a>
+                    @endif
                 </button>
+
+
                 <button class="pfsense-action-btn">
                     <!-- Share Icon -->
                     <i class="mdi mdi-share-variant" style="color: white;"></i>
