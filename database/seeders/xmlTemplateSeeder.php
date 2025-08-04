@@ -773,3 +773,5 @@ class xmlTemplateSeeder extends Seeder
         ]);
     }
 }
+
+

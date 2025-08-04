@@ -12,8 +12,12 @@ class xmlTemplate extends Model
 
 
     protected $fillable = [
-    'contend'
-
+    'contend',
+    'created_at',
+    'updated_at'
     ];
 
 }
+
+
+
