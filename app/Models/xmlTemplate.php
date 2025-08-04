@@ -9,7 +9,7 @@ class xmlTemplate extends Model
 {
     use HasFactory;
 
-
+    protected $table = 'xmlTemplate';
 
     protected $fillable = [
     'contend',
