@@ -64,7 +64,7 @@ class NetworkProvisioningController extends Controller
 
 
         // 1. Buscar template do XML
-        $templateRow = \App\Models\xmlTemplate::find($request->template_id); // Ajuste para sua tabela/model
+        $templateRow = \App\Models\xmlTemplate::find($request->id); // Ajuste para sua tabela/model
         $templateString = $templateRow ? $templateRow->template_string : '<config>#propertyName#</config>'; // Exemplo fallback
 
         // 2. Substituir placeholders usando dados do formulário e IP
