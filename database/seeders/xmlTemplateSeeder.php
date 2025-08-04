@@ -6,14 +6,14 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class TextStorageSeeder extends Seeder
+class xmlTemplateSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('text_storage')->insert([
+        DB::table('xmlTemplate')->insert([
             'content' => 
             '<?xml version="1.0"?>
 <pfsense>
