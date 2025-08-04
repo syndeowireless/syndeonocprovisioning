@@ -119,6 +119,30 @@
                             <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="hostname">Hostname (dyndns)</label>
+                        <input type="text" class="form-control" id="hostname" name="hostname" placeholder="Digite o hostname">
+                    </div>
+                </div>
+
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <input type="checkbox" class="form-check-input" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
+                        <label class="form-check-label" for="static_ip_check">Static IP</label>
+                    </div>
+                </div>
+
+                <div id="static-ip-fields" style="display: none;">
+                    <div class="form-group mb-3">
+                        <label for="static_ip">IP</label>
+                        <input type="text" class="form-control" id="static_ip" name="static_ip" placeholder="Digite o IP">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="static_mask">Mask</label>
+                        <input type="text" class="form-control" id="static_mask" name="static_mask" placeholder="Digite a máscara">
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -142,5 +166,15 @@
         </div>
     </div>
 </div>
+
+<script>
+function toggleStaticIpFields() {
+    var checkbox = document.getElementById('static_ip_check');
+    var fields = document.getElementById('static-ip-fields');
+    fields.style.display = checkbox.checked ? 'block' : 'none';
+}
+</script>
+
+
 @endsection
 
