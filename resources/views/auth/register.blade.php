@@ -1,52 +1,65 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+@extends('auth-layout')
+
+@section('title', 'Register | ' . config('app.name', 'Laravel'))
+
+@section('content')
+    <h4 class="text-muted font-size-18 mb-1 text-center">{{ __('Free Register') }}</h4>
+    <p class="text-muted text-center">{{ __('Get your free') }} {{ config('app.name', 'Laravel') }} {{ __('account now.') }}</p>
+    
+    <form class="form-horizontal mt-4" method="POST" action="{{ route('register') }}">
         @csrf
 
         <!-- Name -->
-        <div>
+        <div class="mb-3">
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-text-input id="name" class="form-control" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="{{ __('Enter name') }}" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
-        <div class="mt-4">
+        <div class="mb-3">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="{{ __('Enter email') }}" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
+        <div class="mb-3">
             <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="password" class="form-control"
                             type="password"
                             name="password"
-                            required autocomplete="new-password" />
-
+                            required autocomplete="new-password" 
+                            placeholder="{{ __('Enter password') }}" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
+        <div class="mb-3">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
+            <x-text-input id="password_confirmation" class="form-control"
                             type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
+                            name="password_confirmation" required autocomplete="new-password" 
+                            placeholder="{{ __('Confirm password') }}" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <div class="mb-3 row mt-4">
+            <div class="col-12 text-end">
+                <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
+                    {{ __('Register') }}
+                </x-primary-button>
+            </div>
+        </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <div class="mb-0 row">
+            <div class="col-12 mt-4">
+                <p class="text-muted mb-0 font-size-14">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a></p>
+            </div>
         </div>
     </form>
-</x-guest-layout>
+@endsection
+
+@section('footer-links')
+    <p>{{ __('Already have an account ?') }} <a href="{{ route('login') }}" class="text-primary"> {{ __('Login') }} </a></p>
+@endsection
