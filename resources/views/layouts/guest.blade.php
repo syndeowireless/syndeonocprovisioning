@@ -27,7 +27,7 @@
 
                                 <h3 class="text-center mt-5 mb-4">
                                     <a href="{{ url('/') }}" class="d-block auth-logo">
-                                        <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="30" class="auth-logo-dark">
+                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="30" class="auth-logo-dark">
                                         <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="30" class="auth-logo-light">
                                     </a>
                                 </h3>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="mt-5 text-center">
                             @yield('footer-links')
-                            © <script>document.write(new Date().getFullYear())</script> {{ config('app.name', 'Laravel') }} <span class="d-none d-sm-inline-block"> - Crafted with <i class="mdi mdi-heart text-danger"></i> by {{ config('app.name', 'Laravel') }}.</span>
+                            © <script>document.write(new Date().getFullYear())</script> {{ config('app.name', 'Laravel') }} <span class="d-none d-sm-inline-block"> - Crafted with <i class="mdi mdi-heart text-danger"></i> by NortonGauss.</span>
                         </div>
                     </div>
                 </div>

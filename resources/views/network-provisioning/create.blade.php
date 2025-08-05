@@ -9,6 +9,50 @@
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 @section("content")
+<style>
+    .switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: #2196F3;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+</style>
 <div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
     <div class="max-w-4xl px-4 py-8" style="width: 80%;padding-top: 5%;">
         <div class="bg-white rounded-xl shadow-lg p-8">
@@ -131,9 +175,10 @@
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black form-check-label" for="static_ip_check" style="margin-left: 5%">Static IP</label>
                         
-                        <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600">
-                            <input class="sr-only peer" type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" style="width: 95%;">
-                        </div>
+                        <label class="switch">
+                          <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
+                          <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -181,9 +226,3 @@ function toggleStaticIpFields() {
 
 @endsection
 
-style="margin-left: 5%"
-style="width: 90%;margin-left: 5%;"
-
-
-
-style="width: 95%;"

@@ -7,7 +7,7 @@ use App\Http\Controllers\NetworkProvisioningController;
 
 
 Route::get('/', function () {
-    return view('login');
+    return view('auth.login');
 });
 
 /*

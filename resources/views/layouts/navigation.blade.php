@@ -6,7 +6,7 @@
             padding-top: 20px;border-right:5px solid #fbbf0f" >
                 <a href="" class="logo logo-dark" >
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="30">
+                        <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="50">
                     </span>
                 </a>
             </div>
