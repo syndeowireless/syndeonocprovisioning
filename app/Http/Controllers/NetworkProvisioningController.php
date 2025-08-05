@@ -10,17 +10,11 @@ use Illuminate\Support\Facades\Log;
 
 class NetworkProvisioningController extends Controller
 {
-    /**
-     * Display the network provisioning form.
-     */
     public function create()
     {
         return view('network-provisioning.create');
     }
 
-    /**
-     * Store a newly created network provisioning in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -30,29 +24,28 @@ class NetworkProvisioningController extends Controller
             'remote_unit_quantity' => 'nullable|integer',
             'master_unit_quantity' => 'nullable|integer',
             'bda_quantity' => 'nullable|integer',
-            'latitude' => 'nullable|numeric|between:-90,90', // Use numeric if your DB expects it, else string
-            'longitude' => 'nullable|numeric|between:-180,180', // Use numeric if your DB expects it, else string
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'property_type' => 'nullable|string|max:255',
             'average_density' => 'nullable|string|max:255',
             'system_type' => 'nullable|string|max:255',
+            // campos novos não precisam ser validados obrigatoriamente
         ]);
 
-        \App\Models\NetworkManagement::create($validated);
+        // Salva os dados principais (se necessário)
+        NetworkManagement::create($validated);
 
-                // Fetch 4 available IPs
+        // Busca IPs disponíveis
         $ipRows = Ip::where('in_use', false)->limit(4)->get();
 
         if ($ipRows->count() < 4) {
             return back()->with('error', 'Not enough available IP ranges.');
         }
-
-        // Mark as used
         foreach ($ipRows as $row) {
             $row->in_use = true;
             $row->save();
         }
 
-        // Assign each IP row to its role
         $ipData = [
             'master_unit_1' => $ipRows[0],
             'master_unit_2' => $ipRows[1],
@@ -60,50 +53,56 @@ class NetworkProvisioningController extends Controller
             'errcs'         => $ipRows[3],
         ];
 
-        // === END: IP assignment logic ===
+        // Novos campos do request
+        $dyndnsHostname = $request->input('hostname', '');
+        $isStaticIp = $request->has('static_ip_check');
+        $staticIp = $request->input('static_ip', '');
+        $staticMask = $request->input('static_mask', '');
 
+        // Busca do template
+        $templateRow = \App\Models\xmlTemplate::find($request->id);
+        $templateString = $templateRow ? $templateRow->content : '<config>#propertyName#</config>';
 
-        // 1. Buscar template do XML
-        $templateRow = \App\Models\xmlTemplate::find($request->id); // Ajuste para sua tabela/model
-        $templateString = $templateRow ? $templateRow->template_string : '<config>#propertyName#</config>'; // Exemplo fallback
+        // Gerar senha aleatória
+        $randomPassword = \Illuminate\Support\Str::random(12);
 
-        // 2. Substituir placeholders usando dados do formulário e IP
+        // Regras para substituição dos placeholders
         $placeholders = [
-            '#propertyName#' => $validated['property_name'],
-            '#ip#' => $ipData['ip'] ?? '',
-            '#mask#' => $ipData['mask'] ?? '',
-            // Adicione outros campos conforme necessário
+            '#system.hostname#'   => $validated['property_name'],
+            '#ipsec.hostname#'    => $validated['property_name'],
+            '#dyndns.hostname#'   => $dyndnsHostname,
+            '#random.password#'   => $randomPassword,
         ];
+
+        if ($isStaticIp) {
+            $placeholders['#wan.ipaddr#'] = $staticIp;
+            $placeholders['#wan.mask#']   = $staticMask;
+            $placeholders['#lan.ipaddr#'] = '';
+        } else {
+            $placeholders['#wan.ipaddr#'] = '';
+            $placeholders['#wan.mask#']   = '';
+            $placeholders['#lan.ipaddr#'] = $ipRows[0]->first_usable_ip ?? ''; // ajuste conforme lógica desejada
+        }
+
+        // Substituição dos placeholders
         foreach ($placeholders as $key => $value) {
             $templateString = str_replace($key, $value, $templateString);
         }
 
-        // 3. Gerar senha aleatória para um campo no XML (se necessário)
-        $randomPassword = \Illuminate\Support\Str::random(12);
-        $templateString = str_replace('#password#', $randomPassword, $templateString);
-
-        // 4. Salvar arquivo XML no storage
+        // Salvar arquivo XML
         $xmlFileName = 'config_' . uniqid() . '.xml';
         \Illuminate\Support\Facades\Storage::disk('local')->put('xml/' . $xmlFileName, $templateString);
 
-        // 5. Passar o nome do XML para a view
+        // Retorno para a view
         return view('network-provisioning.pfsense', [
             'propertyName' => $validated['property_name'],
             'ipData' => $ipData,
-            'xmlFile' => $xmlFileName, // Adicionado para o botão de download
+            'xmlFile' => $xmlFileName,
         ]);
-
     }
 
-
     public function downloadXml($fileName)
-{
-    return \Illuminate\Support\Facades\Storage::disk('local')->download('xml/' . $fileName, $fileName);
+    {
+        return \Illuminate\Support\Facades\Storage::disk('local')->download('xml/' . $fileName, $fileName);
+    }
 }
-
-
-}
-
-
-
-
