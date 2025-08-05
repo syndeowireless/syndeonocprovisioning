@@ -7,7 +7,7 @@ use App\Http\Controllers\NetworkProvisioningController;
 
 
 Route::get('/', function () {
-    return redirect()->route('auth.login');
+    return redirect()->route('login');
 });
 
 /*
@@ -21,9 +21,6 @@ Route::get('/', function () {
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
-
+        <link rel="shortcut icon" href="{{ asset('assets/images/logo-sm.ico') }}">
         <!-- Bootstrap Css -->
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
         <!-- Icons Css -->
@@ -27,8 +27,8 @@
 
                                 <h3 class="text-center mt-5 mb-4">
                                     <a href="{{ url('/') }}" class="d-block auth-logo">
-                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-dark">
-                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-light">
+                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-dark" style="width: 50%;">
+                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-light" style="width: 50%;">
                                     </a>
                                 </h3>
 
