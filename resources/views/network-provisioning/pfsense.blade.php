@@ -113,8 +113,8 @@
             <h2>PFsense Config File</h2>
             <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
                 <div style="flex-shrink:0;">
-                    <!-- SVG Icon -->
-                    <svg width="90" height="90" fill="none"><path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="#2563eb" stroke-width="2" fill="#e0f2fe"/><path d="M14 2V8H20" stroke="#2563eb" stroke-width="2"/><path d="M16 13H8" stroke="#2563eb" stroke-width="1.5"/><path d="M16 17H8" stroke="#2563eb" stroke-width="1.5"/><path d="M10 9H8" stroke="#2563eb" stroke-width="1.5"/></svg>
+                    <!-- Ícone MDI grande -->
+                    <i class="mdi mdi-file-document" style="font-size:90px;color:#2563eb;background:#e0f2fe;border-radius:8px;display:inline-block;padding:10px;"></i>
                 </div>
                 <div style="flex-grow:1;">
                     <div class="pfsense-table-row">
