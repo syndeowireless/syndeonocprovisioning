@@ -1,4 +1,4 @@
-@extends('guest')
+@extends('layouts.guest')
 @section('content')
 <x-guest-layout>
     <!-- Session Status -->
