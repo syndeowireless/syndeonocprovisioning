@@ -1,5 +1,5 @@
             <!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu" style="background: #13395d; border-right: 5px solid #fbbf0f;">
+            <div class="vertical-menu" style="background: #13395d; border-right: 5px solid #fbbf0f;" collapsed>
 
                 <div data-simplebar class="h-100">
 
@@ -10,7 +10,7 @@
                             <li class="menu-title" style="color: white;">Main</li>
 
                             <li>
-                                <a href="index.html" class="waves-effect" style="color: white;">
+                                <a href="" class="waves-effect" style="color: white;">
                                     <i class="mdi mdi-home" style="color: white;"></i>
                                     
                                     <span>Home</span>
