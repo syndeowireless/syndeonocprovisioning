@@ -185,11 +185,11 @@
                 <div id="static-ip-fields" style="display: none;">
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_ip" style="margin-left: 5%">IP</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" placeholder="Digite o IP" style="width: 50%;margin-left: 3%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" placeholder="Type the IP" style="width: 50%;margin-left: 3%;">
                     </div>
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_mask" style="margin-left: 5%">Mask</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" placeholder="Digite a máscara" style="width: 50%;margin-left: 3%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" placeholder="Type the Mask" style="width: 50%;margin-left: 3%;">
                     </div>
                 </div>
 

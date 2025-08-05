@@ -7,7 +7,7 @@ use App\Http\Controllers\NetworkProvisioningController;
 
 
 Route::get('/', function () {
-    return redirect()->route('register');
+    return redirect()->route('login');
 });
 
 /*

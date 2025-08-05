@@ -40,14 +40,16 @@
         </div>
 
         <!-- Forgot Password Link -->
-        <div class="form-group mb-0 row">
-            <div class="col-12 mt-4">
-                @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="text-muted">
-                        <i class="mdi mdi-lock"></i> {{ __('Forgot your password?') }}
-                    </a>
-                @endif
-            </div>
+        <div class="flex justify-between items-center mt-4">
+            @if (Route::has('password.request'))
+                <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
+                    Forgot your password?
+                </a>
+            @endif
+
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 ml-4" href="{{ route('register') }}">
+                Register
+            </a>
         </div>
     </form>
 @endsection

@@ -16,7 +16,7 @@
                                     <span>Home</span>
                                 </a>
                             </li>
-                            <li>
+                            <!--<li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white;">
                                     <i class="mdi mdi-cash-multiple" style="color: white;"></i>
                                     <span>Sales</span>
@@ -33,7 +33,7 @@
                                         </ul>
                                     </li>
                                 </ul>
-                            </li>
+                            </li>-->
 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white;">
@@ -50,7 +50,7 @@
                                 </ul>
                             </li>
 
-                            <li>
+                            <!--<li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white;">
                                     <i class="mdi mdi-collage" style="color: white;"></i>
                                     <span>Others</span>
@@ -61,7 +61,7 @@
                                     <li><a href="javascript: void(0);" style="color: white;"> Lock page</a></li>
                                     <li><a href="javascript: void(0);" style="color: white;"> System Users</a></li>
                                 </ul>
-                            </li>
+                            </li>-->
 
 
                         </ul>
