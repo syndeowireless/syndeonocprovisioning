@@ -130,7 +130,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black form-check-label" for="static_ip_check">Static IP</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-check-input" type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
+                        <input class="sr-only peer" type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
+                        <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
                     </div>
                 </div>
 
