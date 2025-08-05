@@ -29,15 +29,12 @@ class NetworkProvisioningController extends Controller
             'property_type' => 'nullable|string|max:255',
             'average_density' => 'nullable|string|max:255',
             'system_type' => 'nullable|string|max:255',
-            // campos novos não precisam ser validados obrigatoriamente
         ]);
 
-        // Salva os dados principais (se necessário)
         NetworkManagement::create($validated);
 
-        // Busca IPs disponíveis
+        // Busca 4 IPs disponíveis
         $ipRows = Ip::where('in_use', false)->limit(4)->get();
-
         if ($ipRows->count() < 4) {
             return back()->with('error', 'Not enough available IP ranges.');
         }
@@ -53,20 +50,20 @@ class NetworkProvisioningController extends Controller
             'errcs'         => $ipRows[3],
         ];
 
-        // Novos campos do request
+        // Novos campos do formulário
         $dyndnsHostname = $request->input('hostname', '');
         $isStaticIp = $request->has('static_ip_check');
         $staticIp = $request->input('static_ip', '');
         $staticMask = $request->input('static_mask', '');
 
-        // Busca do template
-        $templateRow = \App\Models\xmlTemplate::find($request->id);
+        // Busca o template XML sempre pelo registro de id=1
+        $templateRow = \App\Models\xmlTemplate::find(1);
         $templateString = $templateRow ? $templateRow->content : '<config>#propertyName#</config>';
 
         // Gerar senha aleatória
         $randomPassword = \Illuminate\Support\Str::random(12);
 
-        // Regras para substituição dos placeholders
+        // Substituição dos placeholders conforme regras
         $placeholders = [
             '#system.hostname#'   => $validated['property_name'],
             '#ipsec.hostname#'    => $validated['property_name'],
@@ -81,10 +78,10 @@ class NetworkProvisioningController extends Controller
         } else {
             $placeholders['#wan.ipaddr#'] = '';
             $placeholders['#wan.mask#']   = '';
-            $placeholders['#lan.ipaddr#'] = $ipRows[0]->first_usable_ip ?? ''; // ajuste conforme lógica desejada
+            $placeholders['#lan.ipaddr#'] = $ipRows[0]->first_usable_ip ?? '';
         }
 
-        // Substituição dos placeholders
+        // Substituir todos os placeholders
         foreach ($placeholders as $key => $value) {
             $templateString = str_replace($key, $value, $templateString);
         }
