@@ -5,9 +5,6 @@
             <div class="navbar-brand-box" style="background-color: #13395d;
             padding-top: 20px;border-right:5px solid #fbbf0f" >
                 <a href="" class="logo logo-dark" >
-                    <span class="logo-sm">
-                        <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="10">
-                    </span>
                     <span class="logo-lg">
                         <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="10">
                     </span>
