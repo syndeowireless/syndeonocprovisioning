@@ -1,5 +1,4 @@
 <x-guest-layout>
-
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -19,13 +18,13 @@
             <x-text-input id="password" class="form-control"
                             type="password"
                             name="password"
-                            required autocomplete="current-password" 
+                            required autocomplete="current-password"
                             placeholder="{{ __('Enter password') }}" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+        <!-- Remember Me & Button -->
         <div class="mb-3 row mt-4">
-            <!-- Remember Me -->
             <div class="col-6">
                 <div class="form-check">
                     <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
@@ -39,6 +38,7 @@
             </div>
         </div>
 
+        <!-- Forgot Password Link -->
         <div class="form-group mb-0 row">
             <div class="col-12 mt-4">
                 @if (Route::has('password.request'))

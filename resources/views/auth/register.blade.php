@@ -1,4 +1,3 @@
- 
 <x-guest-layout>
     <form class="form-horizontal mt-4" method="POST" action="{{ route('register') }}">
         @csrf
@@ -23,7 +22,7 @@
             <x-text-input id="password" class="form-control"
                             type="password"
                             name="password"
-                            required autocomplete="new-password" 
+                            required autocomplete="new-password"
                             placeholder="{{ __('Enter password') }}" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -33,7 +32,7 @@
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
             <x-text-input id="password_confirmation" class="form-control"
                             type="password"
-                            name="password_confirmation" required autocomplete="new-password" 
+                            name="password_confirmation" required autocomplete="new-password"
                             placeholder="{{ __('Confirm password') }}" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
@@ -45,12 +44,13 @@
                 </x-primary-button>
             </div>
         </div>
-
         <div class="mb-0 row">
             <div class="col-12 mt-4">
-                <p class="text-muted mb-0 font-size-14">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a></p>
+                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+                    {{ __('Already registered?') }}
+                </a>
+                <p class="text-muted mb-0 font-size-14 mt-2">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a>
             </div>
         </div>
     </form>
 </x-guest-layout>
-
