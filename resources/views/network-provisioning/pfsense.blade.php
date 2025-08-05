@@ -132,7 +132,7 @@
                     <!-- Download Icon -->
                     <i class="mdi mdi-download" style="color: white;"></i>
                     @if(isset($xmlFile))
-                        <a href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" class="btn btn-primary">
+                        <a href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}">
                             Download XML
                         </a>
                     @endif
