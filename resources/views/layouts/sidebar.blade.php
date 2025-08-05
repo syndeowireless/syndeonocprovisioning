@@ -10,7 +10,7 @@
                             <li class="menu-title" style="color: white;">Main</li>
 
                             <li>
-                                <a href="" class="waves-effect" style="color: white;">
+                                <a href="#" class="waves-effect" style="color: white;">
                                     <i class="mdi mdi-home" style="color: white;"></i>
                                     
                                     <span>Home</span>

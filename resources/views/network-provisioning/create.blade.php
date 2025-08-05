@@ -173,23 +173,18 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
-                        <label class="block text-gray-700 font-medium mb-2 text-black form-check-label" for="static_ip_check" style="margin-left: 5%">Static IP</label>
-                        
-                        <label class="switch">
-                          <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
-                          <span class="slider"></span>
-                        </label>
+                        <label class="block text-gray-700 font-medium mb-2 text-black form-check-label switch" for="static_ip_check" style="margin-left: 5%">Static IP  <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()"><span class="slider"></span></label>
                     </div>
                 </div>
 
                 <div id="static-ip-fields" style="display: none;">
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_ip" style="margin-left: 5%">IP</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" placeholder="Digite o IP" style="width: 50%;margin-left: 5%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" placeholder="Digite o IP" style="width: 50%;margin-left: 3%;">
                     </div>
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_mask" style="margin-left: 5%">Mask</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" placeholder="Digite a máscara" style="width: 50%;margin-left: 5%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" placeholder="Digite a máscara" style="width: 50%;margin-left: 3%;">
                     </div>
                 </div>
 

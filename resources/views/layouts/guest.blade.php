@@ -27,8 +27,8 @@
 
                                 <h3 class="text-center mt-5 mb-4">
                                     <a href="{{ url('/') }}" class="d-block auth-logo">
-                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="30" class="auth-logo-dark">
-                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="30" class="auth-logo-light">
+                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-dark">
+                                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-light">
                                     </a>
                                 </h3>
 
