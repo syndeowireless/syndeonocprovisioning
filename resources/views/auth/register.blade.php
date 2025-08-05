@@ -40,6 +40,9 @@
 
         <div class="mb-3 row mt-4">
             <div class="col-12 text-end">
+                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+                    {{ __('Already registered?') }}
+                </a>
                 <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
                     {{ __('Register') }}
                 </x-primary-button>
@@ -47,9 +50,7 @@
         </div>
         <div class="mb-0 row">
             <div class="col-12 mt-4">
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                    {{ __('Already registered?') }}
-                </a>
+
                 <p class="text-muted mb-0 font-size-14 mt-2">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a>
             </div>
         </div>
