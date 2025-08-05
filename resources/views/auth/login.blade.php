@@ -1,11 +1,6 @@
-@extends('auth-layout')
-
-@section('title', 'Login | ' . config('app.name', 'Laravel'))
 
 @section('content')
-    <h4 class="text-muted font-size-18 mb-1 text-center">{{ __('Welcome Back !') }}</h4>
-    <p class="text-muted text-center">{{ __('Sign in to continue to') }} {{ config('app.name', 'Laravel') }}.</p>
-    
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -55,8 +50,4 @@
             </div>
         </div>
     </form>
-@endsection
-
-@section('footer-links')
-    <p>{{ __("Don't have an account ?") }} <a href="{{ route('register') }}" class="text-primary"> {{ __('Signup Now') }} </a></p>
 @endsection

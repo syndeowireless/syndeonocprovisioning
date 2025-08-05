@@ -1,11 +1,6 @@
-@extends('auth-layout')
-
-@section('title', 'Register | ' . config('app.name', 'Laravel'))
+ 
 
 @section('content')
-    <h4 class="text-muted font-size-18 mb-1 text-center">{{ __('Free Register') }}</h4>
-    <p class="text-muted text-center">{{ __('Get your free') }} {{ config('app.name', 'Laravel') }} {{ __('account now.') }}</p>
-    
     <form class="form-horizontal mt-4" method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -60,6 +55,3 @@
     </form>
 @endsection
 
-@section('footer-links')
-    <p>{{ __('Already have an account ?') }} <a href="{{ route('login') }}" class="text-primary"> {{ __('Login') }} </a></p>
-@endsection
