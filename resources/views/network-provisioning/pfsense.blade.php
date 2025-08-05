@@ -114,7 +114,7 @@
             <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
                 <div style="flex-shrink:0;">
                     <!-- Ícone MDI grande -->
-                    <i class="mdi mdi-file-document" style="font-size:90px;border-radius:8px;display:inline-block;padding:10px;"></i>
+                    <i class="mdi mdi-file-document" style="font-size:90px;border-radius:8px;display:inline-block;padding:10px;color: #13395d;"></i>
                 </div>
                 <div style="flex-grow:1;">
                     <div class="pfsense-table-row">

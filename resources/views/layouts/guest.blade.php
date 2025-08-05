@@ -14,7 +14,7 @@
         <!-- App Css-->
         <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 
-        
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="mt-5 text-center">
                             @yield('footer-links')
-                            © <script>document.write(new Date().getFullYear())</script> {{ config('app.name', 'Laravel') }} <span class="d-none d-sm-inline-block"> - Crafted with <i class="mdi mdi-heart text-danger"></i> by NortonGauss.</span>
+                            © <script>document.write(new Date().getFullYear())</script> Syndeo Wireless <span class="d-none d-sm-inline-block"></span>
                         </div>
                     </div>
                 </div>
