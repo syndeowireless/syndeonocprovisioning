@@ -120,8 +120,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="hostname">Hostname (dyndns)</label>
-                        <input type="text" class="form-control" id="hostname" name="hostname" placeholder="Digite o hostname">
+                        <label class="block text-gray-700 font-medium mb-2 text-black" for="hostname">Hostname (dyndns)</label>
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="hostname" name="hostname">
                     </div>
                 </div>
 
@@ -129,19 +129,19 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
-                        <input type="checkbox" class="form-check-input" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
-                        <label class="form-check-label" for="static_ip_check">Static IP</label>
+                        <label class="block text-gray-700 font-medium mb-2 text-black form-check-label" for="static_ip_check">Static IP</label>
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-check-input" type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
                     </div>
                 </div>
 
                 <div id="static-ip-fields" style="display: none;">
                     <div class="form-group mb-3">
-                        <label for="static_ip">IP</label>
-                        <input type="text" class="form-control" id="static_ip" name="static_ip" placeholder="Digite o IP">
+                        <label class="block text-gray-700 font-medium mb-2 text-black" for="static_ip">IP</label>
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" placeholder="Digite o IP">
                     </div>
                     <div class="form-group mb-3">
-                        <label for="static_mask">Mask</label>
-                        <input type="text" class="form-control" id="static_mask" name="static_mask" placeholder="Digite a máscara">
+                        <label class="block text-gray-700 font-medium mb-2 text-black" for="static_mask">Mask</label>
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" placeholder="Digite a máscara">
                     </div>
                 </div>
 
