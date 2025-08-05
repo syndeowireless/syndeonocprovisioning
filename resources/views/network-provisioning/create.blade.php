@@ -171,16 +171,19 @@
 
 
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="form-group">
-                        <label class="block text-gray-700 font-medium mb-2 text-black form-check-label switch" for="static_ip_check" style="margin-left: 5%">Static IP</label>
-                        
-                        <label class="switch">
-                          <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
-                          <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="form-group" style="margin-left: 5%;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <label for="static_ip_check" class="block text-gray-700 font-medium mb-2 text-black form-check-label" style="margin-bottom: 0;">
+                Static IP
+            </label>
+            <label class="switch" style="margin-bottom: 0;">
+                <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</div>
 
                 <div id="static-ip-fields" style="display: none;">
                     <div class="form-group mb-3">
