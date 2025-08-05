@@ -1,6 +1,5 @@
 @extends('layouts.guest')
 @section('content')
-<x-guest-layout>
     <form class="form-horizontal mt-4" method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -55,5 +54,4 @@
             </div>
         </div>
     </form>
-</x-guest-layout>
 @endsection
