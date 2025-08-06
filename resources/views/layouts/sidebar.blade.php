@@ -1,17 +1,17 @@
 <style>
     /* Cor do texto do submenu */
     .sub-menu.mm-collapse.mm-show a {
-        color: black !important;
+        background-color: #13395d !important ;
     }
 
     /* Cor no hover */
     .sub-menu.mm-collapse.mm-show a:hover {
-        color: black !important;
+        background-color: #13395d !important ;
     }
 
     /* Se for item ativo */
     .sub-menu.mm-collapse.mm-show .mm-active a {
-        color: black !important;
+        background-color: #13395d !important ;
     }
 </style>
 <!-- ========== Left Sidebar Start ========== -->
