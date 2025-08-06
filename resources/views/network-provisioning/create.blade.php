@@ -56,10 +56,18 @@
 
 <style>
     /* Estilos para as sugestões de endereço */
+    .address-input-container {
+        position: relative;
+    }
+    
     #address_suggestions {
+        position: absolute;
         top: 100%;
         left: 0;
+        right: 0;
         z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
     }
     
     .address-suggestion {
@@ -67,6 +75,7 @@
         cursor: pointer;
         border-bottom: 1px solid #eee;
         background-color: white;
+        transition: background-color 0.2s;
     }
     
     .address-suggestion:hover {
@@ -87,14 +96,23 @@
     }
 
     #map {
+        height: 300px;
+        width: 100%;
         z-index: 10 !important;
         position: relative;
+        border-radius: 8px;
+        margin-top: 10px;
     }
     
     .leaflet-container {
         z-index: 10 !important;
     }
 </style>
+
+<!-- Adicionar CDNs do Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
     <div class="max-w-4xl px-4 py-8" style="width: 80%;padding-top: 5%;">
         <div class="bg-white rounded-xl shadow-lg p-8">
@@ -123,13 +141,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black" style="margin-left: 5%">Property Address</label>
-                        <input type="text" name="property_address" value="{{ old('property_address') }}"
-                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="Type the property full address" style="width: 90%;margin-left: 5%;">
+                        <div class="address-input-container" style="width: 90%;margin-left: 5%;">
+                            <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}"
+                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Type the property full address" autocomplete="off">
                             <div id="address_suggestions" 
-                                class="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-48 overflow-y-auto">
+                                class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
                             </div>
-                            <div id="map" class="w-full h-64 border rounded-lg"></div>
+                        </div>
+                        <div id="map"></div>
                     </div>
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black">Remote Unit Quantity</label>
@@ -159,15 +179,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black" style="margin-left: 5%">Latitude</label>
-                        <input type="text" name="latitude" value="{{ old('latitude') }}"
+                        <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="Type the latitude" style="width: 90%;margin-left: 5%;">
+                               placeholder="Type the latitude" style="width: 90%;margin-left: 5%;" readonly>
                     </div>
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black">Longitude</label>
-                        <input type="text" name="longitude" value="{{ old('longitude') }}"
+                        <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="Type the longitude">
+                               placeholder="Type the longitude" readonly>
                     </div>
                 </div>
 
@@ -178,19 +198,19 @@
                         <select name="property_type"
                                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" style="width: 90%;margin-left: 5%;" >
                             <option value="">Select the property type</option>
-                            <option value="Hotel" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
-                            <option value="Hotel" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
-                            <option value="Hotel" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
-                            <option value="Hotel" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
-                            <option value="Hotel" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
-                            <option value="Hotel" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
-                            <option value="Hotel" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
-                            <option value="Hotel" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
-                            <option value="Hotel" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
-                            <option value="Hotel" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
-                            <option value="Hotel" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
-                            <option value="Hotel" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
-                            <option value="Hotel" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
+                            <option value="Education" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
+                            <option value="Healthcare" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
+                            <option value="Hospitality" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
+                            <option value="Industrial" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
+                            <option value="Mixed-Use" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
+                            <option value="Office" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
+                            <option value="Parking Garage" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
+                            <option value="Residential" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
+                            <option value="Retail" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
+                            <option value="Senior Living" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
+                            <option value="Sports&Events" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
+                            <option value="Warehouse" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
+                            <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
                         </select>
                     </div>
                     <div class="form-group">
@@ -219,31 +239,29 @@
                     </div>
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="hostname">Hostname (dyndns)</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="hostname" name="hostname" style="width: 95%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}" style="width: 95%;">
                     </div>
                 </div>
-
-
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black form-check-label switch" for="static_ip_check" style="margin-left: 5%">Static IP</label>
                         
                         <label class="switch">
-                          <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()">
+                          <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
                           <span class="slider"></span>
                         </label>
                     </div>
                 </div>
 
-                <div id="static-ip-fields" style="display: none;">
+                <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_ip" style="margin-left: 5%">IP</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" placeholder="Type the IP" style="width: 50%;margin-left: 3%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP" style="width: 50%;margin-left: 3%;">
                     </div>
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_mask" style="margin-left: 5%">Mask</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" placeholder="Type the Mask" style="width: 50%;margin-left: 3%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the Mask" style="width: 50%;margin-left: 3%;">
                     </div>
                 </div>
 
@@ -268,8 +286,8 @@
         </div>
     </div>
 </div>
-<script>
 
+<script>
 class OpenStreetMapHandler {
     constructor(mapElementId = 'map', addressInputId = 'property_address', suggestionsId = 'address_suggestions') {
         this.mapElementId = mapElementId;
@@ -287,27 +305,62 @@ class OpenStreetMapHandler {
     
     // Inicializar o sistema
     init() {
-        // Aguardar o DOM estar pronto
+        // Aguardar o DOM e o Leaflet estarem prontos
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.setupComponents());
         } else {
-            this.setupComponents();
+            // Se o DOM já está pronto, aguardar um pouco para garantir que o Leaflet foi carregado
+            setTimeout(() => this.setupComponents(), 100);
         }
     }
     
     // Configurar todos os componentes
     setupComponents() {
+        // Verificar se o Leaflet foi carregado
+        if (typeof L === 'undefined') {
+            console.error('Leaflet não foi carregado. Tentando novamente...');
+            setTimeout(() => this.setupComponents(), 200);
+            return;
+        }
+        
+        console.log('Inicializando OpenStreetMap Handler...');
         this.initMap();
         this.setupEventListeners();
     }
     
     // Inicializar o mapa
-    initMap(lat = 40.7081, lng = -74.0061, zoom = 10) {
-        this.map = L.map(this.mapElementId).setView([lat, lng], zoom);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(this.map);
+    initMap(lat = 40.7589, lng = -73.9851, zoom = 10) {
+        try {
+            const mapElement = document.getElementById(this.mapElementId);
+            if (!mapElement) {
+                console.error('Elemento do mapa não encontrado:', this.mapElementId);
+                return;
+            }
+            
+            console.log('Inicializando mapa...');
+            this.map = L.map(this.mapElementId).setView([lat, lng], zoom);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(this.map);
+            
+            console.log('Mapa inicializado com sucesso!');
+            
+            // Adicionar evento de clique no mapa
+            this.map.on('click', (e) => {
+                this.addMarker(e.latlng.lat, e.latlng.lng);
+                this.updateCoordinateFields(e.latlng.lat, e.latlng.lng);
+            });
+            
+            // Invalidar o tamanho do mapa após um pequeno delay para garantir renderização correta
+            setTimeout(() => {
+                this.map.invalidateSize();
+            }, 250);
+            
+        } catch (error) {
+            console.error('Erro ao inicializar mapa:', error);
+        }
     }
     
     // Configurar event listeners
@@ -320,6 +373,8 @@ class OpenStreetMapHandler {
             return;
         }
         
+        console.log('Configurando event listeners...');
+        
         // Autocompletar endereço
         addressInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
@@ -330,12 +385,13 @@ class OpenStreetMapHandler {
             
             this.searchTimeout = setTimeout(async () => {
                 if (query.length >= 3) {
+                    console.log('Buscando endereços para:', query);
                     const suggestions = await this.searchAddresses(query);
                     this.showAddressSuggestions(suggestions);
                 } else {
                     suggestionsDiv.classList.add('hidden');
                 }
-            }, 300);
+            }, 500); // Aumentei o delay para 500ms para evitar muitas requisições
         });
         
         // Ocultar sugestões quando clicar fora
@@ -344,6 +400,8 @@ class OpenStreetMapHandler {
                 suggestionsDiv.classList.add('hidden');
             }
         });
+        
+        console.log('Event listeners configurados!');
     }
     
     // Buscar endereços usando Nominatim
@@ -351,11 +409,23 @@ class OpenStreetMapHandler {
         if (query.length < 3) return [];
         
         try {
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=en`
-            );
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
+            console.log('URL da busca:', url);
+            
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'NetworkProvisioningApp/1.0 (Laravel Application)'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log('Resultados da busca:', data.length, 'endereços encontrados');
             return data;
+            
         } catch (error) {
             console.error('Erro ao buscar endereços:', error);
             return [];
@@ -368,9 +438,11 @@ class OpenStreetMapHandler {
         
         if (suggestions.length === 0) {
             suggestionsDiv.classList.add('hidden');
+            console.log('Nenhuma sugestão encontrada');
             return;
         }
         
+        console.log('Mostrando', suggestions.length, 'sugestões');
         suggestionsDiv.innerHTML = '';
         
         suggestions.forEach(suggestion => {
@@ -386,6 +458,8 @@ class OpenStreetMapHandler {
     
     // Selecionar um endereço
     selectAddress(address) {
+        console.log('Endereço selecionado:', address.display_name);
+        
         const input = document.getElementById(this.addressInputId);
         input.value = address.display_name;
         this.selectedAddressText = address.display_name;
@@ -399,6 +473,16 @@ class OpenStreetMapHandler {
         
         this.selectedCoordinates = { lat, lng };
         
+        // Atualizar campos de coordenadas
+        this.updateCoordinateFields(lat, lng);
+        
+        // Adicionar marcador e centralizar mapa
+        this.addMarker(lat, lng);
+        this.map.setView([lat, lng], 15);
+    }
+    
+    // Adicionar marcador no mapa
+    addMarker(lat, lng) {
         // Remover marcador anterior se existir
         if (this.marker) {
             this.map.removeLayer(this.marker);
@@ -406,16 +490,18 @@ class OpenStreetMapHandler {
         
         // Adicionar novo marcador
         this.marker = L.marker([lat, lng]).addTo(this.map);
+        console.log('Marcador adicionado em:', lat, lng);
+    }
+    
+    // Atualizar campos de coordenadas
+    updateCoordinateFields(lat, lng) {
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
         
-        // Centralizar mapa no endereço
-        this.map.setView([lat, lng], 15);
-        
-        // Callback personalizado (se definido)
-        if (this.onAddressSelected) {
-            this.onAddressSelected({
-                address: address.display_name,
-                coordinates: { lat, lng }
-            });
+        if (latInput && lngInput) {
+            latInput.value = lat.toFixed(6);
+            lngInput.value = lng.toFixed(6);
+            console.log('Coordenadas atualizadas:', lat.toFixed(6), lng.toFixed(6));
         }
     }
     
@@ -439,16 +525,25 @@ class OpenStreetMapHandler {
             this.map.setView([lat, lng], zoom);
         }
     }
-}    
-</script>
-<script>
+}
+
+// Função para toggle dos campos de IP estático
 function toggleStaticIpFields() {
     var checkbox = document.getElementById('static_ip_check');
     var fields = document.getElementById('static-ip-fields');
     fields.style.display = checkbox.checked ? 'block' : 'none';
 }
+
+// Inicializar o mapa quando a página estiver pronta
+let mapHandler;
+
+// Aguardar tanto o DOM quanto o Leaflet
+document.addEventListener('DOMContentLoaded', function() {
+    // Pequeno delay para garantir que todos os recursos foram carregados
+    setTimeout(() => {
+        mapHandler = new OpenStreetMapHandler();
+    }, 100);
+});
 </script>
 
-
 @endsection
-
