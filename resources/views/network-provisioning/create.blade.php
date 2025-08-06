@@ -97,11 +97,12 @@
 
     #map {
         height: 300px;
-        width: 100%;
+        width: 90%;
         z-index: 10 !important;
         position: relative;
         border-radius: 8px;
         margin-top: 10px;
+        margin-left: 5%;
     }
     
     .leaflet-container {
@@ -245,12 +246,15 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
-                        <label class="block text-gray-700 font-medium mb-2 text-black form-check-label switch" for="static_ip_check" style="margin-left: 5%">Static IP</label>
-                        
-                        <label class="switch">
-                          <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
-                          <span class="slider"></span>
-                        </label>
+                        <div class="flex items-center" style="margin-left: 5%;">
+                            <label class="block text-gray-700 font-medium text-black mr-3" for="static_ip_check">
+                                Static IP
+                            </label>
+                            <label class="switch">
+                                <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
