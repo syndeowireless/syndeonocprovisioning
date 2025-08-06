@@ -13,6 +13,9 @@
     .sub-menu.mm-collapse.mm-show .mm-active a {
         background-color: #13395d !important ;
     }
+    .sub-menu .mm-collapse .mm-show  ul{
+        background-color: #13395d
+    }
 </style>
 <!-- ========== Left Sidebar Start ========== -->
             <div class="vertical-menu" style="background: #13395d; border-right: 5px solid #fbbf0f;" collapsed>
