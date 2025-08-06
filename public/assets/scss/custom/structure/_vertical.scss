@@ -667,18 +667,14 @@ body[data-sidebar="colored"] {
                                 a{
                                     &:hover {
                                         color: var(--#{$prefix}sidebar-menu-item-active-color);
-                                        background-color: pink !important ;
                                     }
                                 }
                                 &.mm-active {
                                     color: var(--#{$prefix}sidebar-menu-item-active-color) !important;
-                                    background-color: pink !important ;
                                     > a{
                                         color: var(--#{$prefix}sidebar-menu-item-active-color) !important;
-                                        background-color: pink !important ;
                                         i {
                                             color: var(--#{$prefix}sidebar-menu-item-active-color) !important;
-                                            background-color: pink !important ;
                                         }
                                     }
                                 }

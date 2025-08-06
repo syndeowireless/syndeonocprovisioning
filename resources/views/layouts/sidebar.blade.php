@@ -1,43 +1,16 @@
-<style>
-    /* Cor do texto do submenu */
-    .sub-menu.mm-collapse.mm-show a {
-        background-color: #13395d !important ;
-    }
-
-    /* Cor no hover */
-    .sub-menu.mm-collapse.mm-show a:hover {
-        background-color: #13395d !important ;
-    }
-
-    /* Se for item ativo */
-    .sub-menu.mm-collapse.mm-show .mm-active a {
-        background-color: #13395d !important ;
-    }
-    .sub-menu.mm-collapse.mm-show  ul{
-        background-color: #13395d !important ;
-    }
-    .sub-menu.mm-collapse ul{
-        background-color: #13395d !important ; 
-    }
-    .has-arrow.waves-effect a{
-        background-color: #13395d !important ;
-    }
-
-</style>
-<!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu" style="background: #13395d; border-right: 5px solid #fbbf0f;" collapsed>
+<div class="vertical-menu" style="background: #13395d !important; border-right: 5px solid #fbbf0f;" collapsed>
 
                 <div data-simplebar class="h-100">
 
                     <!--- Sidemenu -->
                     <div id="sidebar-menu">
                         <!-- Left Menu Start -->
-                        <ul class="metismenu list-unstyled" id="side-menu">
-                            <li class="menu-title" style="color: white;">Main</li>
+                        <ul class="metismenu list-unstyled" id="side-menu" style="background-color: #13395d !important;">
+                            <li class="menu-title" style="color: white; background-color: #13395d !important;">Main</li>
 
-                            <li>
-                                <a href="#" class="waves-effect" style="color: white;">
-                                    <i class="mdi mdi-home" style="color: white;"></i>
+                            <li style="background-color: #13395d !important;">
+                                <a href="#" class="waves-effect" style="color: white !important; background-color: #13395d !important; padding: 12px 20px; display: block;">
+                                    <i class="mdi mdi-home" style="color: white !important;"></i>
                                     
                                     <span>Home</span>
                                 </a>
@@ -61,16 +34,16 @@
                                 </ul>
                             </li>-->
 
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white;">
-                                    <i class="mdi mdi-atom" style="color: white;"></i>
+                            <li style="background-color: #13395d !important;">
+                                <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white !important; background-color: #13395d !important; padding: 12px 20px; display: block;">
+                                    <i class="mdi mdi-atom" style="color: white !important;"></i>
                                     <span>Operations</span>
                                 </a>
-                                <ul class="sub-menu" aria-expanded="true">
-                                    <li><a href="javascript: void(0);" class="has-arrow" style="color: white;">Network mgmt.</a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('network-provisioning.create') }}" style="color: white;">New Provisioning</a></li>
-                                            <li><a href="#" style="color: white;">Search Provisioning</a></li>
+                                <ul class="sub-menu" aria-expanded="true" style="background-color: #13395d !important;">
+                                    <li style="background-color: #13395d !important;"><a href="javascript: void(0);" class="has-arrow" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 40px; display: block;">Network mgmt.</a>
+                                        <ul class="sub-menu" aria-expanded="true" style="background-color: #13395d !important;">
+                                            <li style="background-color: #13395d !important;"><a href="{{ route('network-provisioning.create') }}" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 60px; display: block;">New Provisioning</a></li>
+                                            <li style="background-color: #13395d !important;"><a href="#" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 60px; display: block;">Search Provisioning</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -98,9 +71,59 @@
             <!-- Left Sidebar End -->
 
             <style>
-                .vertical-menu .metismenu a:hover {
-                    background-color: #fbbf0f !important;
+                /* Sobrescreve todos os estilos do metismenu */
+                .vertical-menu,
+                .vertical-menu .metismenu,
+                .vertical-menu .metismenu li,
+                .vertical-menu .metismenu li a,
+                .vertical-menu .metismenu .sub-menu,
+                .vertical-menu .metismenu .sub-menu li,
+                .vertical-menu .metismenu .sub-menu li a {
+                    background-color: #13395d !important;
+                }
+                
+                /* Hover effect - tom mais claro do azul */
+                .vertical-menu .metismenu a:hover,
+                .vertical-menu .metismenu li:hover > a,
+                .vertical-menu .metismenu .sub-menu a:hover {
+                    background-color: #1e4a73 !important;
+                    color: white !important;
+                }
+                
+                /* Estado ativo */
+                .vertical-menu .metismenu li.mm-active > a,
+                .vertical-menu .metismenu .sub-menu li.mm-active > a {
+                    background-color: #1e4a73 !important;
+                    color: white !important;
+                }
+                
+                /* Força a cor do texto para branco em todos os estados */
+                .vertical-menu .metismenu a,
+                .vertical-menu .metismenu .sub-menu a,
+                .vertical-menu .menu-title {
+                    color: white !important;
+                }
+                
+                /* Ícones sempre brancos, exceto no hover */
+                .vertical-menu .metismenu i {
+                    color: white !important;
+                }
+                
+                .vertical-menu .metismenu a:hover i,
+                .vertical-menu .metismenu li.mm-active > a i {
+                    color: white !important;
+                }
+                
+                /* Remove qualquer borda ou outline */
+                .vertical-menu .metismenu a {
+                    border: none !important;
+                    outline: none !important;
+                }
+                
+                /* Garante que sub-menus também tenham o fundo correto */
+                .vertical-menu .metismenu .collapse.show,
+                .vertical-menu .metismenu .collapsing {
+                    background-color: #13395d !important;
                 }
                 
             </style>
-
