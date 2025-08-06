@@ -87,7 +87,7 @@ class NetworkProvisioningController extends Controller
         }
 
         // Salvar arquivo XML
-        $xmlFileName = 'config_' . uniqid() . '.xml';
+        $xmlFileName = 'config_file_' . $validated['property_name'] . '.xml';
         \Illuminate\Support\Facades\Storage::disk('local')->put('xml/' . $xmlFileName, $templateString);
 
         // Retorno para a view

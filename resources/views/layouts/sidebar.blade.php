@@ -1,4 +1,20 @@
-            <!-- ========== Left Sidebar Start ========== -->
+<style>
+    /* Cor do texto do submenu */
+    .sub-menu.mm-collapse.mm-show a {
+        color: black !important;
+    }
+
+    /* Cor no hover */
+    .sub-menu.mm-collapse.mm-show a:hover {
+        color: black !important;
+    }
+
+    /* Se for item ativo */
+    .sub-menu.mm-collapse.mm-show .mm-active a {
+        color: black !important;
+    }
+</style>
+<!-- ========== Left Sidebar Start ========== -->
             <div class="vertical-menu" style="background: #13395d; border-right: 5px solid #fbbf0f;" collapsed>
 
                 <div data-simplebar class="h-100">

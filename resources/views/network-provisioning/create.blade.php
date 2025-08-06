@@ -132,11 +132,19 @@
                         <select name="property_type"
                                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" style="width: 90%;margin-left: 5%;" >
                             <option value="">Select the property type</option>
-                            <option value="Hotel" {{ old('property_type') == 'Hotel' ? 'selected' : '' }}>Hotel</option>
-                            <option value="Factory" {{ old('property_type') == 'Factory' ? 'selected' : '' }}>Factory</option>
-                            <option value="Office" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
-                            <option value="Residencial" {{ old('property_type') == 'Residencial' ? 'selected' : '' }}>Residencial</option>
-                            <option value="Others" {{ old('property_type') == 'Others' ? 'selected' : '' }}>Others</option>
+                            <option value="Hotel" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
+                            <option value="Hotel" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
+                            <option value="Hotel" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
+                            <option value="Hotel" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
+                            <option value="Hotel" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
+                            <option value="Hotel" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
+                            <option value="Hotel" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
+                            <option value="Hotel" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
+                            <option value="Hotel" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
+                            <option value="Hotel" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
+                            <option value="Hotel" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
+                            <option value="Hotel" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
+                            <option value="Hotel" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
                         </select>
                     </div>
                     <div class="form-group">
