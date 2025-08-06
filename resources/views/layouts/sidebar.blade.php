@@ -82,19 +82,19 @@
                     background-color: #13395d !important;
                 }
                 
-                /* Hover effect - tom mais claro do azul */
+                /* Hover effect com a cor amarela */
                 .vertical-menu .metismenu a:hover,
                 .vertical-menu .metismenu li:hover > a,
                 .vertical-menu .metismenu .sub-menu a:hover {
-                    background-color: #1e4a73 !important;
-                    color: white !important;
+                    background-color: #fbbf0f !important;
+                    color: #13395d !important;
                 }
                 
                 /* Estado ativo */
                 .vertical-menu .metismenu li.mm-active > a,
                 .vertical-menu .metismenu .sub-menu li.mm-active > a {
-                    background-color: #1e4a73 !important;
-                    color: white !important;
+                    background-color: #fbbf0f !important;
+                    color: #13395d !important;
                 }
                 
                 /* Força a cor do texto para branco em todos os estados */
@@ -111,7 +111,7 @@
                 
                 .vertical-menu .metismenu a:hover i,
                 .vertical-menu .metismenu li.mm-active > a i {
-                    color: white !important;
+                    color: #13395d !important;
                 }
                 
                 /* Remove qualquer borda ou outline */
