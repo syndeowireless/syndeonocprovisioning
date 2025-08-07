@@ -150,7 +150,7 @@
                                 class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
                             </div>
                         </div>
-                        <div id="map" style="margin-left: 2%;"></div>
+                        <div id="map" style="margin-left: 5%;"></div>
                     </div>
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black">Remote Unit Quantity</label>
