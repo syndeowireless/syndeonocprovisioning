@@ -150,7 +150,7 @@
                                 class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
                             </div>
                         </div>
-                        <div id="map"></div>
+                        <div id="map" style="margin-left: 2%;"></div>
                     </div>
                     <div class="form-group">
                         <label class="block text-gray-700 font-medium mb-2 text-black">Remote Unit Quantity</label>
@@ -247,10 +247,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="form-group">
                         <div class="flex items-center" style="margin-left: 5%;">
-                            <label class="block text-gray-700 font-medium text-black mr-3" for="static_ip_check">
+                            <label class="block text-gray-700 font-medium text-black mr-3" for="static_ip_check" style="margin-left:1%">
                                 Static IP
                             </label>
-                            <label class="switch">
+                            <label class="switch" style="margin-left: 2%">
                                 <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
                                 <span class="slider"></span>
                             </label>
@@ -261,11 +261,11 @@
                 <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_ip" style="margin-left: 5%">IP</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP" style="width: 50%;margin-left: 3%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP" style="width: 44%;margin-left: 3%;">
                     </div>
                     <div class="form-group mb-3">
                         <label class="block text-gray-700 font-medium mb-2 text-black" for="static_mask" style="margin-left: 5%">Mask</label>
-                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the Mask" style="width: 50%;margin-left: 3%;">
+                        <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-control" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the Mask" style="width: 44%;margin-left: 3%;">
                     </div>
                 </div>
 
