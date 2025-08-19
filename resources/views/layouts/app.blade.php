@@ -22,32 +22,37 @@
     
     <!-- Scripts do Vite (mantenha apenas se necessário) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        /* Ensure content shifts on small screens when sidebar is opened */
+        @media (max-width: 992px) {
+            body.sidebar-enable .main-content { margin-left: 240px; }
+        }
+    </style>
 </head>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 flex">
+    <div id="layout-wrapper">
+        <!-- Top Navigation -->
+        @include('layouts.navigation')
+
         <!-- Sidebar -->
         @include('layouts.sidebar')
 
-        <div class="flex-1 flex flex-col">
-            <!-- Navigation -->
-            @include('layouts.navigation')
+        <!-- Main Content Area that respects sidebar width -->
+        <main class="main-content">
+            <div class="page-content">
+                @if (isset($header))
+                    <header class="bg-white shadow">
+                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endif
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main class="flex-1">
                 {{ $slot ?? '' }}
                 @yield('content')
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
 
     <!-- SCRIPTS (movidos para dentro do body) -->
@@ -66,7 +71,7 @@
     <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
     <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
     <!-- Mantenha apenas estes se forem necessários -->
-    <script src="{{ asset('assets/js/layout.js') }}"></script>
+    
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
     <!-- Inicialização manual dos dropdowns (adicione este script) -->
