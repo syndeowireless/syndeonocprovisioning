@@ -24,14 +24,6 @@
                     <i class="mdi mdi-fullscreen font-size-24"></i>
                 </button>
             </div>
-
-            <div class="dropdown d-inline-block ms-1">
-                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="ti-bell"></i>
-                    <span class="badge text-bg-danger rounded-pill">3</span>
-                </button>
-            </div>
             
             
         <div class="dropdown d-inline-block">

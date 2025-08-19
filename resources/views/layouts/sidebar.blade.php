@@ -2,6 +2,13 @@
 
                 <div data-simplebar class="h-100">
 
+                    <!-- Logo Section - Only for expanded sidebar -->
+                    <div class="navbar-brand-box sidebar-logo" style="background-color: #13395d !important; padding: 20px; text-align: center;">
+                        <a href="#" class="logo logo-dark">
+                            <img src="public/assets/images/logo-light.png" alt="logo-light" height="40">
+                        </a>
+                    </div>
+
                     <!--- Sidemenu -->
                     <div id="sidebar-menu">
                         <!-- Left Menu Start -->
@@ -71,6 +78,26 @@
             <!-- Left Sidebar End -->
 
             <style>
+                /* Sidebar Logo styling - only for expanded state */
+                .sidebar-logo {
+                    background-color: #13395d !important;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .sidebar-logo .logo {
+                    display: block;
+                    text-decoration: none;
+                }
+                
+                .sidebar-logo .logo img {
+                    transition: all 0.3s ease;
+                }
+                
+                /* Hide sidebar logo when collapsed */
+                .vertical-menu[collapsed] .sidebar-logo {
+                    display: none;
+                }
+                
                 /* Sobrescreve todos os estilos do metismenu */
                 .vertical-menu,
                 .vertical-menu .metismenu,
@@ -124,6 +151,20 @@
                 .vertical-menu .metismenu .collapse.show,
                 .vertical-menu .metismenu .collapsing {
                     background-color: #13395d !important;
+                }
+                
+                /* Collapsed sidebar adjustments */
+                .vertical-menu[collapsed] {
+                    width: 70px;
+                }
+                
+                .vertical-menu[collapsed] .navbar-brand-box {
+                    padding: 15px 10px;
+                }
+                
+                .vertical-menu[collapsed] .menu-title,
+                .vertical-menu[collapsed] span {
+                    display: none;
                 }
                 
             </style>
