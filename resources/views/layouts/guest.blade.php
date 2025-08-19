@@ -22,7 +22,11 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 col-xl-5">
+<<<<<<< HEAD
                         <div class="card overflow-hidden rounded-3">
+=======
+                        <div class="card overflow-hidden" style="border-radius: 20px">
+>>>>>>> a657d0703513bf02bd3c3e083fe368087d0c8660
                             <div class="card-body pt-0">
                                 
                                 <h3 class="text-center mt-5 mb-4">
