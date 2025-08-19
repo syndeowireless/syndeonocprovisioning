@@ -1,6 +1,16 @@
 <div class="vertical-menu" style="background: #13395d !important; border-right: 5px solid #fbbf0f;" collapsed>
 
                 <div data-simplebar class="h-100">
+                    <div class="sidebar-logo" style="text-align: center; padding: 16px 0; background-color: #13395d;">
+                        <a href="{{ url('/') }}">
+                        @if(file_exists(public_path('assets/images/logo-light.png')))
+    <img src="{{ asset('assets/images/logo-light.png') }}" alt="Logo" height="50">
+@else
+    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Logo" height="50">
+@endif
+
+                        </a>
+                    </div>
 
                     <!--- Sidemenu -->
                     <div id="sidebar-menu">
