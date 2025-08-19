@@ -13,8 +13,7 @@
         <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- App Css-->
         <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-
-
+        
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -23,16 +22,16 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 col-xl-5">
-                        <div class="card overflow-hidden">
+                        <div class="card overflow-hidden rounded-3">
                             <div class="card-body pt-0">
-
+                                
                                 <h3 class="text-center mt-5 mb-4">
                                     <a href="{{ url('/') }}" class="d-block auth-logo">
                                         <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-dark" style="width: 50%;">
                                         <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="20" class="auth-logo-light" style="width: 50%;">
                                     </a>
                                 </h3>
-
+                                
                                 <div class="p-3">
                                     @yield('content')
                                 </div>

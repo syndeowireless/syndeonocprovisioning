@@ -1,4 +1,5 @@
 @extends('layouts.guest')
+
 @section('content')
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -40,16 +41,12 @@
         </div>
 
         <!-- Forgot Password Link -->
-        <div class="flex justify-between items-center mt-4">
+        <div class="mt-4">
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
                     Forgot your password?
                 </a>
             @endif
-
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 ml-4" href="{{ route('register') }}">
-                Register
-            </a>
         </div>
     </form>
 @endsection
