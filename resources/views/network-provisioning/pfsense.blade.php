@@ -104,6 +104,29 @@
         background-color: #13395d;
         border-color: #fbbf0f;
     }
+    .password-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .password-icon {
+        color: #64748b;
+        cursor: pointer;
+        font-size: 18px;
+        transition: color 0.2s;
+    }
+    .password-icon:hover {
+        color: #13395d;
+    }
+    .password-input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: .95rem;
+        color: #1e293b;
+        font-weight: 500;
+        width: 120px;
+    }
 </style>
 <div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%">
     <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
@@ -123,10 +146,11 @@
                     </div>
                     <div class="pfsense-table-row">
                         <span class="pfsense-label">password</span>
-                        <input class="pfsense-value" type="password" value="{{$randomPassword}}" id= 'password_PFsense'>   
-                        <i type="checkbox" onclick="show_password()">           
-                        <i class="mdi mdi-image-filter-none" onclick="copy_to_clipboard()"></i>
-                        
+                        <div class="password-group">
+                            <input class="password-input" type="password" value="{{$randomPassword}}" id="password_PFsense" readonly>
+                            <i class="mdi mdi-eye password-icon" onclick="show_password()" title="Show/Hide Password"></i>           
+                            <i class="mdi mdi-content-copy password-icon" onclick="copy_to_clipboard()" title="Copy to Clipboard"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -135,12 +159,11 @@
                     <!-- Download Icon -->
                     <i class="mdi mdi-download" style="color: white;"></i>
                     @if(isset($xmlFile))
-                        <a href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}">
+                        <a href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" style="color: white; text-decoration: none;">
                             Download XML
                         </a>
                     @endif
                 </button>
-
 
                 <button class="pfsense-action-btn">
                     <!-- Share Icon -->
@@ -224,36 +247,27 @@
 </div>
 <script>
 function copy_to_clipboard() {
-  
-  var copyText = document.getElementById("password_PFsense");
-
-
-  copyText.select();
-  copyText.setSelectionRange(0, 99999); 
-
-
-  navigator.clipboard.writeText(copyText.value);
-
-
-  alert("Copied the text: " + copyText.value);
+    var copyText = document.getElementById("password_PFsense");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("Copied the text: " + copyText.value);
 }
-</script>
-
-<script>
 
 function show_password() {
-  var x = document.getElementById("password_PFsense");
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
+    var x = document.getElementById("password_PFsense");
+    var icon = event.target;
+    
+    if (x.type === "password") {
+        x.type = "text";
+        icon.classList.remove("mdi-eye");
+        icon.classList.add("mdi-eye-off");
+    } else {
+        x.type = "password";
+        icon.classList.remove("mdi-eye-off");
+        icon.classList.add("mdi-eye");
+    }
 }
-
 </script>
 
 @endsection
-
-
-
-
