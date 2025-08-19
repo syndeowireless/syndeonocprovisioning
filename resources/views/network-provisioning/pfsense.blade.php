@@ -123,7 +123,10 @@
                     </div>
                     <div class="pfsense-table-row">
                         <span class="pfsense-label">password</span>
-                        <span class="pfsense-value">••••••••••••••••••••••</span>
+                        <input class="pfsense-value" type="password" value="{{$randomPassword}}" id= 'password_PFsense'>   
+                        <i type="checkbox" onclick="show_password()">           
+                        <i class="mdi mdi-image-filter-none" onclick="copy_to_clipboard()"></i>
+                        
                     </div>
                 </div>
             </div>
@@ -219,6 +222,38 @@
         Start Provisioning
     </button>
 </div>
+<script>
+function copy_to_clipboard() {
+  
+  var copyText = document.getElementById("password_PFsense");
+
+
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); 
+
+
+  navigator.clipboard.writeText(copyText.value);
+
+
+  alert("Copied the text: " + copyText.value);
+}
+</script>
+
+<script>
+
+function show_password() {
+  var x = document.getElementById("password_PFsense");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
+</script>
+
 @endsection
+
+
 
 
