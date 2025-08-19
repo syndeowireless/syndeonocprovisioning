@@ -251,7 +251,17 @@ function copy_to_clipboard() {
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     navigator.clipboard.writeText(copyText.value);
-    alert("Copied the text: " + copyText.value);
+
+    copyIcon.classList.remove("mdi-content-copy");
+    copyIcon.classList.add("mdi-check");
+    copyIcon.style.color = "#10b981"; // Verde para indicar sucesso
+    
+    // Voltar ao ícone original após 2 segundos
+    setTimeout(function() {
+        copyIcon.classList.remove("mdi-check");
+        copyIcon.classList.add("mdi-content-copy");
+        copyIcon.style.color = "#64748b"; // Cor original
+    }, 2000);
 }
 
 function show_password() {
