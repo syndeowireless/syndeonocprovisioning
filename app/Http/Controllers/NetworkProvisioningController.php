@@ -95,6 +95,7 @@ class NetworkProvisioningController extends Controller
             'propertyName' => $validated['property_name'],
             'ipData' => $ipData,
             'xmlFile' => $xmlFileName,
+            'randomPassword' => $randomPassword
         ]);
     }
 
