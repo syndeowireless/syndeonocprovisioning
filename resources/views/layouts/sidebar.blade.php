@@ -2,18 +2,6 @@
 
                 <div data-simplebar class="h-100">
 
-                    <!-- Logo Section -->
-                    <div class="navbar-brand-box sidebar-logo" style="background-color: #13395d !important; padding: 20px; text-align: center; border-right: 5px solid #fbbf0f;">
-                        <a href="#" class="logo logo-dark">
-                            <span class="logo-lg">
-                                <img src="{{ asset('assets/images/logo-light.png') }}" alt="logo-light" height="50">
-                            </span>
-                            <span class="logo-sm">
-                                <img src="{{ asset('assets/images/logo-sm.png') }}" alt="logo-sm" height="50">
-                            </span>
-                        </a>
-                    </div>
-
                     <!--- Sidemenu -->
                     <div id="sidebar-menu">
                         <!-- Left Menu Start -->
@@ -83,44 +71,6 @@
             <!-- Left Sidebar End -->
 
             <style>
-                /* Sidebar Logo styling */
-                .sidebar-logo {
-                    background-color: #13395d !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                    border-right: 5px solid #fbbf0f !important;
-                }
-                
-                .sidebar-logo .logo {
-                    display: block;
-                    text-decoration: none;
-                }
-                
-                .sidebar-logo .logo img {
-                    transition: all 0.3s ease;
-                }
-                
-                /* Show/hide logos based on sidebar state */
-                .vertical-menu:not([collapsed]) .logo-sm {
-                    display: none;
-                }
-                
-                .vertical-menu[collapsed] .logo-lg {
-                    display: none;
-                }
-                
-                .vertical-menu[collapsed] .logo-sm {
-                    display: inline-block;
-                }
-                
-                .vertical-menu:not([collapsed]) .logo-lg {
-                    display: inline-block;
-                }
-                
-                /* Collapsed sidebar logo adjustments */
-                .vertical-menu[collapsed] .sidebar-logo {
-                    padding: 15px 10px !important;
-                }
-                
                 /* Sobrescreve todos os estilos do metismenu */
                 .vertical-menu,
                 .vertical-menu .metismenu,
@@ -174,20 +124,6 @@
                 .vertical-menu .metismenu .collapse.show,
                 .vertical-menu .metismenu .collapsing {
                     background-color: #13395d !important;
-                }
-                
-                /* Collapsed sidebar adjustments */
-                .vertical-menu[collapsed] {
-                    width: 70px;
-                }
-                
-                .vertical-menu[collapsed] .navbar-brand-box {
-                    padding: 15px 10px;
-                }
-                
-                .vertical-menu[collapsed] .menu-title,
-                .vertical-menu[collapsed] span {
-                    display: none;
                 }
                 
             </style>
