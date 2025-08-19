@@ -25,28 +25,28 @@
 </head>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 flex">
+    <div id="layout-wrapper">
+        <!-- Top Navigation -->
+        @include('layouts.navigation')
+
         <!-- Sidebar -->
         @include('layouts.sidebar')
 
-        <div class="flex-1 flex flex-col">
-            <!-- Navigation -->
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Main Content Wrapper that responds to sidebar width -->
+        <div class="main-content">
+            <div class="page-content">
+                <!-- Optional page heading block -->
+                @if (isset($header))
+                    <div class="container-fluid">
                         {{ $header }}
                     </div>
-                </header>
-            @endif
+                @endif
 
-            <!-- Page Content -->
-            <main class="flex-1">
-                {{ $slot ?? '' }}
-                @yield('content')
-            </main>
+                <div class="container-fluid">
+                    {{ $slot ?? '' }}
+                    @yield('content')
+                </div>
+            </div>
         </div>
     </div>
 
