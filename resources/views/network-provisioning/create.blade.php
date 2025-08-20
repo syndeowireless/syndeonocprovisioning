@@ -89,15 +89,20 @@
     font-size: 0.875rem !important;
 }
 
+/* STANDARDIZED INPUT SIZES - All inputs will have exact same dimensions */
 .form-input, .form-select {
     width: 100% !important;
+    height: 42px !important;
     padding: 0.625rem !important;
     border: 1px solid #d1d5db !important;
     border-radius: 6px !important;
     font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
     transition: all 0.2s ease !important;
     background: white !important;
     color: #374151 !important;
+    box-sizing: border-box !important;
+    vertical-align: top !important;
 }
 
 .form-input:focus, .form-select:focus {
@@ -109,6 +114,24 @@
 .form-input::placeholder {
     color: #9ca3af !important;
     font-weight: 400 !important;
+}
+
+/* Ensure select elements match input height exactly */
+.form-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+    padding-right: 2.5rem !important;
+}
+
+/* Readonly inputs should maintain same size */
+.form-input[readonly] {
+    background-color: #f9fafb !important;
+    cursor: not-allowed !important;
 }
 
 .submit-button {
@@ -140,6 +163,14 @@
 .map-container {
     grid-column: 1 / -1 !important;
     margin-top: 0.5rem !important;
+}
+
+/* Switch container alignment to match input height */
+.switch-container {
+    display: flex !important;
+    align-items: center !important;
+    height: 42px !important;
+    padding-top: 0 !important;
 }
 
 @media (max-width: 768px) {
@@ -364,11 +395,9 @@
                         <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
                     </div>
                     <div class="form-group">
-                        <div class="flex items-center pt-6">
-                            <label class="form-label mr-3 mb-0" for="static_ip_check">
-                                Static IP
-                            </label>
-                            <label class="switch ml-2">
+                        <label class="form-label" for="static_ip_check">Static IP</label>
+                        <div class="switch-container">
+                            <label class="switch">
                                 <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
                                 <span class="slider"></span>
                             </label>

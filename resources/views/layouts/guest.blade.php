@@ -19,8 +19,8 @@
         <style>
             /* Page transition styles */
             body.fade-init { opacity: 0; }
-            body.fade-in { opacity: 1; transition: opacity 250ms ease; }
-            body.fade-out { opacity: 0; transition: opacity 200ms ease; }
+            body.fade-in { opacity: 1; transition: opacity 100ms ease; }
+            body.fade-out { opacity: 0; transition: opacity 80ms ease; }
 
             /* Element reveal animations */
             :root {
