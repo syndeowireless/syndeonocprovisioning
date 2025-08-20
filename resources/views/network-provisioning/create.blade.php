@@ -254,6 +254,16 @@
         border: 1px solid #e5e7eb !important;
     }
     
+    #map_placeholder {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+        min-height: 300px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+    
     .leaflet-container {
         z-index: 10 !important;
         border-radius: 8px !important;
@@ -324,8 +334,18 @@
                     </div>
                 </div>
                 
-                <div class="map-container">
+                <div class="map-container" id="map_container" style="display: none;">
                     <div id="map"></div>
+                </div>
+                
+                <!-- Placeholder text when map is hidden -->
+                <div id="map_placeholder" class="text-center py-8 px-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <p class="text-gray-500 text-sm font-medium">Enter a property address above to view the map</p>
+                    <p class="text-gray-400 text-xs mt-2">Or manually enter coordinates below</p>
                 </div>
                 
                 <div class="grid-container">
@@ -483,7 +503,7 @@ class OpenStreetMapHandler {
         }
         
         console.log('Inicializando OpenStreetMap Handler...');
-        this.initMap();
+        // Não inicializar o mapa imediatamente - será feito quando um endereço for selecionado
         this.setupEventListeners();
     }
     
@@ -552,6 +572,23 @@ class OpenStreetMapHandler {
                 }
             }, 500); // Aumentei o delay para 500ms para evitar muitas requisições
         });
+        
+        // Ocultar mapa quando o campo de endereço for limpo
+        addressInput.addEventListener('change', (e) => {
+            const query = e.target.value.trim();
+            if (query === '' || query !== this.selectedAddressText) {
+                this.hideMap();
+            }
+        });
+        
+        // Mostrar mapa quando coordenadas forem inseridas manualmente
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        
+        if (latInput && lngInput) {
+            latInput.addEventListener('input', () => this.checkManualCoordinates());
+            lngInput.addEventListener('input', () => this.checkManualCoordinates());
+        }
         
         // Ocultar sugestões quando clicar fora
         document.addEventListener('click', (e) => {
@@ -635,9 +672,33 @@ class OpenStreetMapHandler {
         // Atualizar campos de coordenadas
         this.updateCoordinateFields(lat, lng);
         
-        // Adicionar marcador e centralizar mapa
-        this.addMarker(lat, lng);
-        this.map.setView([lat, lng], 15);
+        // Mostrar o container do mapa e ocultar o placeholder
+        const mapContainer = document.getElementById('map_container');
+        const mapPlaceholder = document.getElementById('map_placeholder');
+        
+        if (mapContainer) {
+            mapContainer.style.display = 'block';
+        }
+        
+        if (mapPlaceholder) {
+            mapPlaceholder.style.display = 'none';
+        }
+        
+        // Inicializar o mapa se ainda não foi inicializado
+        if (!this.map) {
+            this.initMap(lat, lng, 15);
+        } else {
+            // Adicionar marcador e centralizar mapa
+            this.addMarker(lat, lng);
+            this.map.setView([lat, lng], 15);
+        }
+        
+        // Invalidar o tamanho do mapa para garantir renderização correta
+        setTimeout(() => {
+            if (this.map) {
+                this.map.invalidateSize();
+            }
+        }, 100);
     }
     
     // Adicionar marcador no mapa
@@ -684,6 +745,85 @@ class OpenStreetMapHandler {
             this.map.setView([lat, lng], zoom);
         }
     }
+    
+    // Ocultar o mapa
+    hideMap() {
+        const mapContainer = document.getElementById('map_container');
+        const mapPlaceholder = document.getElementById('map_placeholder');
+        
+        if (mapContainer) {
+            mapContainer.style.display = 'none';
+        }
+        
+        if (mapPlaceholder) {
+            mapPlaceholder.style.display = 'block';
+        }
+        
+        // Limpar coordenadas selecionadas
+        this.selectedCoordinates = null;
+        this.selectedAddressText = '';
+        
+        // Limpar campos de coordenadas
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        if (latInput && lngInput) {
+            latInput.value = '';
+        }
+        if (lngInput) {
+            lngInput.value = '';
+        }
+        
+        // Remover marcador se existir
+        if (this.marker && this.map) {
+            this.map.removeLayer(this.marker);
+            this.marker = null;
+        }
+    }
+    
+    // Verificar se coordenadas foram inseridas manualmente
+    checkManualCoordinates() {
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        
+        if (latInput && lngInput) {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+            
+            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                // Mostrar mapa e marcar localização
+                const mapContainer = document.getElementById('map_container');
+                const mapPlaceholder = document.getElementById('map_placeholder');
+                
+                if (mapContainer) {
+                    mapContainer.style.display = 'block';
+                }
+                
+                if (mapPlaceholder) {
+                    mapPlaceholder.style.display = 'none';
+                }
+                
+                // Inicializar mapa se necessário
+                if (!this.map) {
+                    this.initMap(lat, lng, 15);
+                } else {
+                    this.map.setView([lat, lng], 15);
+                }
+                
+                // Adicionar marcador
+                this.addMarker(lat, lng);
+                
+                // Atualizar coordenadas selecionadas
+                this.selectedCoordinates = { lat, lng };
+                
+                // Invalidar tamanho do mapa
+                setTimeout(() => {
+                    if (this.map) {
+                        this.map.invalidateSize();
+                    }
+                }, 100);
+            }
+        }
+    }
 }
 
 // Função para toggle dos campos de IP estático
@@ -701,6 +841,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Pequeno delay para garantir que todos os recursos foram carregados
     setTimeout(() => {
         mapHandler = new OpenStreetMapHandler();
+        
+        // Verificar se há coordenadas existentes (por exemplo, de validação de formulário)
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        
+        if (latInput && lngInput && latInput.value && lngInput.value) {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                // Se há coordenadas válidas, mostrar o mapa
+                setTimeout(() => {
+                    mapHandler.checkManualCoordinates();
+                }, 200);
+            }
+        }
     }, 100);
 });
 </script>
