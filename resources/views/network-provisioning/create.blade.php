@@ -55,59 +55,55 @@
 
 /* Enhanced Form Styles */
 .form-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    min-height: 100vh !important;
-    padding: 2rem 0 !important;
+    background: #f9fafb !important;
+    min-height: calc(100vh-80px) !important;
+    padding: 1rem 0 !important;
 }
 
 .form-wrapper {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 24px !important;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
-    padding: 3rem !important;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 2rem !important;
+    border: 1px solid #e5e7eb !important;
 }
 
 .form-title {
-    padding-top: 1.5rem !important;
-    padding-bottom: 2rem !important;
-    font-size: 2rem !important;
-    font-weight: 700 !important;
-    color: #1f2937 !important;
-    letter-spacing: -0.025em !important;
-    margin-bottom: 2.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 1rem !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 1.5rem !important;
 }
 
 .form-group {
-    margin-bottom: 2rem !important;
+    margin-bottom: 1.25rem !important;
 }
 
 .form-label {
     display: block !important;
     color: #374151 !important;
-    font-weight: 600 !important;
-    margin-bottom: 0.75rem !important;
-    font-size: 0.95rem !important;
-    letter-spacing: 0.01em !important;
+    font-weight: 500 !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.875rem !important;
 }
 
 .form-input, .form-select {
     width: 100% !important;
-    padding: 0.875rem 1rem !important;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 12px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s ease !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: #1f2937 !important;
+    padding: 0.75rem !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    background: white !important;
+    color: #374151 !important;
 }
 
 .form-input:focus, .form-select:focus {
     outline: none !important;
     border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-    background: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
 }
 
 .form-input::placeholder {
@@ -116,47 +112,44 @@
 }
 
 .submit-button {
-    background: linear-gradient(135deg, #13395d 0%, #1e5a8a 100%) !important;
+    background: #13395d !important;
     color: white !important;
     border: 2px solid #fbbf0f !important;
-    padding: 1rem 2.5rem !important;
-    border-radius: 12px !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    letter-spacing: 0.025em !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 15px rgba(19, 57, 93, 0.3) !important;
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
-    min-width: 150px !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    min-width: 120px !important;
 }
 
 .submit-button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(19, 57, 93, 0.4) !important;
-    background: linear-gradient(135deg, #1e5a8a 0%, #13395d 100%) !important;
+    background: #1e40af !important;
+    transform: translateY(-1px) !important;
 }
 
 .grid-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 2rem !important;
-    margin-bottom: 1.5rem !important;
+    gap: 1.5rem !important;
+    margin-bottom: 1rem !important;
 }
 
 @media (max-width: 768px) {
     .grid-container {
         grid-template-columns: 1fr !important;
-        gap: 1.5rem !important;
+        gap: 1rem !important;
     }
     
     .form-wrapper {
-        padding: 2rem !important;
-        border-radius: 20px !important;
+        padding: 1.5rem !important;
+        border-radius: 12px !important;
     }
     
     .form-title {
-        font-size: 1.75rem !important;
+        font-size: 1.375rem !important;
     }
 }
 </style>
@@ -175,32 +168,31 @@
         z-index: 1000;
         max-height: 200px;
         overflow-y: auto;
-        border-radius: 12px !important;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid #e5e7eb !important;
     }
     
     .address-suggestion {
-        padding: 12px 16px !important;
+        padding: 8px 12px !important;
         cursor: pointer;
         border-bottom: 1px solid #f3f4f6;
         background-color: white;
         transition: all 0.2s ease !important;
-        font-size: 0.9rem !important;
+        font-size: 0.875rem !important;
     }
     
     .address-suggestion:hover {
         background-color: #f8fafc !important;
-        padding-left: 20px !important;
     }
     
     .address-suggestion:last-child {
         border-bottom: none;
-        border-radius: 0 0 12px 12px !important;
+        border-radius: 0 0 8px 8px !important;
     }
     
     .address-suggestion:first-child {
-        border-radius: 12px 12px 0 0 !important;
+        border-radius: 8px 8px 0 0 !important;
     }
 
     /* Ajustar z-index dos controles do Leaflet */
@@ -217,27 +209,26 @@
         width: 100% !important;
         z-index: 10 !important;
         position: relative;
-        border-radius: 12px !important;
-        margin-top: 15px !important;
+        border-radius: 8px !important;
+        margin-top: 10px !important;
         margin-left: 0 !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-        border: 2px solid #e5e7eb !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid #e5e7eb !important;
     }
     
     .leaflet-container {
         z-index: 10 !important;
-        border-radius: 12px !important;
+        border-radius: 8px !important;
     }
 
     /* Enhanced error styling */
     .error-container {
-        background: rgba(239, 68, 68, 0.1) !important;
-        border: 2px solid rgba(239, 68, 68, 0.3) !important;
+        background: #fef2f2 !important;
+        border: 1px solid #fecaca !important;
         color: #dc2626 !important;
-        padding: 1rem 1.5rem !important;
-        border-radius: 12px !important;
-        margin-top: 1.5rem !important;
-        backdrop-filter: blur(10px) !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 8px !important;
+        margin-top: 1rem !important;
     }
 </style>
 
@@ -245,8 +236,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="form-container flex justify-center items-center min-h-screen">
-    <div class="max-w-5xl w-full px-6">
+<div class="form-container flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
+    <div class="max-w-4xl w-full px-4 py-8">
         <div class="form-wrapper">
             <h1 class="form-title text-center">Create Network Provisioning</h1>
 
