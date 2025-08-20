@@ -44,10 +44,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-5 text-center">
-                            @yield('footer-links')
-                            © <script>document.write(new Date().getFullYear())</script> Syndeo Wireless <span class="d-none d-sm-inline-block"></span>
-                        </div>
+                        @yield('footer-links')
                     </div>
                 </div>
             </div>
