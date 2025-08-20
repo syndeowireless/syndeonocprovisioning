@@ -48,7 +48,7 @@
                 </a>
             @endif
         </div>
-        <div class="mt-1 text-center">
+        <div class="mt-4 text-center">
             © <script>document.write(new Date().getFullYear())</script> Syndeo Wireless <span class="d-none d-sm-inline-block"></span>
         </div>
     </form>

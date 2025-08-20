@@ -12,12 +12,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(IpSeeder::class);
+        
 
-        $this->call(xmlTemplateSeeder::class);
+        
+
+        // never truncate/seed demo data in production
+        if (! app()->environment('production')) {
+            $this->call([
+                IpSeeder::class,
+                xmlTemplateSeeder::class,
+            ]);
+        }
+    
+        // If you truly have prod seeders, gate them behind an env flag:
+        if (env('ALLOW_PROD_SEEDING', false)) {
+            $this->call([
+                // Seeders that add non-destructive reference data
+            ]);
+        }
+
+
+
+        
 
     }
     
 
 
 }
+
+
