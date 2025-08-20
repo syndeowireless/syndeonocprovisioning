@@ -1,6 +1,10 @@
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
+            <!-- LOGO -->
+            <div class="navbar-brand-box" style="background-color: #13395d;
+            padding-top: 20px;border-right:5px solid #fbbf0f" >
+            </div>
 
             <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect vertical-menu-btn">
                 <i class="mdi mdi-menu"></i>

@@ -21,8 +21,8 @@
 @section("content")
 <div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
     <div class="max-w-4xl px-6 py-10" style="width: 85%;padding-top: 3%;">
-        <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 p-10">
-            <h1 class="text-3xl font-bold mb-10 text-center text-gray-800 tracking-tight">Create Network Provisioning</h1>
+        <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-10">
+            <h1 class="text-3xl font-bold mb-10 pt-6 text-center text-gray-800 tracking-tight">Create Network Provisioning</h1>
 
             <form method="POST" action="" class="space-y-8">
                 @csrf
@@ -146,7 +146,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="form-group pt-8 text-center">
+                <div class="form-group pt-8 pb-6 text-center">
                     <button type="submit" 
                             class="px-12 py-4 font-semibold text-lg rounded-xl hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105 shadow-lg"
                            style="background-color: #13395d;color: white;border: 3px solid #fbbf0f;">
