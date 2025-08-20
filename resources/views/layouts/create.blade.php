@@ -20,135 +20,137 @@
 
 @section("content")
 <div class="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
-    <div class="max-w-4xl px-4 py-8" style="width: 80%;padding-top: 5%;">
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <h1 class="text-2xl font-bold mb-8 text-center text-black">Create Network Provisioning</h1>
+    <div class="max-w-4xl px-6 py-10" style="width: 85%;padding-top: 3%;">
+        <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 p-10">
+            <h1 class="text-3xl font-bold mb-10 text-center text-gray-800 tracking-tight">Create Network Provisioning</h1>
 
-                <form method="POST" action="" class="space-y-6">
-                    @csrf
+            <form method="POST" action="" class="space-y-8">
+                @csrf
 
-                    <!-- Linha 1: Property Name / OEM -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Property Name</label>
-                            <input type="text" name="property_name" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the property name">
-                        </div>
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">OEM</label>
-                            <input type="text" name="oem" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the OEM">
-                        </div>
+                <!-- Linha 1: Property Name / OEM -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Property Name</label>
+                        <input type="text" name="property_name" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the property name">
                     </div>
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">OEM</label>
+                        <input type="text" name="oem" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the OEM">
+                    </div>
+                </div>
 
-                    <!-- Linha 2: Property Address / Remote Unit Quantity -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!--<div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Property Address</label>
-                            <input type="text" name="property_address" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the property full address">
-                        </div>-->
+                <!-- Linha 2: Property Address / Remote Unit Quantity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Property Address</label>
                         <div class="relative">
                             <input type="text" 
                                    id="property_address" 
                                    placeholder="Digite o endereço completo"
-                                   autocomplete="off">
+                                   autocomplete="off"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400">
                             <div id="address_suggestions" 
-                                 class="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-48 overflow-y-auto">
+                                 class="absolute z-50 w-full bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-48 overflow-y-auto mt-1">
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Remote Unit Quantity</label>
-                            <input type="number" name="remote_unit_quantity" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the quantity">
-                        </div>
-                        
-                    </div>
-                    <div id="map" class="w-full h-64 border rounded-lg"></div>
-                    <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Master Unit Quantity</label>
-                            <input type="number" name="master_unit_quantity" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the quantity">
-                        </div>
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">BDA Quantity</label>
-                            <input type="number" name="bda_quantity" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the quantity">
-                        </div>
                     </div>
 
-                    <!-- Linha 4: Latitude / Longitude -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Latitude</label>
-                            <input type="text" name="latitude" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the latitude">
-                        </div>
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Longitude</label>
-                            <input type="text" name="longitude" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Type the longitude">
-                        </div>
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Remote Unit Quantity</label>
+                        <input type="number" name="remote_unit_quantity" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the quantity">
                     </div>
+                </div>
 
-                    <!-- Linha 5: Property Type / Average Density -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Property Type</label>
-                            <select name="property_type" required
-                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select the property type</option>
-                                <option value="Hotel">Hotel</option>
-                                <option value="Factory">Factory</option>
-                                <option value="Office">Office</option>
-                                <option value="Residencial">Residencial</option>
-                                <option value="Others">Others</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">Average Density</label>
-                            <select name="average_density" required
-                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select the density</option>
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
-                            </select>
-                        </div>
-                    </div>
+                <!-- Map Section -->
+                <div class="form-group">
+                    <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Location Map</label>
+                    <div id="map" class="w-full h-72 border-2 border-gray-200 rounded-xl shadow-inner"></div>
+                </div>
 
-                    <!-- Linha 6: System Type -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="form-group">
-                            <label class="block text-gray-700 font-medium mb-2 text-black">System Type</label>
-                            <select name="system_type" required
-                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select the system type</option>
-                                <option value="DAS">DAS</option>
-                                <option value="ERRCS">ERRCS</option>
-                                <option value="DAS & ERRCS">DAS & ERRCS</option>
-                            </select>
-                        </div>
+                <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Master Unit Quantity</label>
+                        <input type="number" name="master_unit_quantity" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the quantity">
                     </div>
-                </form>
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">BDA Quantity</label>
+                        <input type="number" name="bda_quantity" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the quantity">
+                    </div>
+                </div>
+
+                <!-- Linha 4: Latitude / Longitude -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Latitude</label>
+                        <input type="text" name="latitude" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the latitude">
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Longitude</label>
+                        <input type="text" name="longitude" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
+                               placeholder="Type the longitude">
+                    </div>
+                </div>
+
+                <!-- Linha 5: Property Type / Average Density -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Property Type</label>
+                        <select name="property_type" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 bg-white">
+                            <option value="">Select the property type</option>
+                            <option value="Hotel">Hotel</option>
+                            <option value="Factory">Factory</option>
+                            <option value="Office">Office</option>
+                            <option value="Residencial">Residencial</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Average Density</label>
+                        <select name="average_density" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 bg-white">
+                            <option value="">Select the density</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Linha 6: System Type -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="form-group">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">System Type</label>
+                        <select name="system_type" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 bg-white">
+                            <option value="">Select the system type</option>
+                            <option value="DAS">DAS</option>
+                            <option value="ERRCS">ERRCS</option>
+                            <option value="DAS & ERRCS">DAS & ERRCS</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Submit Button -->
-                <div class="form-group pt-6 text-center">
+                <div class="form-group pt-8 text-center">
                     <button type="submit" 
-                            class="px-8 py-3 font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all"
-                           style="background-color: #13395d;color: white;border: 2px solid #fbbf0f;padding-right: 10px;padding-left: 10px;">
-                        Create
+                            class="px-12 py-4 font-semibold text-lg rounded-xl hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                           style="background-color: #13395d;color: white;border: 3px solid #fbbf0f;">
+                        Create Provisioning
                     </button>
                 </div>
             </form>
@@ -157,31 +159,44 @@
 </div>
 
 <style>
-    /* Estilos para as sugestões de endereço */
+    /* Enhanced styles for address suggestions */
     #address_suggestions {
         top: 100%;
         left: 0;
         z-index: 1000;
+        backdrop-filter: blur(8px);
     }
     
     .address-suggestion {
-        padding: 10px;
+        padding: 12px 16px;
         cursor: pointer;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #f3f4f6;
         background-color: white;
+        transition: all 0.15s ease;
+        font-size: 14px;
+        color: #4b5563;
     }
     
     .address-suggestion:hover {
-        background-color: #f5f5f5;
+        background-color: #f8fafc;
+        transform: translateX(4px);
+        border-left: 3px solid #3b82f6;
     }
     
     .address-suggestion:last-child {
         border-bottom: none;
+        border-radius: 0 0 12px 12px;
     }
 
-    /* Ajustar z-index dos controles do Leaflet */
+    .address-suggestion:first-child {
+        border-radius: 12px 12px 0 0;
+    }
+
+    /* Enhanced Leaflet map controls */
     .leaflet-control-zoom {
         z-index: 100 !important;
+        border-radius: 8px !important;
+        overflow: hidden;
     }
     
     .leaflet-control-container {
@@ -195,6 +210,31 @@
     
     .leaflet-container {
         z-index: 10 !important;
+    }
+
+    /* Enhanced form input focus animations */
+    .form-group input:focus,
+    .form-group select:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Custom scrollbar for address suggestions */
+    #address_suggestions::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #address_suggestions::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+    }
+
+    #address_suggestions::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+
+    #address_suggestions::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
     }
 </style>
 
