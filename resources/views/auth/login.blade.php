@@ -29,7 +29,7 @@
         <div class="mb-3 row mt-4">
             <div class="col-6">
                 <div class="form-check">
-                    <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
+                    <input id="remember_me" type="checkbox" class="form-check-input" name="remember" value="1">
                     <label class="form-check-label" for="remember_me">{{ __('Remember me') }}</label>
                 </div>
             </div>
