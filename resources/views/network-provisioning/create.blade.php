@@ -151,8 +151,10 @@
 }
 
 .submit-button:hover {
-    background: #1e40af !important;
+    background: #FBBF0F !important;
+    border: #13395D !important;
     transform: translateY(-1px) !important;
+    color: #000;
 }
 
 .grid-container {
