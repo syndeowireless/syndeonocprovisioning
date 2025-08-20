@@ -54,7 +54,7 @@
                 <p class="text-muted mb-0 font-size-14 mt-2" style="text-align:center;">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a>
             </div>
         </div>
-        <div class="mt-1 text-center">
+        <div class="mt-4 text-center">
             © <script>document.write(new Date().getFullYear())</script> Syndeo Wireless <span class="d-none d-sm-inline-block"></span>
         </div>
     </form>

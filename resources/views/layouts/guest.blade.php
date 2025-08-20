@@ -54,7 +54,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 col-xl-5">
                         <div class="card overflow-hidden rounded-3">
-                        <div class="card overflow-hidden" style="border-radius: 20px">
+                        <div class="card overflow-hidden" style="border-radius: 20px; margin-bottom: 0px !important">
                             <div class="card-body pt-0">
                                 
                                 <h3 class="text-center mt-5 mb-4">
