@@ -196,6 +196,7 @@
     /* Estilos para as sugestões de endereço */
     .address-input-container {
         position: relative;
+        margin-bottom: 0.5rem !important;
     }
     
     #address_suggestions {
@@ -203,34 +204,178 @@
         top: 100%;
         left: 0;
         right: 0;
-        z-index: 1000;
+        z-index: 9999 !important;
         max-height: 200px;
         overflow-y: auto;
         border-radius: 8px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
         border: 1px solid #e5e7eb !important;
+        background-color: white !important;
+        margin-top: 4px !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
     }
     
     .address-suggestion {
-        padding: 8px 12px !important;
+        padding: 12px 16px !important;
         cursor: pointer;
-        border-bottom: 1px solid #f3f4f6;
-        background-color: white;
+        border-bottom: 1px solid #f1f5f9 !important;
+        background-color: white !important;
         transition: all 0.2s ease !important;
         font-size: 0.875rem !important;
+        line-height: 1.4 !important;
+        color: #374151 !important;
+        font-weight: 400 !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .address-suggestion::before {
+        content: '' !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 3px !important;
+        background: #3b82f6 !important;
+        transform: scaleY(0) !important;
+        transition: transform 0.2s ease !important;
+    }
+    
+    .address-suggestion:hover::before {
+        transform: scaleY(1) !important;
+    }
+    
+    /* Estado de carregamento para as sugestões */
+    #address_suggestions.loading {
+        position: relative !important;
+    }
+    
+    #address_suggestions.loading::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin: -10px 0 0 -10px !important;
+        border: 2px solid #e5e7eb !important;
+        border-top: 2px solid #3b82f6 !important;
+        border-radius: 50% !important;
+        animation: spin 1s linear infinite !important;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg) !important; }
+        100% { transform: rotate(360deg) !important; }
+    }
+    
+    /* Melhorar a aparência quando não há sugestões */
+    #address_suggestions:empty::before {
+        content: 'No addresses found' !important;
+        display: block !important;
+        padding: 16px !important;
+        text-align: center !important;
+        color: #6b7280 !important;
+        font-style: italic !important;
     }
     
     .address-suggestion:hover {
         background-color: #f8fafc !important;
+        color: #1f2937 !important;
+        font-weight: 500 !important;
+        transform: translateX(2px) !important;
     }
     
     .address-suggestion:last-child {
-        border-bottom: none;
+        border-bottom: none !important;
         border-radius: 0 0 8px 8px !important;
     }
     
     .address-suggestion:first-child {
         border-radius: 8px 8px 0 0 !important;
+    }
+    
+    /* Estilização da scrollbar para as sugestões */
+    #address_suggestions::-webkit-scrollbar {
+        width: 6px !important;
+    }
+    
+    #address_suggestions::-webkit-scrollbar-track {
+        background: #f1f5f9 !important;
+        border-radius: 3px !important;
+    }
+    
+    #address_suggestions::-webkit-scrollbar-thumb {
+        background: #cbd5e1 !important;
+        border-radius: 3px !important;
+    }
+    
+    #address_suggestions::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8 !important;
+    }
+    
+    /* Animação de entrada para as sugestões */
+    #address_suggestions {
+        animation: slideDown 0.2s ease-out !important;
+        transform-origin: top !important;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0 !important;
+            transform: translateY(-10px) scale(0.95) !important;
+        }
+        to {
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+        }
+    }
+    
+    /* Melhorar o espaçamento do container de endereço */
+    .address-input-container {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Garantir que as sugestões não sobreponham outros elementos */
+    .form-group:has(.address-input-container) {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Adicionar espaço extra quando as sugestões estão visíveis */
+    .address-input-container:has(#address_suggestions:not(.hidden)) {
+        margin-bottom: 220px !important; /* Altura das sugestões + margem */
+    }
+    
+    /* Responsividade para dispositivos móveis */
+    @media (max-width: 768px) {
+        .address-input-container:has(#address_suggestions:not(.hidden)) {
+            margin-bottom: 180px !important;
+        }
+        
+        #address_suggestions {
+            max-height: 150px !important;
+        }
+        
+        .address-suggestion {
+            padding: 10px 14px !important;
+            font-size: 0.8rem !important;
+        }
+    }
+    
+    /* Estilização especial para o campo de endereço */
+    .address-input-container input[name="property_address"] {
+        border-bottom-right-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom: 1px solid #d1d5db !important;
+    }
+    
+    /* Quando as sugestões estão visíveis, ajustar o border-radius */
+    .address-input-container:has(#address_suggestions:not(.hidden)) input[name="property_address"] {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-bottom: 1px solid #3b82f6 !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
     }
 
     /* Ajustar z-index dos controles do Leaflet */
@@ -555,10 +700,17 @@ class OpenStreetMapHandler {
             this.searchTimeout = setTimeout(async () => {
                 if (query.length >= 3) {
                     console.log('Buscando endereços para:', query);
+                    
+                    // Mostrar estado de carregamento
+                    suggestionsDiv.innerHTML = '';
+                    suggestionsDiv.classList.remove('hidden');
+                    suggestionsDiv.classList.add('loading');
+                    
                     const suggestions = await this.searchAddresses(query);
                     this.showAddressSuggestions(suggestions);
                 } else {
                     suggestionsDiv.classList.add('hidden');
+                    suggestionsDiv.classList.remove('loading');
                 }
             }, 500); // Aumentei o delay para 500ms para evitar muitas requisições
         });
@@ -584,6 +736,13 @@ class OpenStreetMapHandler {
         document.addEventListener('click', (e) => {
             if (!addressInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
                 suggestionsDiv.classList.add('hidden');
+            }
+        });
+        
+        // Ajustar posição das sugestões quando a janela for redimensionada
+        window.addEventListener('resize', () => {
+            if (!suggestionsDiv.classList.contains('hidden')) {
+                this.adjustSuggestionsPosition();
             }
         });
         
@@ -624,11 +783,13 @@ class OpenStreetMapHandler {
         
         if (suggestions.length === 0) {
             suggestionsDiv.classList.add('hidden');
+            suggestionsDiv.classList.remove('loading');
             console.log('Nenhuma sugestão encontrada');
             return;
         }
         
         console.log('Mostrando', suggestions.length, 'sugestões');
+        suggestionsDiv.classList.remove('loading');
         suggestionsDiv.innerHTML = '';
         
         suggestions.forEach(suggestion => {
@@ -640,6 +801,39 @@ class OpenStreetMapHandler {
         });
         
         suggestionsDiv.classList.remove('hidden');
+        
+        // Ajustar posição se necessário para evitar sobreposição
+        this.adjustSuggestionsPosition();
+    }
+    
+    // Ajustar posição das sugestões para evitar sobreposição
+    adjustSuggestionsPosition() {
+        const suggestionsDiv = document.getElementById(this.suggestionsId);
+        const addressInput = document.getElementById(this.addressInputId);
+        
+        if (!suggestionsDiv || !addressInput) return;
+        
+        const inputRect = addressInput.getBoundingClientRect();
+        const suggestionsRect = suggestionsDiv.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Verificar se há espaço suficiente abaixo do input
+        const spaceBelow = viewportHeight - inputRect.bottom;
+        const suggestionsHeight = Math.min(suggestionsRect.height, 200); // max-height
+        
+        if (spaceBelow < suggestionsHeight + 20) {
+            // Se não há espaço suficiente abaixo, mostrar acima do input
+            suggestionsDiv.style.top = 'auto';
+            suggestionsDiv.style.bottom = '100%';
+            suggestionsDiv.style.marginTop = '0';
+            suggestionsDiv.style.marginBottom = '4px';
+        } else {
+            // Posição padrão abaixo do input
+            suggestionsDiv.style.top = '100%';
+            suggestionsDiv.style.bottom = 'auto';
+            suggestionsDiv.style.marginTop = '4px';
+            suggestionsDiv.style.marginBottom = '0';
+        }
     }
     
     // Selecionar um endereço
