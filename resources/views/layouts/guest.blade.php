@@ -21,6 +21,31 @@
             body.fade-init { opacity: 0; }
             body.fade-in { opacity: 1; transition: opacity 250ms ease; }
             body.fade-out { opacity: 0; transition: opacity 200ms ease; }
+
+            /* Element reveal animations */
+            :root {
+                --reveal-distance: 16px;
+                --reveal-duration: 500ms;
+                --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .reveal-up {
+                opacity: 0;
+                transform: translateY(var(--reveal-distance));
+                transition: opacity var(--reveal-duration) var(--reveal-ease) var(--reveal-delay, 0ms),
+                            transform var(--reveal-duration) var(--reveal-ease) var(--reveal-delay, 0ms);
+                will-change: opacity, transform;
+            }
+            .reveal-up.revealed {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .reveal-up, .reveal-up.revealed {
+                    opacity: 1 !important;
+                    transform: none !important;
+                    transition: none !important;
+                }
+            }
         </style>
     </head>
     <body class="fade-init">
@@ -122,6 +147,44 @@
                     document.body.classList.remove('fade-in');
                     document.body.classList.add('fade-out');
                 });
+            })();
+        </script>
+        <script>
+            // Reveal-on-scroll animations (fade-in up)
+            (function() {
+                var defaultSelectors = [
+                    '.account-pages',
+                    '.card',
+                    '.p-3',
+                    '.row > *'
+                ];
+
+                var collect = function(selector) { return Array.prototype.slice.call(document.querySelectorAll(selector)); };
+                var unique = function(list) { return Array.from(new Set(list)); };
+
+                var elements = unique(
+                    collect('[data-reveal]')
+                        .concat.apply([], defaultSelectors.map(collect))
+                ).filter(function(el) { return !el.classList.contains('reveal-skip'); });
+
+                if (!elements.length) return;
+
+                elements.forEach(function(el, index) {
+                    el.classList.add('reveal-up');
+                    el.style.setProperty('--reveal-delay', (index * 60) + 'ms');
+                });
+
+                var observer = new IntersectionObserver(function(entries, obs) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            var el = entry.target;
+                            requestAnimationFrame(function() { el.classList.add('revealed'); });
+                            obs.unobserve(el);
+                        }
+                    });
+                }, { threshold: 0.08, rootMargin: '0px 0px -10% 0px' });
+
+                elements.forEach(function(el) { observer.observe(el); });
             })();
         </script>
     </body>
