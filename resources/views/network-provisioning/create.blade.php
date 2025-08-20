@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 @if(session("success"))
     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
         {{ session("success") }}
@@ -72,8 +73,9 @@
     padding-top: 0.5rem !important;
     padding-bottom: 1rem !important;
     font-size: 1.5rem !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 700 !important; /* Bold */
+    color: #2B2B22 !important; /* Your specified color */
     margin-bottom: 1.5rem !important;
 }
 
