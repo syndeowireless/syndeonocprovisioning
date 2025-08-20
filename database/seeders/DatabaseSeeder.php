@@ -21,3 +21,4 @@ class DatabaseSeeder extends Seeder
 
 
 }
+
