@@ -249,7 +249,7 @@
             <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6">
                 @csrf
 
-                <!-- Linha 1: Property Name / OEM -->
+                <!-- Linha 1: Property Name / Property Type -->
                 <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Property Name</label>
@@ -257,9 +257,23 @@
                                class="form-input" placeholder="Type the property name">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">OEM</label>
-                        <input type="text" name="oem" value="{{ old('oem') }}"
-                               class="form-input" placeholder="Type the OEM">
+                        <label class="form-label">Property Type</label>
+                        <select name="property_type" class="form-select">
+                            <option value="">Select the property type</option>
+                            <option value="Education" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
+                            <option value="Healthcare" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
+                            <option value="Hospitality" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
+                            <option value="Industrial" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
+                            <option value="Mixed-Use" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
+                            <option value="Office" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
+                            <option value="Parking Garage" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
+                            <option value="Residential" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
+                            <option value="Retail" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
+                            <option value="Senior Living" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
+                            <option value="Sports&Events" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
+                            <option value="Warehouse" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
+                            <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
+                        </select>
                     </div>
                 </div>
 
@@ -283,59 +297,49 @@
                 
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label">Remote Unit Quantity</label>
-                        <input type="number" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
-                               class="form-input" placeholder="Type the quantity">
+                        <label class="form-label">System Type</label>
+                        <select name="system_type" class="form-select">
+                            <option value="">Select the system type</option>
+                            <option value="DAS" {{ old('system_type') == 'DAS' ? 'selected' : '' }}>DAS</option>
+                            <option value="ERRCS" {{ old('system_type') == 'ERRCS' ? 'selected' : '' }}>ERRCS</option>
+                            <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">OEM</label>
+                        <input type="text" name="oem" value="{{ old('oem') }}"
+                               class="form-input" placeholder="Type the OEM">
+                    </div>
+                </div>
+                <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Master Unit Quantity</label>
                         <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}"
                                class="form-input" placeholder="Type the quantity">
                     </div>
-                </div>
-                <!-- Linha 3: BDA Quantity / Latitude -->
-                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">BDA Quantity</label>
                         <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}"
                                class="form-input" placeholder="Type the quantity">
                     </div>
+                </div>
+
+                <!-- Linha 4: Latitude / Longitude -->
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Latitude</label>
                         <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
                                class="form-input" placeholder="Type the latitude" readonly>
                     </div>
-                </div>
-
-                <!-- Linha 4: Longitude / Property Type -->
-                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Longitude</label>
                         <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
                                class="form-input" placeholder="Type the longitude" readonly>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Property Type</label>
-                        <select name="property_type" class="form-select">
-                            <option value="">Select the property type</option>
-                            <option value="Education" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
-                            <option value="Healthcare" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
-                            <option value="Hospitality" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
-                            <option value="Industrial" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
-                            <option value="Mixed-Use" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
-                            <option value="Office" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
-                            <option value="Parking Garage" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
-                            <option value="Residential" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
-                            <option value="Retail" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
-                            <option value="Senior Living" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
-                            <option value="Sports&Events" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
-                            <option value="Warehouse" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
-                            <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
-                        </select>
-                    </div>
                 </div>
 
-                <!-- Linha 5: Average Density / System Type -->
+                <!-- Linha 5: Average Density / Remote Unit Quantity -->
                 <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Average Density</label>
@@ -347,13 +351,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">System Type</label>
-                        <select name="system_type" class="form-select">
-                            <option value="">Select the system type</option>
-                            <option value="DAS" {{ old('system_type') == 'DAS' ? 'selected' : '' }}>DAS</option>
-                            <option value="ERRCS" {{ old('system_type') == 'ERRCS' ? 'selected' : '' }}>ERRCS</option>
-                            <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
-                        </select>
+                        <label class="form-label">Remote Unit Quantity</label>
+                        <input type="number" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
+                               class="form-input" placeholder="Type the quantity">
                     </div>
                 </div>
 
