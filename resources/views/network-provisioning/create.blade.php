@@ -338,16 +338,6 @@
                     <div id="map"></div>
                 </div>
                 
-                <!-- Placeholder text when map is hidden -->
-                <div id="map_placeholder" class="text-center py-8 px-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <p class="text-gray-500 text-sm font-medium">Enter a property address above to view the map</p>
-                    <p class="text-gray-400 text-xs mt-2">Or manually enter coordinates below</p>
-                </div>
-                
                 <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">System Type</label>
