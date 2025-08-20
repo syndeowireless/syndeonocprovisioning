@@ -78,22 +78,22 @@
 }
 
 .form-group {
-    margin-bottom: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
 }
 
 .form-label {
     display: block !important;
     color: #374151 !important;
     font-weight: 500 !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.375rem !important;
     font-size: 0.875rem !important;
 }
 
 .form-input, .form-select {
     width: 100% !important;
-    padding: 0.75rem !important;
+    padding: 0.625rem !important;
     border: 1px solid #d1d5db !important;
-    border-radius: 8px !important;
+    border-radius: 6px !important;
     font-size: 0.875rem !important;
     transition: all 0.2s ease !important;
     background: white !important;
@@ -133,8 +133,13 @@
 .grid-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 1.5rem !important;
-    margin-bottom: 1rem !important;
+    gap: 1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.map-container {
+    grid-column: 1 / -1 !important;
+    margin-top: 0.5rem !important;
 }
 
 @media (max-width: 768px) {
@@ -209,8 +214,8 @@
         width: 100% !important;
         z-index: 10 !important;
         position: relative;
-        border-radius: 8px !important;
-        margin-top: 10px !important;
+        border-radius: 6px !important;
+        margin-top: 0.5rem !important;
         margin-left: 0 !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
         border: 1px solid #e5e7eb !important;
@@ -260,7 +265,7 @@
 
                 <!-- Linha 2: Property Address / Remote Unit Quantity -->
                 <div class="grid-container">
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label class="form-label">Property Address</label>
                         <div class="address-input-container">
                             <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}"
@@ -269,45 +274,46 @@
                                 class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
                             </div>
                         </div>
-                        <div id="map"></div>
                     </div>
+                </div>
+                
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Remote Unit Quantity</label>
                         <input type="number" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
                                class="form-input" placeholder="Type the quantity">
                     </div>
-                </div>
-
-                <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
-                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Master Unit Quantity</label>
                         <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}"
                                class="form-input" placeholder="Type the quantity">
                     </div>
+                </div>
+                <!-- Linha 3: BDA Quantity / Latitude -->
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">BDA Quantity</label>
                         <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}"
                                class="form-input" placeholder="Type the quantity">
                     </div>
-                </div>
-
-                <!-- Linha 4: Latitude / Longitude -->
-                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Latitude</label>
                         <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
                                class="form-input" placeholder="Type the latitude" readonly>
                     </div>
+                </div>
+
+                <!-- Linha 4: Longitude / Property Type -->
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Longitude</label>
                         <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
                                class="form-input" placeholder="Type the longitude" readonly>
                     </div>
-                </div>
-
-                <!-- Linha 5: Property Type / Average Density -->
-                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Property Type</label>
                         <select name="property_type" class="form-select">
@@ -327,6 +333,10 @@
                             <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
                         </select>
                     </div>
+                </div>
+
+                <!-- Linha 5: Average Density / System Type -->
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">Average Density</label>
                         <select name="average_density" class="form-select">
@@ -336,10 +346,6 @@
                             <option value="High" {{ old('average_density') == 'High' ? 'selected' : '' }}>High</option>
                         </select>
                     </div>
-                </div>
-
-                <!-- Linha 6: System Type -->
-                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label">System Type</label>
                         <select name="system_type" class="form-select">
@@ -349,19 +355,20 @@
                             <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
                         </select>
                     </div>
+                </div>
+
+                <!-- Linha 6: Hostname / Static IP Toggle -->
+                <div class="grid-container">
                     <div class="form-group">
                         <label class="form-label" for="hostname">Hostname (dyndns)</label>
                         <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
                     </div>
-                </div>
-
-                <div class="grid-container">
                     <div class="form-group">
-                        <div class="flex items-center">
-                            <label class="form-label mr-4" for="static_ip_check">
+                        <div class="flex items-center pt-6">
+                            <label class="form-label mr-3 mb-0" for="static_ip_check">
                                 Static IP
                             </label>
-                            <label class="switch ml-3">
+                            <label class="switch ml-2">
                                 <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
                                 <span class="slider"></span>
                             </label>
@@ -385,7 +392,7 @@
                 <!-- Submit Button -->
                 <div class="text-center">
                     <button type="submit" class="submit-button">
-                        Create Network Provisioning
+                        CREATE
                     </button>
                 </div>
             </form>
