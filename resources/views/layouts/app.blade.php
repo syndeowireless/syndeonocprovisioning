@@ -27,10 +27,15 @@
         @media (max-width: 992px) {
             body.sidebar-enable .main-content { margin-left: 240px; }
         }
+
+        /* Page transition styles */
+        body.fade-init { opacity: 0; }
+        body.fade-in { opacity: 1; transition: opacity 250ms ease; }
+        body.fade-out { opacity: 0; transition: opacity 200ms ease; }
     </style>
 </head>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased fade-init">
     <div id="layout-wrapper">
         <!-- Top Navigation -->
         @include('layouts.navigation')
@@ -82,6 +87,82 @@
                 return new bootstrap.Dropdown(trigger)
             });
         });
+    </script>
+    <script>
+        (function() {
+            var isInternalLink = function(anchor) {
+                if (!anchor || !anchor.href) return false;
+                var url = new URL(anchor.href, window.location.href);
+                var current = new URL(window.location.href);
+                if (url.origin !== current.origin) return false;
+                if (url.hash && (url.pathname === current.pathname) && (url.search === current.search)) return false; // ignore same-page hash
+                if (anchor.hasAttribute('target') && anchor.getAttribute('target') === '_blank') return false;
+                if (anchor.hasAttribute('download')) return false;
+                return true;
+            };
+
+            var startEnterTransition = function() {
+                // Trigger fade-in
+                document.body.classList.remove('fade-init');
+                // Next frame, add fade-in so transition applies
+                requestAnimationFrame(function() {
+                    document.body.classList.add('fade-in');
+                });
+            };
+
+            var startExitTransition = function(callback) {
+                // Trigger fade-out then navigate
+                document.body.classList.remove('fade-in');
+                document.body.classList.add('fade-out');
+                var done = false;
+                var finish = function() { if (done) return; done = true; callback(); };
+                document.body.addEventListener('transitionend', finish, { once: true });
+                // Fallback in case transitionend doesn't fire
+                setTimeout(finish, 300);
+            };
+
+            // Enter on DOM ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startEnterTransition);
+            } else {
+                startEnterTransition();
+            }
+
+            // Intercept link clicks for smooth exit
+            document.addEventListener('click', function(e) {
+                var anchor = e.target.closest('a');
+                if (!anchor) return;
+                if (!isInternalLink(anchor)) return;
+                // Allow modified clicks (ctrl/cmd/shift)
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
+                var href = anchor.href;
+                startExitTransition(function() { window.location.href = href; });
+            });
+
+            // Intercept form submissions
+            document.addEventListener('submit', function(e) {
+                var form = e.target;
+                if (!form || form.target === '_blank') return;
+                // Let the form submit after exit animation
+                e.preventDefault();
+                startExitTransition(function() { form.submit(); });
+            }, true);
+
+            // Handle back/forward navigation
+            window.addEventListener('pageshow', function(event) {
+                // When navigating with bfcache, ensure we fade in
+                if (event.persisted) {
+                    document.body.classList.remove('fade-out');
+                    document.body.classList.add('fade-in');
+                }
+            });
+
+            window.addEventListener('beforeunload', function() {
+                document.body.classList.remove('fade-in');
+                document.body.classList.add('fade-out');
+            });
+        })();
     </script>
 </body>
 </html>
