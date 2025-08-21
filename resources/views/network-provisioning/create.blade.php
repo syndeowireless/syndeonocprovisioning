@@ -91,6 +91,13 @@
     font-size: 0.875rem !important;
 }
 
+/* Required field asterisk styling */
+.required::after {
+    content: ' *' !important;
+    color: #dc2626 !important;
+    font-weight: 600 !important;
+}
+
 /* STANDARDIZED INPUT SIZES - All inputs will have exact same dimensions */
 .form-input, .form-select {
     width: 100% !important;
@@ -116,6 +123,12 @@
 .form-input::placeholder {
     color: #9ca3af !important;
     font-weight: 400 !important;
+}
+
+/* Error state for required fields */
+.form-input.error, .form-select.error {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1) !important;
 }
 
 /* Ensure select elements match input height exactly */
@@ -177,6 +190,33 @@
     padding-top: 0 !important;
 }
 
+/* Toast notification styles */
+.toast {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    background: #dc2626 !important;
+    color: white !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    z-index: 10000 !important;
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+    transition: all 0.3s ease !important;
+    max-width: 400px !important;
+    font-weight: 500 !important;
+}
+
+.toast.show {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+.toast.success {
+    background: #059669 !important;
+}
+
 @media (max-width: 768px) {
     .grid-container {
         grid-template-columns: 1fr !important;
@@ -190,6 +230,13 @@
     
     .form-title {
         font-size: 1.375rem !important;
+    }
+
+    .toast {
+        top: 10px !important;
+        right: 10px !important;
+        left: 10px !important;
+        max-width: none !important;
     }
 }
 </style>
@@ -436,14 +483,14 @@
         <div class="form-wrapper">
             <h1 class="form-title text-center">Create Network Provisioning</h1>
 
-            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6">
+            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6" id="networkProvisioningForm">
                 @csrf
 
                 <!-- Linha 1: Property Name / Property Type -->
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label">Property Name</label>
-                        <input type="text" name="property_name" value="{{ old('property_name') }}" required
+                        <label class="form-label required">Property Name</label>
+                        <input type="text" name="property_name" id="property_name" value="{{ old('property_name') }}" required
                                class="form-input" placeholder="Type the property name">
                     </div>
                     <div class="form-group">
@@ -470,9 +517,9 @@
                 <!-- Linha 2: Property Address / Remote Unit Quantity -->
                 <div class="grid-container">
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <label class="form-label">Property Address</label>
+                        <label class="form-label required">Property Address</label>
                         <div class="address-input-container">
-                            <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}"
+                            <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}" required
                                    class="form-input" placeholder="Type the property full address" autocomplete="off">
                             <div id="address_suggestions" 
                                 class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
@@ -487,8 +534,8 @@
                 
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label">System Type</label>
-                        <select name="system_type" class="form-select">
+                        <label class="form-label required">System Type</label>
+                        <select name="system_type" id="system_type" class="form-select" required>
                             <option value="">Select the system type</option>
                             <option value="DAS" {{ old('system_type') == 'DAS' ? 'selected' : '' }}>DAS</option>
                             <option value="ERRCS" {{ old('system_type') == 'ERRCS' ? 'selected' : '' }}>ERRCS</option>
@@ -496,22 +543,22 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">OEM</label>
-                        <input type="text" name="oem" value="{{ old('oem') }}"
+                        <label class="form-label required">OEM</label>
+                        <input type="text" name="oem" id="oem" value="{{ old('oem') }}" required
                                class="form-input" placeholder="Type the OEM">
                     </div>
                 </div>
                 <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label">Master Unit Quantity</label>
-                        <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}"
-                               class="form-input" placeholder="Type the quantity">
+                        <label class="form-label required">Master Unit Quantity</label>
+                        <input type="number" name="master_unit_quantity" id="master_unit_quantity" value="{{ old('master_unit_quantity') }}" required
+                               class="form-input" placeholder="Type the quantity" min="0">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">BDA Quantity</label>
-                        <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}"
-                               class="form-input" placeholder="Type the quantity">
+                        <label class="form-label required">BDA Quantity</label>
+                        <input type="number" name="bda_quantity" id="bda_quantity" value="{{ old('bda_quantity') }}" required
+                               class="form-input" placeholder="Type the quantity" min="0">
                     </div>
                 </div>
 
@@ -533,8 +580,9 @@
 <div class="grid-container">
     <!-- Hostname now comes in place of Average Density -->
     <div class="form-group">
-        <label class="form-label" for="hostname">Hostname (dyndns)</label>
-        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
+        <label class="form-label required" for="hostname">Hostname (dyndns)</label>
+        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}" required
+               placeholder="Type the hostname">
     </div>
 
     <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
@@ -588,20 +636,6 @@
         </div>
     </div>
 </div>
-
-
-                <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label" for="static_ip">IP Address</label>
-                            <input class="form-input" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP address">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="static_mask">Subnet Mask</label>
-                            <input class="form-input" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Submit Button -->
                 <div class="text-center">
@@ -870,7 +904,7 @@ class OpenStreetMapHandler {
         }
     }
     
-    // Selecionar um endere
+    // Selecionar um endereço
     selectAddress(address) {
         console.log('Endereço selecionado:', address.display_name);
         
@@ -1044,6 +1078,123 @@ class OpenStreetMapHandler {
     }
 }
 
+// Toast notification function
+function showToast(message, type = 'error') {
+    // Remove existing toast if any
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20">
+                ${type === 'error' ? 
+                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>' :
+                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>'
+                }
+            </svg>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add toast to DOM
+    document.body.appendChild(toast);
+    
+    // Show toast with animation
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // Auto-hide toast after 5 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast && toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Form validation function
+function validateRequiredFields() {
+    const requiredFields = [
+        { id: 'property_name', name: 'Property Name' },
+        { id: 'property_address', name: 'Property Address' },
+        { id: 'system_type', name: 'System Type' },
+        { id: 'oem', name: 'OEM' },
+        { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+        { id: 'bda_quantity', name: 'BDA Quantity' },
+        { id: 'hostname', name: 'Hostname (dyndns)' }
+    ];
+    
+    let emptyFields = [];
+    let hasErrors = false;
+    
+    // Reset all error states
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+            element.classList.remove('error');
+        }
+    });
+    
+    // Check each required field
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+            const value = element.value.trim();
+            if (!value) {
+                emptyFields.push(field.name);
+                element.classList.add('error');
+                hasErrors = true;
+            }
+        }
+    });
+    
+    if (hasErrors) {
+        const message = emptyFields.length === 1 
+            ? `Please fill in the ${emptyFields[0]} field.`
+            : `Please fill in all required fields: ${emptyFields.join(', ')}.`;
+        
+        showToast(message, 'error');
+        
+        // Focus on the first empty field
+        const firstEmptyField = requiredFields.find(field => {
+            const element = document.getElementById(field.id);
+            return element && !element.value.trim();
+        });
+        
+        if (firstEmptyField) {
+            const element = document.getElementById(firstEmptyField.id);
+            if (element) {
+                element.focus();
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        return false;
+    }
+    
+    return true;
+}
+
+// Function to handle form submission
+function handleFormSubmission(event) {
+    if (!validateRequiredFields()) {
+        event.preventDefault();
+        return false;
+    }
+    
+    // If validation passes, show success message
+    showToast('Form is being submitted...', 'success');
+    return true;
+}
+
 // Função para toggle dos campos de IP estático
 function toggleStaticIpFields() {
     var checkbox = document.getElementById('static_ip_check');
@@ -1051,11 +1202,23 @@ function toggleStaticIpFields() {
     fields.style.display = checkbox.checked ? 'block' : 'none';
 }
 
+function toggleGrafanaEmail() {
+    const toggle = document.getElementById('grafana_toggle');
+    const emailField = document.getElementById('grafana-email-field');
+    emailField.style.display = toggle.checked ? 'block' : 'none';
+}
+
 // Inicializar o mapa quando a página estiver pronta
 let mapHandler;
 
 // Aguardar tanto o DOM quanto o Leaflet
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize form validation
+    const form = document.getElementById('networkProvisioningForm');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmission);
+    }
+    
     // Pequeno delay para garantir que todos os recursos foram carregados
     setTimeout(() => {
         mapHandler = new OpenStreetMapHandler();
@@ -1077,12 +1240,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 100);
 });
-
-function toggleGrafanaEmail() {
-    const toggle = document.getElementById('grafana_toggle');
-    const emailField = document.getElementById('grafana-email-field');
-    emailField.style.display = toggle.checked ? 'block' : 'none';
-}
 
 </script>
 
