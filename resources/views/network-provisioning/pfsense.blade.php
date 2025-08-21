@@ -172,74 +172,95 @@
                 </button>
             </div>
         </div>
-        <!-- DAS Master Unit IPs -->
-        <div class="pfsense-segment">
-            <h2>DAS Master Unit IPs</h2>
-            <div style="flex-grow:1;margin-bottom:2rem;">
+       <!-- DAS Master Unit IPs (Dynamic) -->
+<div class="pfsense-segment">
+    <h2>DAS Master Unit IPs</h2>
+    <div style="flex-grow:1;margin-bottom:2rem;">
+        @if(isset($ipAssignments) && count($ipAssignments))
+            @php
+                $hasMaster = false;
+            @endphp
+            @foreach($ipAssignments as $assignment)
+                @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
+                    @php $hasMaster = true; @endphp
+                    <div class="pfsense-table-row">
+                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                        <span class="pfsense-value" style="text-align:center;">
+                            {{ $assignment['ip'] ?? 'N/A' }}
+                        </span>
+                        <span class="pfsense-value" style="text-align:center;">
+                            {{ $assignment['mask'] ?? 'N/A' }}
+                        </span>
+                    </div>
+                @endif
+            @endforeach
+            @unless($hasMaster)
                 <div class="pfsense-table-row">
-                    <span class="pfsense-label">Master Unit Sector 1</span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['master_unit_1']->first_usable_ip ?? 'N/A' }}
-                    </span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['master_unit_1']->last_usable_ip ?? 'N/A' }}
-                    </span>
+                    <span class="pfsense-label" colspan="3">No Master Unit IP assignments found.</span>
                 </div>
+            @endunless
+        @else
+            <div class="pfsense-table-row">
+                <span class="pfsense-label" colspan="3">No Master Unit IP assignments found.</span>
+            </div>
+        @endif
+    </div>
+    <div class="pfsense-btn-group">
+        <button class="pfsense-action-btn">
+            <i class="mdi mdi-download" style="color: white;"></i>
+            Download
+        </button>
+        <button class="pfsense-action-btn">
+            <i class="mdi mdi-share-variant" style="color: white;"></i>
+            Share
+        </button>
+    </div>
+</div>
+
+<!-- ERRCS BDA IPs (Dynamic) -->
+<div class="pfsense-segment">
+    <h2>ERRCS BDA IPs</h2>
+    <div style="flex-grow:1;margin-bottom:2rem;">
+        @if(isset($ipAssignments) && count($ipAssignments))
+            @php
+                $hasBda = false;
+            @endphp
+            @foreach($ipAssignments as $assignment)
+                @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
+                    @php $hasBda = true; @endphp
+                    <div class="pfsense-table-row">
+                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                        <span class="pfsense-value" style="text-align:center;">
+                            {{ $assignment['ip'] ?? 'N/A' }}
+                        </span>
+                        <span class="pfsense-value" style="text-align:center;">
+                            {{ $assignment['mask'] ?? 'N/A' }}
+                        </span>
+                    </div>
+                @endif
+            @endforeach
+            @unless($hasBda)
                 <div class="pfsense-table-row">
-                    <span class="pfsense-label">Master Unit Sector 2</span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['master_unit_2']->first_usable_ip ?? 'N/A' }}
-                    </span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['master_unit_2']->last_usable_ip ?? 'N/A' }}
-                    </span>
+                    <span class="pfsense-label" colspan="3">No ERRCS BDA IP assignments found.</span>
                 </div>
-                <div class="pfsense-table-row">
-                    <span class="pfsense-label">Master Unit Sector 3</span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['master_unit_3']->first_usable_ip ?? 'N/A' }}
-                    </span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['master_unit_3']->last_usable_ip ?? 'N/A' }}
-                    </span>
-                </div>
+            @endunless
+        @else
+            <div class="pfsense-table-row">
+                <span class="pfsense-label" colspan="3">No ERRCS BDA IP assignments found.</span>
             </div>
-            <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
-                </button>
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
-                </button>
-            </div>
-        </div>
-        <!-- ERRCS BDA IPs -->
-        <div class="pfsense-segment">
-            <h2>ERRCS BDA IPs</h2>
-            <div style="flex-grow:1;margin-bottom:2rem;">
-                <div class="pfsense-table-row">
-                    <span class="pfsense-label">ERRCS BDA</span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['errcs']->first_usable_ip ?? 'N/A' }}
-                    </span>
-                    <span class="pfsense-value" style="text-align:center;">
-                        {{ $ipData['errcs']->last_usable_ip ?? 'N/A' }}
-                    </span>
-                </div>
-            </div>
-            <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
-                </button>
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
-                </button>
-            </div>
-        </div>
+        @endif
+    </div>
+    <div class="pfsense-btn-group">
+        <button class="pfsense-action-btn">
+            <i class="mdi mdi-download" style="color: white;"></i>
+            Download
+        </button>
+        <button class="pfsense-action-btn">
+            <i class="mdi mdi-share-variant" style="color: white;"></i>
+            Share
+        </button>
+    </div>
+</div>
     </div>
     <button class="pfsense-main-btn">
         Start Provisioning

@@ -33,22 +33,46 @@ class NetworkProvisioningController extends Controller
 
         NetworkManagement::create($validated);
 
-        // Busca 4 IPs disponíveis
-        $ipRows = Ip::where('in_use', false)->limit(4)->get();
-        if ($ipRows->count() < 4) {
-            return back()->with('error', 'Not enough available IP ranges.');
+        $ipRow = Ip::where('in_use', false)->first();
+        if (!$ipRow) {
+            return back()->with('error', 'No available IP ranges.');
         }
-        foreach ($ipRows as $row) {
-            $row->in_use = true;
-            $row->save();
+        $ipRow->in_use = true;
+        $ipRow->save();
+
+        // Get quantities from form (default to 0 if not set)
+        $masterQty = (int) $request->input('master_unit_quantity', 0);
+        $bdaQty = (int) $request->input('bda_quantity', 0);
+
+        // Helper to increment IP
+        function ip_add($ip, $increment) {
+            $ipLong = ip2long($ip);
+            return long2ip($ipLong + $increment);
         }
 
-        $ipData = [
-            'master_unit_1' => $ipRows[0],
-            'master_unit_2' => $ipRows[1],
-            'master_unit_3' => $ipRows[2],
-            'errcs'         => $ipRows[3],
-        ];
+        // Build assignments array
+        $ipAssignments = [];
+        $currentIncrement = 1;
+
+        // Master Unit Sectors
+        for ($i = 1; $i <= $masterQty; $i++) {
+            $ipAssignments[] = [
+                'label' => "Master Unit Sector $i",
+                'ip' => ip_add($ipRow->first_usable_ip, $currentIncrement),
+                'mask' => '255.255.255.192',
+            ];
+            $currentIncrement++;
+        }
+
+        // ERRCS BDA
+        for ($i = 1; $i <= $bdaQty; $i++) {
+            $ipAssignments[] = [
+                'label' => "ERRCS BDA $i",
+                'ip' => ip_add($ipRow->first_usable_ip, $currentIncrement),
+                'mask' => '255.255.255.192',
+            ];
+            $currentIncrement++;
+        }
 
         // Novos campos do formulário
         $dyndnsHostname = $request->input('hostname', '');
@@ -78,7 +102,7 @@ class NetworkProvisioningController extends Controller
         } else {
             $placeholders['#wan.ipaddr#'] = '';
             $placeholders['#wan.mask#']   = '';
-            $placeholders['#lan.ipaddr#'] = $ipRows[0]->first_usable_ip ?? '';
+            $placeholders['#lan.ipaddr#'] = $ipRows->first_usable_ip ?? '';
         }
 
         // Substituir todos os placeholders
