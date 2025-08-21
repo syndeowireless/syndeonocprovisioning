@@ -59,6 +59,16 @@
                                 </ul>
                             </li>
 
+                            <li style="background-color: #13395d !important;">
+                                <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white !important; background-color: #13395d !important; padding: 12px 20px; display: block;">
+                                    <i class="mdi mdi-collage" style="color: white !important;"></i>
+                                    <span>Others</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="true" style="background-color: #13395d !important;">
+                                    <li style="background-color: #13395d !important;"><a href="#" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 40px; display: block;">Manage Users</a></li>
+                                </ul>
+                            </li>
+
                             <!--<li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white;">
                                     <i class="mdi mdi-collage" style="color: white;"></i>
