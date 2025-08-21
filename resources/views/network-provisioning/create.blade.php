@@ -603,6 +603,12 @@
     </div>
 </div>
 
+<footer class="mt-6 border-t border-gray-200 py-4">
+	<div class="max-w-4xl mx-auto px-4 text-center text-sm text-gray-600">
+		© <script>document.write(new Date().getFullYear())</script> Syndeo Wireless. All rights reserved.
+	</div>
+</footer>
+
 <script>
 class OpenStreetMapHandler {
     constructor(mapElementId = 'map', addressInputId = 'property_address', suggestionsId = 'address_suggestions') {
