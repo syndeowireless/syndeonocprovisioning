@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    use Illuminate\Support\Str;
+
+    $hasMaster = isset($ipAssignments) && collect($ipAssignments)->contains(function($a) {
+        return Str::startsWith($a['label'], 'Master Unit Sector');
+    });
+    $hasBda = isset($ipAssignments) && collect($ipAssignments)->contains(function($a) {
+        return Str::startsWith($a['label'], 'ERRCS BDA');
+    });
+@endphp
 <style>
     .pfsense-row {
         display: flex;
@@ -131,7 +141,7 @@
 <div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%">
     <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
     <div class="pfsense-row">
-        <!-- PFsense Config File Segment -->
+        <!-- PFsense Config File Segment (always visible) -->
         <div class="pfsense-segment">
             <h2>PFsense Config File</h2>
             <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
@@ -164,7 +174,6 @@
                         </a>
                     @endif
                 </button>
-
                 <button class="pfsense-action-btn">
                     <!-- Share Icon -->
                     <i class="mdi mdi-share-variant" style="color: white;"></i>
@@ -172,95 +181,70 @@
                 </button>
             </div>
         </div>
-       <!-- DAS Master Unit IPs (Dynamic) -->
-<div class="pfsense-segment">
-    <h2>DAS Master Unit IPs</h2>
-    <div style="flex-grow:1;margin-bottom:2rem;">
-        @if(isset($ipAssignments) && count($ipAssignments))
-            @php
-                $hasMaster = false;
-            @endphp
-            @foreach($ipAssignments as $assignment)
-                @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
-                    @php $hasMaster = true; @endphp
-                    <div class="pfsense-table-row">
-                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
-                        <span class="pfsense-value" style="text-align:center;">
-                            {{ $assignment['ip'] ?? 'N/A' }}
-                        </span>
-                        <span class="pfsense-value" style="text-align:center;">
-                            {{ $assignment['mask'] ?? 'N/A' }}
-                        </span>
-                    </div>
-                @endif
-            @endforeach
-            @unless($hasMaster)
-                <div class="pfsense-table-row">
-                    <span class="pfsense-label" colspan="3">No Master Unit IP assignments found.</span>
-                </div>
-            @endunless
-        @else
-            <div class="pfsense-table-row">
-                <span class="pfsense-label" colspan="3">No Master Unit IP assignments found.</span>
-            </div>
-        @endif
-    </div>
-    <div class="pfsense-btn-group">
-        <button class="pfsense-action-btn">
-            <i class="mdi mdi-download" style="color: white;"></i>
-            Download
-        </button>
-        <button class="pfsense-action-btn">
-            <i class="mdi mdi-share-variant" style="color: white;"></i>
-            Share
-        </button>
-    </div>
-</div>
 
-<!-- ERRCS BDA IPs (Dynamic) -->
-<div class="pfsense-segment">
-    <h2>ERRCS BDA IPs</h2>
-    <div style="flex-grow:1;margin-bottom:2rem;">
-        @if(isset($ipAssignments) && count($ipAssignments))
-            @php
-                $hasBda = false;
-            @endphp
-            @foreach($ipAssignments as $assignment)
-                @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
-                    @php $hasBda = true; @endphp
-                    <div class="pfsense-table-row">
-                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
-                        <span class="pfsense-value" style="text-align:center;">
-                            {{ $assignment['ip'] ?? 'N/A' }}
-                        </span>
-                        <span class="pfsense-value" style="text-align:center;">
-                            {{ $assignment['mask'] ?? 'N/A' }}
-                        </span>
-                    </div>
-                @endif
-            @endforeach
-            @unless($hasBda)
-                <div class="pfsense-table-row">
-                    <span class="pfsense-label" colspan="3">No ERRCS BDA IP assignments found.</span>
-                </div>
-            @endunless
-        @else
-            <div class="pfsense-table-row">
-                <span class="pfsense-label" colspan="3">No ERRCS BDA IP assignments found.</span>
+        @if($hasMaster)
+        <!-- DAS Master Unit IPs (Dynamic) -->
+        <div class="pfsense-segment">
+            <h2>DAS Master Unit IPs</h2>
+            <div style="flex-grow:1;margin-bottom:2rem;">
+                @foreach($ipAssignments as $assignment)
+                    @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
+                        <div class="pfsense-table-row">
+                            <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                            <span class="pfsense-value" style="text-align:center;">
+                                {{ $assignment['ip'] ?? 'N/A' }}
+                            </span>
+                            <span class="pfsense-value" style="text-align:center;">
+                                {{ $assignment['mask'] ?? 'N/A' }}
+                            </span>
+                        </div>
+                    @endif
+                @endforeach
             </div>
+            <div class="pfsense-btn-group">
+                <button class="pfsense-action-btn">
+                    <i class="mdi mdi-download" style="color: white;"></i>
+                    Download
+                </button>
+                <button class="pfsense-action-btn">
+                    <i class="mdi mdi-share-variant" style="color: white;"></i>
+                    Share
+                </button>
+            </div>
+        </div>
         @endif
-    </div>
-    <div class="pfsense-btn-group">
-        <button class="pfsense-action-btn">
-            <i class="mdi mdi-download" style="color: white;"></i>
-            Download
-        </button>
-        <button class="pfsense-action-btn">
-            <i class="mdi mdi-share-variant" style="color: white;"></i>
-            Share
-        </button>
-    </div>
-</div>
+
+        @if($hasBda)
+        <!-- ERRCS BDA IPs (Dynamic) -->
+        <div class="pfsense-segment">
+            <h2>ERRCS BDA IPs</h2>
+            <div style="flex-grow:1;margin-bottom:2rem;">
+                @foreach($ipAssignments as $assignment)
+                    @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
+                        <div class="pfsense-table-row">
+                            <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                            <span class="pfsense-value" style="text-align:center;">
+                                {{ $assignment['ip'] ?? 'N/A' }}
+                            </span>
+                            <span class="pfsense-value" style="text-align:center;">
+                                {{ $assignment['mask'] ?? 'N/A' }}
+                            </span>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+            <div class="pfsense-btn-group">
+                <button class="pfsense-action-btn">
+                    <i class="mdi mdi-download" style="color: white;"></i>
+                    Download
+                </button>
+                <button class="pfsense-action-btn">
+                    <i class="mdi mdi-share-variant" style="color: white;"></i>
+                    Share
+                </button>
+            </div>
+        </div>
+        @endif
 
     </div>
     <button class="pfsense-main-btn">
@@ -274,22 +258,20 @@ function copy_to_clipboard() {
     copyText.setSelectionRange(0, 99999);
     navigator.clipboard.writeText(copyText.value);
 
+    var copyIcon = event.target;
     copyIcon.classList.remove("mdi-content-copy");
     copyIcon.classList.add("mdi-check");
-    copyIcon.style.color = "#10b981"; // Verde para indicar sucesso
-    
-    // Voltar ao ícone original após 2 segundos
+    copyIcon.style.color = "#10b981";
     setTimeout(function() {
         copyIcon.classList.remove("mdi-check");
         copyIcon.classList.add("mdi-content-copy");
-        copyIcon.style.color = "#64748b"; // Cor original
+        copyIcon.style.color = "#64748b";
     }, 2000);
 }
 
 function show_password() {
     var x = document.getElementById("password_PFsense");
     var icon = event.target;
-    
     if (x.type === "password") {
         x.type = "text";
         icon.classList.remove("mdi-eye");
@@ -301,5 +283,4 @@ function show_password() {
     }
 }
 </script>
-
 @endsection
