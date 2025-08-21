@@ -870,7 +870,7 @@ class OpenStreetMapHandler {
         }
     }
     
-    // Selecionar um endereço
+    // Selecionar um endere
     selectAddress(address) {
         console.log('Endereço selecionado:', address.display_name);
         
