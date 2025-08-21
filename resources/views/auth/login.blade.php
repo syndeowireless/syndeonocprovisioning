@@ -33,36 +33,34 @@
                     <label class="form-check-label" for="remember_me">{{ __('Remember me') }}</label>
                 </div>
             </div>
-            <div class="w-1/2 text-right">                      
-    <x-primary-button style="
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
-        background-color: #3b82f6 !important;
-        color: white !important;
-        border-radius: 0.25rem !important;
-        transition-property: all !important;
-        transition-duration: 300ms !important;
-        transition-timing-function: ease-in-out !important;
-        border-width: 2px !important;
-        border-color: #facc15 !important;
-    " 
-    onmouseover="
-        this.style.backgroundColor = '#facc15 !important';
-        this.style.borderColor = '#1e40af !important';
-        this.style.transform = 'translateY(-0.125rem) !important';
-        this.style.color = 'black !important';
-    "
-    onmouseout="
-        this.style.backgroundColor = '#3b82f6 !important';
-        this.style.borderColor = '#facc15 !important';
-        this.style.transform = 'translateY(0) !important';
-        this.style.color = 'white !important';
-    ">                              
-        {{ __('Log in') }}                      
-    </x-primary-button>              
+            <div class="w-1/2 text-right">
+    <x-primary-button 
+        class="
+            !bg-[#13395d]
+            !text-white
+            !border-2
+            !border-[#fbbf0f]
+            !py-3
+            !px-6
+            !rounded-lg
+            !font-medium
+            !text-sm
+            !transition-all
+            !duration-200
+            !ease-in-out
+            !mt-4
+            !mb-4
+            !min-w-[120px]
+            hover:!bg-[#FBBF0F]
+            hover:!border-[#13395D]
+            hover:!translate-y-[-1px]
+            hover:!text-black
+        "
+    >
+        {{ __('Log in') }}
+    </x-primary-button>
 </div>
+
         </div>
 
         <!-- Forgot Password Link -->
