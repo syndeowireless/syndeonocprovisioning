@@ -74,6 +74,7 @@ class NetworkProvisioningController extends Controller
             $currentIncrement++;
         }
 
+        
         // Novos campos do formulário
         $dyndnsHostname = $request->input('hostname', '');
         $isStaticIp = $request->has('static_ip_check');
