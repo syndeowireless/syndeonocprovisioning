@@ -1243,4 +1243,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function updateFields() {
+        const type = document.getElementById('system_type').value;
+        const master = document.getElementById('master_unity_qty');
+        const bda = document.getElementById('bda_qty');
+        if (type === 'DAS') {
+            master.disabled = false;
+            bda.disabled = true;
+            bda.value = '';
+        } else if (type === 'ERRCS') {
+            master.disabled = true;
+            bda.disabled = false;
+            master.value = '';
+        } else {
+            master.disabled = false;
+            bda.disabled = false;
+        }
+    }
+    document.getElementById('system_type').addEventListener('change', updateFields);
+    updateFields(); // Initial call to handle default value
+});
+</script>
+
 @endsection
