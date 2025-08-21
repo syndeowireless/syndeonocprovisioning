@@ -23,6 +23,24 @@
     <!-- Scripts do Vite (mantenha apenas se necessário) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        /* Sidebar toggle smoothness */
+        .vertical-menu {
+            transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: width;
+        }
+        .navbar-brand-box {
+            transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: width;
+        }
+        .main-content {
+            transition: margin-left 220ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: margin-left;
+        }
+        .footer { /* if present */
+            transition: left 220ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: left;
+        }
+
         /* Ensure content shifts on small screens when sidebar is opened */
         @media (max-width: 992px) {
             body.sidebar-enable .main-content { margin-left: 240px; }
