@@ -57,10 +57,8 @@
 /* Enhanced Form Styles */
 .form-container {
     background: #f9fafb !important;
-    min-height: calc(100vh - 80px) !important;
+    min-height: calc(100vh-80px) !important;
     padding: 1rem 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
 }
 
 .form-wrapper {
@@ -69,7 +67,6 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
     padding: 2rem !important;
     border: 1px solid #e5e7eb !important;
-    flex: 1 !important;
 }
 
 .form-title {
@@ -180,33 +177,6 @@
     padding-top: 0 !important;
 }
 
-/* Footer Styles */
-.footer {
-    background: #f9fafb !important;
-    padding: 1rem 0 !important;
-    text-align: center !important;
-    color: #6b7280 !important;
-    font-size: 0.875rem !important;
-    border-top: 1px solid #e5e7eb !important;
-    margin-top: auto !important;
-    flex-shrink: 0 !important;
-}
-
-/* Page wrapper to ensure footer stays at bottom */
-.page-wrapper {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: calc(100vh - 80px) !important;
-}
-
-.content-wrapper {
-    flex: 1 !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    padding: 2rem 1rem 1rem 1rem !important;
-}
-
 @media (max-width: 768px) {
     .grid-container {
         grid-template-columns: 1fr !important;
@@ -220,10 +190,6 @@
     
     .form-title {
         font-size: 1.375rem !important;
-    }
-
-    .content-wrapper {
-        padding: 1rem !important;
     }
 }
 </style>
@@ -465,182 +431,175 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="page-wrapper">
-    <div class="content-wrapper">
-        <div class="max-w-4xl w-full">
-            <div class="form-wrapper">
-                <h1 class="form-title text-center">Create Network Provisioning</h1>
+<div class="form-container flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
+    <div class="max-w-4xl w-full px-4 py-8">
+        <div class="form-wrapper">
+            <h1 class="form-title text-center">Create Network Provisioning</h1>
 
-                <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6">
-                    @csrf
+            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6">
+                @csrf
 
-                    <!-- Linha 1: Property Name / Property Type -->
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label">Property Name</label>
-                            <input type="text" name="property_name" value="{{ old('property_name') }}" required
-                                   class="form-input" placeholder="Type the property name">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Property Type</label>
-                            <select name="property_type" class="form-select">
-                                <option value="">Select the property type</option>
-                                <option value="Education" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
-                                <option value="Healthcare" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
-                                <option value="Hospitality" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
-                                <option value="Industrial" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
-                                <option value="Mixed-Use" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
-                                <option value="Office" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
-                                <option value="Parking Garage" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
-                                <option value="Residential" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
-                                <option value="Retail" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
-                                <option value="Senior Living" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
-                                <option value="Sports&Events" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
-                                <option value="Warehouse" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
-                                <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
-                            </select>
-                        </div>
+                <!-- Linha 1: Property Name / Property Type -->
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label">Property Name</label>
+                        <input type="text" name="property_name" value="{{ old('property_name') }}" required
+                               class="form-input" placeholder="Type the property name">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Property Type</label>
+                        <select name="property_type" class="form-select">
+                            <option value="">Select the property type</option>
+                            <option value="Education" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
+                            <option value="Healthcare" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
+                            <option value="Hospitality" {{ old('property_type') == 'Hospitality' ? 'selected' : '' }}>Hospitality</option>
+                            <option value="Industrial" {{ old('property_type') == 'Industrial' ? 'selected' : '' }}>Industrial</option>
+                            <option value="Mixed-Use" {{ old('property_type') == 'Mixed-Use' ? 'selected' : '' }}>Mixed-Use</option>
+                            <option value="Office" {{ old('property_type') == 'Office' ? 'selected' : '' }}>Office</option>
+                            <option value="Parking Garage" {{ old('property_type') == 'Parking Garage' ? 'selected' : '' }}>Parking Garage</option>
+                            <option value="Residential" {{ old('property_type') == 'Residential' ? 'selected' : '' }}>Residential</option>
+                            <option value="Retail" {{ old('property_type') == 'Retail' ? 'selected' : '' }}>Retail</option>
+                            <option value="Senior Living" {{ old('property_type') == 'Senior Living' ? 'selected' : '' }}>Senior Living</option>
+                            <option value="Sports&Events" {{ old('property_type') == 'Sports&Events' ? 'selected' : '' }}>Sports&Events</option>
+                            <option value="Warehouse" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
+                            <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
+                        </select>
+                    </div>
+                </div>
 
-                    <!-- Linha 2: Property Address / Remote Unit Quantity -->
-                    <div class="grid-container">
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label class="form-label">Property Address</label>
-                            <div class="address-input-container">
-                                <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}"
-                                       class="form-input" placeholder="Type the property full address" autocomplete="off">
-                                <div id="address_suggestions" 
-                                    class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
-                                </div>
+                <!-- Linha 2: Property Address / Remote Unit Quantity -->
+                <div class="grid-container">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Property Address</label>
+                        <div class="address-input-container">
+                            <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}"
+                                   class="form-input" placeholder="Type the property full address" autocomplete="off">
+                            <div id="address_suggestions" 
+                                class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="map-container" id="map_container" style="display: none;">
-                        <div id="map"></div>
-                    </div>
-                    
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label">System Type</label>
-                            <select name="system_type" class="form-select">
-                                <option value="">Select the system type</option>
-                                <option value="DAS" {{ old('system_type') == 'DAS' ? 'selected' : '' }}>DAS</option>
-                                <option value="ERRCS" {{ old('system_type') == 'ERRCS' ? 'selected' : '' }}>ERRCS</option>
-                                <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">OEM</label>
-                            <input type="text" name="oem" value="{{ old('oem') }}"
-                                   class="form-input" placeholder="Type the OEM">
-                        </div>
-                    </div>
-                    <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label">Master Unit Quantity</label>
-                            <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}"
-                                   class="form-input" placeholder="Type the quantity">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">BDA Quantity</label>
-                            <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}"
-                                   class="form-input" placeholder="Type the quantity">
-                        </div>
-                    </div>
-
-                    <!-- Linha 4: Latitude / Longitude -->
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label">Latitude</label>
-                            <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
-                                   class="form-input" placeholder="Type the latitude" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Longitude</label>
-                            <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
-                                   class="form-input" placeholder="Type the longitude" readonly>
-                        </div>
-                    </div>
-
-                    <!-- Linha 5: Average Density / Remote Unit Quantity -->
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label">Average Density</label>
-                            <select name="average_density" class="form-select">
-                                <option value="">Select the density</option>
-                                <option value="Low" {{ old('average_density') == 'Low' ? 'selected' : '' }}>Low</option>
-                                <option value="Medium" {{ old('average_density') == 'Medium' ? 'selected' : '' }}>Medium</option>
-                                <option value="High" {{ old('average_density') == 'High' ? 'selected' : '' }}>High</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Remote Unit Quantity</label>
-                            <input type="number" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
-                                   class="form-input" placeholder="Type the quantity">
-                        </div>
-                    </div>
-
-                    <!-- Linha 6: Hostname / Static IP Toggle -->
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label class="form-label" for="hostname">Hostname (dyndns)</label>
-                            <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="static_ip_check">Static IP</label>
-                            <div class="switch-container">
-                                <label class="switch">
-                                    <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
-                        <div class="grid-container">
-                            <div class="form-group">
-                                <label class="form-label" for="static_ip">IP Address</label>
-                                <input class="form-input" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP address">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="static_mask">Subnet Mask</label>
-                                <input class="form-input" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="text-center">
-                        <button type="submit" class="submit-button">
-                            CREATE
-                        </button>
-                    </div>
-                </form>
+                </div>
                 
-                @if($errors->any())
-                    <div class="error-container">
-                        <ul class="space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li class="flex items-center">
-                                    <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ $error }}
-                                </li>
-                            @endforeach
-                        </ul>
+                <div class="map-container" id="map_container" style="display: none;">
+                    <div id="map"></div>
+                </div>
+                
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label">System Type</label>
+                        <select name="system_type" class="form-select">
+                            <option value="">Select the system type</option>
+                            <option value="DAS" {{ old('system_type') == 'DAS' ? 'selected' : '' }}>DAS</option>
+                            <option value="ERRCS" {{ old('system_type') == 'ERRCS' ? 'selected' : '' }}>ERRCS</option>
+                            <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
+                        </select>
                     </div>
-                @endif
-            </div>
-        </div>
-    </div>
+                    <div class="form-group">
+                        <label class="form-label">OEM</label>
+                        <input type="text" name="oem" value="{{ old('oem') }}"
+                               class="form-input" placeholder="Type the OEM">
+                    </div>
+                </div>
+                <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label">Master Unit Quantity</label>
+                        <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}"
+                               class="form-input" placeholder="Type the quantity">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">BDA Quantity</label>
+                        <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}"
+                               class="form-input" placeholder="Type the quantity">
+                    </div>
+                </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        © <script>document.write(new Date().getFullYear())</script> Syndeo Wireless <span class="d-none d-sm-inline-block"></span>
+                <!-- Linha 4: Latitude / Longitude -->
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label">Latitude</label>
+                        <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
+                               class="form-input" placeholder="Type the latitude" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Longitude</label>
+                        <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
+                               class="form-input" placeholder="Type the longitude" readonly>
+                    </div>
+                </div>
+
+                <!-- Linha 5: Average Density / Remote Unit Quantity -->
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label">Average Density</label>
+                        <select name="average_density" class="form-select">
+                            <option value="">Select the density</option>
+                            <option value="Low" {{ old('average_density') == 'Low' ? 'selected' : '' }}>Low</option>
+                            <option value="Medium" {{ old('average_density') == 'Medium' ? 'selected' : '' }}>Medium</option>
+                            <option value="High" {{ old('average_density') == 'High' ? 'selected' : '' }}>High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Remote Unit Quantity</label>
+                        <input type="number" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
+                               class="form-input" placeholder="Type the quantity">
+                    </div>
+                </div>
+
+                <!-- Linha 6: Hostname / Static IP Toggle -->
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label" for="hostname">Hostname (dyndns)</label>
+                        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="static_ip_check">Static IP</label>
+                        <div class="switch-container">
+                            <label class="switch">
+                                <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
+                    <div class="grid-container">
+                        <div class="form-group">
+                            <label class="form-label" for="static_ip">IP Address</label>
+                            <input class="form-input" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP address">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="static_mask">Subnet Mask</label>
+                            <input class="form-input" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="submit-button">
+                        CREATE
+                    </button>
+                </div>
+            </form>
+            
+            @if($errors->any())
+                <div class="error-container">
+                    <ul class="space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                                {{ $error }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 
