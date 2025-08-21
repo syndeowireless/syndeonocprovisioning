@@ -91,13 +91,6 @@
     font-size: 0.875rem !important;
 }
 
-/* Add asterisk styling for mandatory fields */
-.form-label.required::after {
-    content: " *" !important;
-    color: #dc2626 !important;
-    font-weight: bold !important;
-}
-
 /* STANDARDIZED INPUT SIZES - All inputs will have exact same dimensions */
 .form-input, .form-select {
     width: 100% !important;
@@ -112,18 +105,6 @@
     color: #374151 !important;
     box-sizing: border-box !important;
     vertical-align: top !important;
-}
-
-/* Enhanced styling for required fields */
-.form-input[required], .form-select[required] {
-    border-left: 3px solid #dc2626 !important;
-}
-
-.form-input[required]:focus, .form-select[required]:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-    border-left-color: #dc2626 !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
 }
 
 .form-input:focus, .form-select:focus {
@@ -169,19 +150,11 @@
     min-width: 120px !important;
 }
 
-.submit-button:hover:not(:disabled) {
+.submit-button:hover {
     background: #FBBF0F !important;
     border:2px solid #13395D !important;
     transform: translateY(-1px) !important;
     color: #000 !important;
-}
-
-.submit-button:disabled {
-    background: #9ca3af !important;
-    border: 2px solid #d1d5db !important;
-    color: #6b7280 !important;
-    cursor: not-allowed !important;
-    transform: none !important;
 }
 
 .grid-container {
@@ -202,29 +175,6 @@
     align-items: center !important;
     height: 42px !important;
     padding-top: 0 !important;
-}
-
-/* Error styling for validation */
-.form-input.error, .form-select.error {
-    border-color: #dc2626 !important;
-    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1) !important;
-}
-
-.error-message {
-    color: #dc2626 !important;
-    font-size: 0.75rem !important;
-    margin-top: 0.25rem !important;
-    display: none !important;
-}
-
-.validation-summary {
-    background: #fef2f2 !important;
-    border: 1px solid #fecaca !important;
-    color: #dc2626 !important;
-    padding: 1rem !important;
-    border-radius: 8px !important;
-    margin-bottom: 1rem !important;
-    display: none !important;
 }
 
 @media (max-width: 768px) {
@@ -486,26 +436,19 @@
         <div class="form-wrapper">
             <h1 class="form-title text-center">Create Network Provisioning</h1>
 
-            <!-- Validation Summary -->
-            <div id="validation-summary" class="validation-summary">
-                <div class="font-semibold mb-2">Please fill in all required fields:</div>
-                <ul id="validation-errors" class="list-disc list-inside space-y-1"></ul>
-            </div>
-
-            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6" id="provisioning-form" novalidate>
+            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6">
                 @csrf
 
                 <!-- Linha 1: Property Name / Property Type -->
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label required">Property Name</label>
+                        <label class="form-label">Property Name</label>
                         <input type="text" name="property_name" value="{{ old('property_name') }}" required
                                class="form-input" placeholder="Type the property name">
-                        <div class="error-message">Property name is required</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">Property Type</label>
-                        <select name="property_type" class="form-select" required>
+                        <label class="form-label">Property Type</label>
+                        <select name="property_type" class="form-select">
                             <option value="">Select the property type</option>
                             <option value="Education" {{ old('property_type') == 'Education' ? 'selected' : '' }}>Education</option>
                             <option value="Healthcare" {{ old('property_type') == 'Healthcare' ? 'selected' : '' }}>Healthcare</option>
@@ -521,22 +464,20 @@
                             <option value="Warehouse" {{ old('property_type') == 'Warehouse' ? 'selected' : '' }}>Warehouse</option>
                             <option value="Other" {{ old('property_type') == 'Other' ? 'selected' : '' }}>Other</option>  
                         </select>
-                        <div class="error-message">Please select a property type</div>
                     </div>
                 </div>
 
                 <!-- Linha 2: Property Address / Remote Unit Quantity -->
                 <div class="grid-container">
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <label class="form-label required">Property Address</label>
+                        <label class="form-label">Property Address</label>
                         <div class="address-input-container">
-                            <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}" required
+                            <input type="text" name="property_address" id="property_address" value="{{ old('property_address') }}"
                                    class="form-input" placeholder="Type the property full address" autocomplete="off">
                             <div id="address_suggestions" 
                                 class="bg-white border border-gray-300 rounded-lg shadow-lg hidden">
                             </div>
                         </div>
-                        <div class="error-message">Property address is required</div>
                     </div>
                 </div>
                 
@@ -546,51 +487,45 @@
                 
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label required">System Type</label>
-                        <select name="system_type" class="form-select" required>
+                        <label class="form-label">System Type</label>
+                        <select name="system_type" class="form-select">
                             <option value="">Select the system type</option>
                             <option value="DAS" {{ old('system_type') == 'DAS' ? 'selected' : '' }}>DAS</option>
                             <option value="ERRCS" {{ old('system_type') == 'ERRCS' ? 'selected' : '' }}>ERRCS</option>
                             <option value="DAS & ERRCS" {{ old('system_type') == 'DAS & ERRCS' ? 'selected' : '' }}>DAS & ERRCS</option>
                         </select>
-                        <div class="error-message">Please select a system type</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">OEM</label>
-                        <input type="text" name="oem" value="{{ old('oem') }}" required
+                        <label class="form-label">OEM</label>
+                        <input type="text" name="oem" value="{{ old('oem') }}"
                                class="form-input" placeholder="Type the OEM">
-                        <div class="error-message">OEM is required</div>
                     </div>
                 </div>
                 <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label required">Master Unit Quantity</label>
-                        <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}" required
-                               class="form-input" placeholder="Type the quantity" min="0">
-                        <div class="error-message">Master unit quantity is required</div>
+                        <label class="form-label">Master Unit Quantity</label>
+                        <input type="number" name="master_unit_quantity" value="{{ old('master_unit_quantity') }}"
+                               class="form-input" placeholder="Type the quantity">
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">BDA Quantity</label>
-                        <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}" required
-                               class="form-input" placeholder="Type the quantity" min="0">
-                        <div class="error-message">BDA quantity is required</div>
+                        <label class="form-label">BDA Quantity</label>
+                        <input type="number" name="bda_quantity" value="{{ old('bda_quantity') }}"
+                               class="form-input" placeholder="Type the quantity">
                     </div>
                 </div>
 
                 <!-- Linha 4: Latitude / Longitude -->
                 <div class="grid-container">
                     <div class="form-group">
-                        <label class="form-label required">Latitude</label>
-                        <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}" required
+                        <label class="form-label">Latitude</label>
+                        <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
                                class="form-input" placeholder="Type the latitude" readonly>
-                        <div class="error-message">Latitude is required</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">Longitude</label>
-                        <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}" required
+                        <label class="form-label">Longitude</label>
+                        <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
                                class="form-input" placeholder="Type the longitude" readonly>
-                        <div class="error-message">Longitude is required</div>
                     </div>
                 </div>
 
@@ -598,9 +533,8 @@
 <div class="grid-container">
     <!-- Hostname now comes in place of Average Density -->
     <div class="form-group">
-        <label class="form-label required" for="hostname">Hostname (dyndns)</label>
-        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}" required placeholder="Type the hostname">
-        <div class="error-message">Hostname is required</div>
+        <label class="form-label" for="hostname">Hostname (dyndns)</label>
+        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
     </div>
 
     <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
@@ -619,10 +553,9 @@
 <div id="grafana-email-field" style="display: {{ old('grafana_toggle') ? 'block' : 'none' }};">
     <div class="grid-container">
         <div class="form-group" style="grid-column: 1 / -1;">
-            <label class="form-label required" for="customer_email">Customer Email ID</label>
+            <label class="form-label" for="customer_email">Customer Email ID</label>
             <input class="form-input" type="email" id="customer_email" name="customer_email"
                    value="{{ old('customer_email') }}" placeholder="Enter a valid email address">
-            <div class="error-message">Valid email address is required when Grafana credentials are enabled</div>
         </div>
     </div>
 </div>
@@ -644,23 +577,35 @@
 <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
     <div class="grid-container">
         <div class="form-group">
-            <label class="form-label required" for="static_ip">IP Address</label>
+            <label class="form-label" for="static_ip">IP Address</label>
             <input class="form-input" type="text" id="static_ip" name="static_ip"
                    value="{{ old('static_ip') }}" placeholder="Type the IP address">
-            <div class="error-message">IP address is required when Static IP is enabled</div>
         </div>
         <div class="form-group">
-            <label class="form-label required" for="static_mask">Subnet Mask</label>
+            <label class="form-label" for="static_mask">Subnet Mask</label>
             <input class="form-input" type="text" id="static_mask" name="static_mask"
                    value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
-            <div class="error-message">Subnet mask is required when Static IP is enabled</div>
         </div>
     </div>
 </div>
 
+
+                <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
+                    <div class="grid-container">
+                        <div class="form-group">
+                            <label class="form-label" for="static_ip">IP Address</label>
+                            <input class="form-input" type="text" id="static_ip" name="static_ip" value="{{ old('static_ip') }}" placeholder="Type the IP address">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="static_mask">Subnet Mask</label>
+                            <input class="form-input" type="text" id="static_mask" name="static_mask" value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Submit Button -->
                 <div class="text-center">
-                    <button type="submit" class="submit-button" id="submit-btn">
+                    <button type="submit" class="submit-button">
                         CREATE
                     </button>
                 </div>
@@ -691,150 +636,6 @@
 </footer>
 
 <script>
-// Form validation class
-class FormValidator {
-    constructor(formId) {
-        this.form = document.getElementById(formId);
-        this.submitBtn = document.getElementById('submit-btn');
-        this.validationSummary = document.getElementById('validation-summary');
-        this.validationErrors = document.getElementById('validation-errors');
-        this.requiredFields = [];
-        
-        this.init();
-    }
-    
-    init() {
-        // Get all required text inputs and selects
-        this.requiredFields = Array.from(this.form.querySelectorAll('input[required], select[required]'));
-        
-        // Add event listeners for real-time validation
-        this.requiredFields.forEach(field => {
-            field.addEventListener('input', () => this.validateField(field));
-            field.addEventListener('blur', () => this.validateField(field));
-            field.addEventListener('change', () => this.validateField(field));
-        });
-        
-        // Form submit validation
-        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-        
-        // Initial validation check
-        this.validateForm();
-    }
-    
-    validateField(field) {
-        const errorDiv = field.parentElement.querySelector('.error-message');
-        let isValid = true;
-        
-        // Check if field is required and empty
-        if (field.hasAttribute('required')) {
-            // For conditional fields, check if they should be validated
-            if (this.shouldValidateField(field)) {
-                if (!field.value.trim()) {
-                    isValid = false;
-                }
-                
-                // Special validation for email
-                if (field.type === 'email' && field.value.trim()) {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(field.value.trim())) {
-                        isValid = false;
-                    }
-                }
-            } else {
-                // Field is not required in current context
-                isValid = true;
-            }
-        }
-        
-        // Update field styling and error message
-        if (isValid) {
-            field.classList.remove('error');
-            if (errorDiv) errorDiv.style.display = 'none';
-        } else {
-            field.classList.add('error');
-            if (errorDiv) errorDiv.style.display = 'block';
-        }
-        
-        // Update form validation status
-        this.validateForm();
-        return isValid;
-    }
-    
-    shouldValidateField(field) {
-        // Check if field should be validated based on current form state
-        const fieldName = field.name;
-        
-        // Customer email is only required if Grafana toggle is checked
-        if (fieldName === 'customer_email') {
-            const grafanaToggle = document.getElementById('grafana_toggle');
-            return grafanaToggle && grafanaToggle.checked;
-        }
-        
-        // Static IP fields are only required if Static IP toggle is checked
-        if (fieldName === 'static_ip' || fieldName === 'static_mask') {
-            const staticIpToggle = document.getElementById('static_ip_check');
-            return staticIpToggle && staticIpToggle.checked;
-        }
-        
-        // All other required fields should always be validated
-        return true;
-    }
-    
-    validateForm() {
-        const errors = [];
-        let allValid = true;
-        
-        this.requiredFields.forEach(field => {
-            if (this.shouldValidateField(field)) {
-                if (!field.value.trim()) {
-                    allValid = false;
-                    const label = field.parentElement.querySelector('.form-label');
-                    const fieldName = label ? label.textContent.replace(' *', '') : field.name;
-                    errors.push(fieldName);
-                } else if (field.type === 'email' && field.value.trim()) {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(field.value.trim())) {
-                        allValid = false;
-                        errors.push('Valid ' + (field.parentElement.querySelector('.form-label')?.textContent.replace(' *', '') || field.name));
-                    }
-                }
-            }
-        });
-        
-        // Update submit button state
-        this.submitBtn.disabled = !allValid;
-        
-        // Update validation summary
-        if (errors.length > 0) {
-            this.validationErrors.innerHTML = errors.map(error => `<li>${error}</li>`).join('');
-            this.validationSummary.style.display = 'block';
-        } else {
-            this.validationSummary.style.display = 'none';
-        }
-        
-        return allValid;
-    }
-    
-    handleSubmit(e) {
-        if (!this.validateForm()) {
-            e.preventDefault();
-            
-            // Scroll to first error field
-            const firstErrorField = this.form.querySelector('.error');
-            if (firstErrorField) {
-                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstErrorField.focus();
-            } else {
-                // Scroll to validation summary
-                this.validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            return false;
-        }
-        return true;
-    }
-}
-
 class OpenStreetMapHandler {
     constructor(mapElementId = 'map', addressInputId = 'property_address', suggestionsId = 'address_suggestions') {
         this.mapElementId = mapElementId;
@@ -1077,10 +878,6 @@ class OpenStreetMapHandler {
         input.value = address.display_name;
         this.selectedAddressText = address.display_name;
         
-        // Trigger validation for the address field
-        const event = new Event('input', { bubbles: true });
-        input.dispatchEvent(event);
-        
         // Ocultar sugestões
         document.getElementById(this.suggestionsId).classList.add('hidden');
         
@@ -1142,13 +939,6 @@ class OpenStreetMapHandler {
         if (latInput && lngInput) {
             latInput.value = lat.toFixed(6);
             lngInput.value = lng.toFixed(6);
-            
-            // Trigger validation for coordinate fields
-            const latEvent = new Event('input', { bubbles: true });
-            const lngEvent = new Event('input', { bubbles: true });
-            latInput.dispatchEvent(latEvent);
-            lngInput.dispatchEvent(lngEvent);
-            
             console.log('Coordenadas atualizadas:', lat.toFixed(6), lng.toFixed(6));
         }
     }
@@ -1196,13 +986,9 @@ class OpenStreetMapHandler {
         const lngInput = document.getElementById('longitude');
         if (latInput && lngInput) {
             latInput.value = '';
+        }
+        if (lngInput) {
             lngInput.value = '';
-            
-            // Trigger validation
-            const latEvent = new Event('input', { bubbles: true });
-            const lngEvent = new Event('input', { bubbles: true });
-            latInput.dispatchEvent(latEvent);
-            lngInput.dispatchEvent(lngEvent);
         }
         
         // Remover marcador se existir
@@ -1263,33 +1049,13 @@ function toggleStaticIpFields() {
     var checkbox = document.getElementById('static_ip_check');
     var fields = document.getElementById('static-ip-fields');
     fields.style.display = checkbox.checked ? 'block' : 'none';
-    
-    // Trigger validation when fields visibility changes
-    if (window.formValidator) {
-        window.formValidator.validateForm();
-    }
 }
 
-function toggleGrafanaEmail() {
-    const toggle = document.getElementById('grafana_toggle');
-    const emailField = document.getElementById('grafana-email-field');
-    emailField.style.display = toggle.checked ? 'block' : 'none';
-    
-    // Trigger validation when field visibility changes
-    if (window.formValidator) {
-        window.formValidator.validateForm();
-    }
-}
-
-// Inicializar o mapa e validação quando a página estiver pronta
+// Inicializar o mapa quando a página estiver pronta
 let mapHandler;
-let formValidator;
 
 // Aguardar tanto o DOM quanto o Leaflet
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize form validation first
-    window.formValidator = formValidator = new FormValidator('provisioning-form');
-    
     // Pequeno delay para garantir que todos os recursos foram carregados
     setTimeout(() => {
         mapHandler = new OpenStreetMapHandler();
@@ -1311,3 +1077,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 100);
 });
+
+function toggleGrafanaEmail() {
+    const toggle = document.getElementById('grafana_toggle');
+    const emailField = document.getElementById('grafana-email-field');
+    emailField.style.display = toggle.checked ? 'block' : 'none';
+}
+
+</script>
+
+@endsection
