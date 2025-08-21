@@ -33,11 +33,11 @@
                     <label class="form-check-label" for="remember_me">{{ __('Remember me') }}</label>
                 </div>
             </div>
-            <div class="col-6 text-end">
-                <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
-                    {{ __('Log in') }}
-                </x-primary-button>
-            </div>
+            <div class="w-1/2 text-right">                 
+    <x-primary-button class="px-4 py-2 bg-blue-500 text-white rounded transition-all duration-300 ease-in-out border-2 border-yellow-400 hover:bg-yellow-400 hover:border-blue-800 hover:-translate-y-0.5 hover:text-black">                     
+        {{ __('Log in') }}                 
+    </x-primary-button>             
+</div>
         </div>
 
         <!-- Forgot Password Link -->
