@@ -138,11 +138,11 @@
         width: 120px;
     }
 </style>
-<div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%">
+<div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 max-w-7xl w-100 mx-auto shadow-lg" style="margin-top: 10%; border-radius: 3%">
     <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
     <div class="pfsense-row">
         <!-- PFsense Config File Segment (always visible) -->
-        <div class="pfsense-segment">
+        <div class="pfsense-segment" style="margin-right: 3%;">
             <h2>PFsense Config File</h2>
             <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
                 <div style="flex-shrink:0;">
@@ -151,11 +151,11 @@
                 </div>
                 <div style="flex-grow:1;">
                     <div class="pfsense-table-row">
-                        <span class="pfsense-label">user name</span>
-                        <span class="pfsense-value">siteA</span>
+                        <span class="pfsense-label">User name</span>
+                        <span class="pfsense-value" style="text-align: center; width: 100%;">Admin</span>
                     </div>
                     <div class="pfsense-table-row">
-                        <span class="pfsense-label">password</span>
+                        <span class="pfsense-label">Password</span>
                         <div class="password-group">
                             <input class="password-input" type="password" value="{{$randomPassword}}" id="password_PFsense" readonly>
                             <i class="mdi mdi-eye password-icon" onclick="show_password()" title="Show/Hide Password"></i>           
@@ -251,6 +251,11 @@
         Start Provisioning
     </button>
 </div>
+<footer class="mt-6 border-t border-gray-200 py-4">
+	<div class="max-w-4xl mx-auto px-4 text-center text-sm text-gray-600">
+		© <script>document.write(new Date().getFullYear())</script> Syndeo Wireless. All rights reserved.
+	</div>
+</footer>
 <script>
 function copy_to_clipboard() {
     var copyText = document.getElementById("password_PFsense");
