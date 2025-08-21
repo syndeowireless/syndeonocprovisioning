@@ -33,10 +33,35 @@
                     <label class="form-check-label" for="remember_me">{{ __('Remember me') }}</label>
                 </div>
             </div>
-            <div class="w-1/2 text-right">                 
-    <x-primary-button class="px-4 py-2 bg-blue-500 text-white rounded transition-all duration-300 ease-in-out border-2 border-yellow-400 hover:bg-yellow-400 hover:border-blue-800 hover:-translate-y-0.5 hover:text-black">                     
-        {{ __('Log in') }}                 
-    </x-primary-button>             
+            <div class="w-1/2 text-right">                      
+    <x-primary-button style="
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        background-color: #3b82f6 !important;
+        color: white !important;
+        border-radius: 0.25rem !important;
+        transition-property: all !important;
+        transition-duration: 300ms !important;
+        transition-timing-function: ease-in-out !important;
+        border-width: 2px !important;
+        border-color: #facc15 !important;
+    " 
+    onmouseover="
+        this.style.backgroundColor = '#facc15 !important';
+        this.style.borderColor = '#1e40af !important';
+        this.style.transform = 'translateY(-0.125rem) !important';
+        this.style.color = 'black !important';
+    "
+    onmouseout="
+        this.style.backgroundColor = '#3b82f6 !important';
+        this.style.borderColor = '#facc15 !important';
+        this.style.transform = 'translateY(0) !important';
+        this.style.color = 'white !important';
+    ">                              
+        {{ __('Log in') }}                      
+    </x-primary-button>              
 </div>
         </div>
 
