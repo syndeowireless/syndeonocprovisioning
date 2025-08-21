@@ -1247,8 +1247,8 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function () {
     function updateFields() {
         const type = document.getElementById('system_type').value;
-        const master = document.getElementById('master_unity_qty');
-        const bda = document.getElementById('bda_qty');
+        const master = document.getElementById('master_unit_quantity');
+        const bda = document.getElementById('bda_quantity');
         if (type === 'DAS') {
             master.disabled = false;
             bda.disabled = true;

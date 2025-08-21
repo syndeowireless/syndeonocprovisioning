@@ -118,7 +118,7 @@ class NetworkProvisioningController extends Controller
         // Retorno para a view
         return view('network-provisioning.pfsense', [
             'propertyName' => $validated['property_name'],
-            'ipData' => $ipData,
+            'ipAssignments' => $ipAssignments,
             'xmlFile' => $xmlFileName,
             'randomPassword' => $randomPassword
         ]);
