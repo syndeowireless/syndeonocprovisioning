@@ -529,40 +529,66 @@
                     </div>
                 </div>
 
-                <!-- Linha 5: Average Density / Remote Unit Quantity -->
-                <div class="grid-container">
-                    <div class="form-group">
-                        <label class="form-label">Average Density</label>
-                        <select name="average_density" class="form-select">
-                            <option value="">Select the density</option>
-                            <option value="Low" {{ old('average_density') == 'Low' ? 'selected' : '' }}>Low</option>
-                            <option value="Medium" {{ old('average_density') == 'Medium' ? 'selected' : '' }}>Medium</option>
-                            <option value="High" {{ old('average_density') == 'High' ? 'selected' : '' }}>High</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Remote Unit Quantity</label>
-                        <input type="number" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
-                               class="form-input" placeholder="Type the quantity">
-                    </div>
-                </div>
+                <!-- Linha 5: Hostname (dyndns) / Create Grafana Credentials -->
+<div class="grid-container">
+    <!-- Hostname now comes in place of Average Density -->
+    <div class="form-group">
+        <label class="form-label" for="hostname">Hostname (dyndns)</label>
+        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
+    </div>
 
-                <!-- Linha 6: Hostname / Static IP Toggle -->
-                <div class="grid-container">
-                    <div class="form-group">
-                        <label class="form-label" for="hostname">Hostname (dyndns)</label>
-                        <input class="form-input" type="text" id="hostname" name="hostname" value="{{ old('hostname') }}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="static_ip_check">Static IP</label>
-                        <div class="switch-container">
-                            <label class="switch">
-                                <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1" onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+    <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
+    <div class="form-group">
+        <label class="form-label">Create Grafana Credentials</label>
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="grafana_toggle" name="grafana_toggle" value="1" {{ old('grafana_toggle') ? 'checked' : '' }} onchange="toggleGrafanaEmail()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<!-- Conditional Customer Email field (hidden until toggle is yes) -->
+<div id="grafana-email-field" style="display: {{ old('grafana_toggle') ? 'block' : 'none' }};">
+    <div class="grid-container">
+        <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label" for="customer_email">Customer Email ID</label>
+            <input class="form-input" type="email" id="customer_email" name="customer_email"
+                   value="{{ old('customer_email') }}" placeholder="Enter a valid email address">
+        </div>
+    </div>
+</div>
+
+<!-- Linha 6: Static IP toggle now comes in place of Hostname -->
+<div class="grid-container">
+    <div class="form-group">
+        <label class="form-label" for="static_ip_check">Static IP</label>
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="static_ip_check" name="static_ip_check" value="1"
+                       onchange="toggleStaticIpFields()" {{ old('static_ip_check') ? 'checked' : '' }}>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
+    <div class="grid-container">
+        <div class="form-group">
+            <label class="form-label" for="static_ip">IP Address</label>
+            <input class="form-input" type="text" id="static_ip" name="static_ip"
+                   value="{{ old('static_ip') }}" placeholder="Type the IP address">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="static_mask">Subnet Mask</label>
+            <input class="form-input" type="text" id="static_mask" name="static_mask"
+                   value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
+        </div>
+    </div>
+</div>
+
 
                 <div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
                     <div class="grid-container">
@@ -1051,6 +1077,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 100);
 });
+
+function toggleGrafanaEmail() {
+    const toggle = document.getElementById('grafana_toggle');
+    const emailField = document.getElementById('grafana-email-field');
+    emailField.style.display = toggle.checked ? 'block' : 'none';
+}
+
 </script>
 
 @endsection
