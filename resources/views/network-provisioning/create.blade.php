@@ -107,7 +107,7 @@
     border-radius: 6px !important;
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
-    transition: all 0.2s ease !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     background: white !important;
     color: #374151 !important;
     box-sizing: border-box !important;
@@ -131,7 +131,7 @@
     box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1) !important;
 }
 
-/* Ensure select elements match input height exactly */
+/* Enhanced select elements with smooth animations */
 .form-select {
     appearance: none !important;
     -webkit-appearance: none !important;
@@ -141,6 +141,63 @@
     background-repeat: no-repeat !important;
     background-size: 1.5em 1.5em !important;
     padding-right: 2.5rem !important;
+    
+    /* Enhanced smooth transition for dropdown interactions */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Smooth hover effect for better UX */
+.form-select:hover:not(:focus) {
+    border-color: #9ca3af !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Enhanced focus state with smooth glow animation */
+.form-select:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+    animation: focusGlow 0.4s ease-in-out !important;
+    transform: translateY(0) !important;
+}
+
+/* Subtle click animation for better feedback */
+.form-select:active {
+    transform: translateY(0) scale(0.99) !important;
+    transition: all 0.1s ease !important;
+}
+
+/* Smooth glow animation for focus state */
+@keyframes focusGlow {
+    0% {
+        box-shadow: 0 0 0 0px rgba(59, 130, 246, 0) !important;
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12) !important;
+    }
+    100% {
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+    }
+}
+
+/* Dropdown opening animation simulation */
+.form-select:focus + .dropdown-options,
+.form-select[data-dropdown-open="true"] {
+    animation: dropdownSlideIn 0.25s ease-out !important;
+}
+
+@keyframes dropdownSlideIn {
+    0% {
+        opacity: 0 !important;
+        transform: translateY(-8px) scale(0.95) !important;
+    }
+    100% {
+        opacity: 1 !important;
+        transform: translateY(0) scale(1) !important;
+    }
 }
 
 /* Readonly inputs should maintain same size */
