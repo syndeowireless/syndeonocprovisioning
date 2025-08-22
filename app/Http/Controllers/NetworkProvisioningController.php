@@ -103,7 +103,8 @@ class NetworkProvisioningController extends Controller
         } else {
             $placeholders['#wan.ipaddr#'] = '';
             $placeholders['#wan.mask#']   = '';
-            $placeholders['#lan.ipaddr#'] = $ipRows->first_usable_ip ?? '';
+            $placeholders['#lan.ipaddr#'] = ip_add($ipRow->first_usable_ip, 0);
+            ##$ipRows->first_usable_ip ?? '';
         }
 
         // Substituir todos os placeholders
