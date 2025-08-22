@@ -1324,33 +1324,52 @@ function showToast(message, type = 'error') {
     }, 5000);
 }
 
-// Form validation function
+// REPLACE the existing validateRequiredFields() function with this:
+
 function validateRequiredFields() {
-    const requiredFields = [
+    const systemType = document.getElementById('system_type').value;
+    
+    // Base required fields that are always required
+    const baseRequiredFields = [
         { id: 'property_name', name: 'Property Name' },
         { id: 'property_address', name: 'Property Address' },
         { id: 'system_type', name: 'System Type' },
         { id: 'oem', name: 'OEM' },
-        { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-        { id: 'bda_quantity', name: 'BDA Quantity' },
         { id: 'hostname', name: 'Hostname (dyndns)' }
     ];
+    
+    // Add conditional required fields based on system type
+    let requiredFields = [...baseRequiredFields];
+    
+    if (systemType === 'DAS') {
+        requiredFields.push({ id: 'master_unit_quantity', name: 'Master Unit Quantity' });
+    } else if (systemType === 'ERRCS') {
+        requiredFields.push({ id: 'bda_quantity', name: 'BDA Quantity' });
+    } else if (systemType === 'DAS & ERRCS') {
+        requiredFields.push(
+            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+            { id: 'bda_quantity', name: 'BDA Quantity' }
+        );
+    } else {
+        // If no system type selected, require both for validation message
+        requiredFields.push(
+            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+            { id: 'bda_quantity', name: 'BDA Quantity' }
+        );
+    }
     
     let emptyFields = [];
     let hasErrors = false;
     
     // Reset all error states
-    requiredFields.forEach(field => {
-        const element = document.getElementById(field.id);
-        if (element) {
-            element.classList.remove('error');
-        }
+    document.querySelectorAll('.form-input, .form-select').forEach(element => {
+        element.classList.remove('error');
     });
     
     // Check each required field
     requiredFields.forEach(field => {
         const element = document.getElementById(field.id);
-        if (element) {
+        if (element && !element.disabled) { // Only validate if field is not disabled
             const value = element.value.trim();
             if (!value) {
                 emptyFields.push(field.name);
@@ -1367,10 +1386,10 @@ function validateRequiredFields() {
         
         showToast(message, 'error');
         
-        // Focus on the first empty field
+        // Focus on the first empty field that's not disabled
         const firstEmptyField = requiredFields.find(field => {
             const element = document.getElementById(field.id);
-            return element && !element.value.trim();
+            return element && !element.disabled && !element.value.trim();
         });
         
         if (firstEmptyField) {
@@ -1386,8 +1405,6 @@ function validateRequiredFields() {
     
     return true;
 }
-
-// Function to handle form submission
 function handleFormSubmission(event) {
     if (!validateRequiredFields()) {
         event.preventDefault();
@@ -1448,26 +1465,68 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
+// REPLACE the existing updateFields script with this:
+
 document.addEventListener('DOMContentLoaded', function () {
     function updateFields() {
         const type = document.getElementById('system_type').value;
         const master = document.getElementById('master_unit_quantity');
         const bda = document.getElementById('bda_quantity');
+        
+        // Remove any existing error states when fields change
+        master.classList.remove('error');
+        bda.classList.remove('error');
+        
         if (type === 'DAS') {
             master.disabled = false;
+            master.required = true;
             bda.disabled = true;
+            bda.required = false;
             bda.value = '';
+            // Visual indication for disabled field
+            bda.style.backgroundColor = '#f9fafb';
+            bda.style.cursor = 'not-allowed';
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
         } else if (type === 'ERRCS') {
             master.disabled = true;
-            bda.disabled = false;
+            master.required = false;
             master.value = '';
-        } else {
-            master.disabled = false;
             bda.disabled = false;
+            bda.required = true;
+            // Visual indication for disabled field
+            master.style.backgroundColor = '#f9fafb';
+            master.style.cursor = 'not-allowed';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        } else if (type === 'DAS & ERRCS') {
+            master.disabled = false;
+            master.required = true;
+            bda.disabled = false;
+            bda.required = true;
+            // Both fields enabled
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        } else {
+            // No system type selected - enable both but don't require
+            master.disabled = false;
+            master.required = false;
+            bda.disabled = false;
+            bda.required = false;
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
         }
     }
-    document.getElementById('system_type').addEventListener('change', updateFields);
-    updateFields(); // Initial call to handle default value
+    
+    const systemTypeSelect = document.getElementById('system_type');
+    if (systemTypeSelect) {
+        systemTypeSelect.addEventListener('change', updateFields);
+        updateFields(); // Initial call to handle default value
+    }
 });
 </script>
 
