@@ -10,6 +10,35 @@
     $hasBda = isset($ipAssignments) && collect($ipAssignments)->contains(function($a) {
         return Str::startsWith($a['label'], 'ERRCS BDA');
     });
+
+
+    // Generate the email body for sharing
+    $outlookBody = "Segue abaixo as informações dos IPs provisionados:\n\n";
+    if ($hasMaster) {
+        $outlookBody .= "DAS Master Unit IPs:\n";
+        foreach ($ipAssignments as $assignment) {
+            if (Str::startsWith($assignment['label'], 'Master Unit Sector')) {
+                $outlookBody .= "{$assignment['label']}:\n";
+                $outlookBody .= "IP: " . ($assignment['ip'] ?? 'N/A') . "\n";
+                $outlookBody .= "Mask: " . ($assignment['mask'] ?? 'N/A') . "\n\n";
+            }
+        }
+    }
+    if ($hasBda) {
+        $outlookBody .= "ERRCS BDA IPs:\n";
+        foreach ($ipAssignments as $assignment) {
+            if (Str::startsWith($assignment['label'], 'ERRCS BDA')) {
+                $outlookBody .= "{$assignment['label']}:\n";
+                $outlookBody .= "IP: " . ($assignment['ip'] ?? 'N/A') . "\n";
+                $outlookBody .= "Mask: " . ($assignment['mask'] ?? 'N/A') . "\n\n";
+            }
+        }
+    }
+    if (isset($xmlFile)) {
+        $outlookBody .= "Arquivo XML: " . route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) . "\n";
+    }
+    $mailtoBody = rawurlencode($outlookBody);
+    $mailtoSubject = rawurlencode('IPs Provisioning - ' . ($propertyName ?? 'PROPERTY NAME'));
 @endphp
 <style>
     .pfsense-row {
@@ -175,9 +204,13 @@
                     @endif
                 </button>
                 <button class="pfsense-action-btn">
-                    <!-- Share Icon -->
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
+                    <a class="pfsense-action-btn"
+                        style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
+                        href="mailto:?subject={{ $mailtoSubject }}&body={{ $mailtoBody }}"
+                        target="_blank">
+                        <i class="mdi mdi-share-variant" style="color: white;"></i>
+                        Share
+                    </a>
                 </button>
             </div>
         </div>
@@ -187,6 +220,15 @@
         <div class="pfsense-segment">
             <h2>DAS Master Unit IPs</h2>
             <div style="flex-grow:1;margin-bottom:2rem;">
+                <div class="pfsense-table-row">
+                    <span class="pfsense-label"></span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        IP
+                    </span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        Mask
+                    </span>
+                </div>
                 @foreach($ipAssignments as $assignment)
                     @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
                         <div class="pfsense-table-row">
@@ -201,16 +243,6 @@
                     @endif
                 @endforeach
             </div>
-            <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
-                </button>
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
-                </button>
-            </div>
         </div>
         @endif
 
@@ -219,6 +251,15 @@
         <div class="pfsense-segment">
             <h2>ERRCS BDA IPs</h2>
             <div style="flex-grow:1;margin-bottom:2rem;">
+                <div class="pfsense-table-row">
+                    <span class="pfsense-label"></span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        IP
+                    </span>
+                    <span class="pfsense-value" style="text-align:center;">
+                        Mask
+                    </span>
+                </div>
                 @foreach($ipAssignments as $assignment)
                     @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
                         <div class="pfsense-table-row">
@@ -232,16 +273,6 @@
                         </div>
                     @endif
                 @endforeach
-            </div>
-            <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
-                </button>
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
-                </button>
             </div>
         </div>
         @endif
