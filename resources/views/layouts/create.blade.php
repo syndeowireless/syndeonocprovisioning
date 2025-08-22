@@ -79,13 +79,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="form-group">
                         <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">Master Unit Quantity</label>
-                        <input type="number" name="master_unit_quantity" required
+                        <input type="number" name="master_unit_quantity" 
                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
                                placeholder="Type the quantity">
                     </div>
                     <div class="form-group">
                         <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">BDA Quantity</label>
-                        <input type="number" name="bda_quantity" required
+                        <input type="number" name="bda_quantity" 
                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-700 placeholder-gray-400"
                                placeholder="Type the quantity">
                     </div>
