@@ -204,7 +204,7 @@
                         <span class="pfsense-label" style="text-align:left;">password</span>
                         <span colspan="2">
                             <div class="password-group" style="justify-content:center;">
-                                <input class="password-input" type="password" value="{{$randomPassword}}" id="password_PFsense" readonly>
+                                <input class="password-input" type="password" value="$ynd30@noc" id="password_PFsense" readonly>
                                 <i class="mdi mdi-eye password-icon" onclick="show_password()" title="Show/Hide Password"></i>
                                 <i class="mdi mdi-content-copy password-icon" onclick="copy_to_clipboard()" title="Copy to Clipboard"></i>
                             </div>
