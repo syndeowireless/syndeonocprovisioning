@@ -1332,7 +1332,7 @@ function validateRequiredFields() {
         { id: 'system_type', name: 'System Type' },
         { id: 'oem', name: 'OEM' },
         { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-        { id: 'bda_quantity', name: 'BDA Quantity' },
+        { id: 'bda_quantity', name: 'BDA Quantity', required: false }
         { id: 'hostname', name: 'Hostname (dyndns)' }
     ];
     
