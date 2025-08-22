@@ -1,3 +1,13 @@
-<button {{ $attributes->merge(['type' => 'submit', 'class' => 'inline-flex items-center px-4 py-2 bg-primary-blue border-2 border-primary-yellow rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-yellow hover:border-primary-blue hover:text-black focus:bg-primary-yellow focus:border-primary-blue focus:text-black active:bg-primary-yellow active:border-primary-blue active:text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform']) }}>
+<button 
+    {{ $attributes->merge([
+        'type' => 'submit', 
+        'class' => 'inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform',
+        'style' => 'background-color: #13395d; border: 2px solid #fbbf0f; color: white;'
+    ]) }}
+    onmouseover="this.style.backgroundColor='#fbbf0f'; this.style.borderColor='#13395d'; this.style.color='black';"
+    onmouseout="this.style.backgroundColor='#13395d'; this.style.borderColor='#fbbf0f'; this.style.color='white';"
+    onfocus="this.style.backgroundColor='#fbbf0f'; this.style.borderColor='#13395d'; this.style.color='black';"
+    onblur="this.style.backgroundColor='#13395d'; this.style.borderColor='#fbbf0f'; this.style.color='white';"
+>
     {{ $slot }}
 </button>

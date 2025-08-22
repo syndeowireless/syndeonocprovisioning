@@ -14,15 +14,6 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
-            colors: {
-                'primary': {
-                    'blue': '#13395d',
-                    'yellow': '#fbbf0f',
-                },
-                // Alternative flat naming if you prefer
-                'syndeo-blue': '#13395d',
-                'syndeo-yellow': '#fbbf0f',
-            },
         },
     },
 
