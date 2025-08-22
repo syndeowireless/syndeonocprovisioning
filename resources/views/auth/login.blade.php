@@ -33,34 +33,11 @@
                     <label class="form-check-label" for="remember_me">{{ __('Remember me') }}</label>
                 </div>
             </div>
-            <div class="w-1/2 text-right">
-    <x-primary-button 
-        class="
-            !bg-[#13395d]
-            !text-white
-            !border-2
-            !border-[#fbbf0f]
-            !py-3
-            !px-6
-            !rounded-lg
-            !font-medium
-            !text-sm
-            !transition-all
-            !duration-200
-            !ease-in-out
-            !mt-4
-            !mb-4
-            !min-w-[120px]
-            hover:!bg-[#FBBF0F]
-            hover:!border-[#13395D]
-            hover:!translate-y-[-1px]
-            hover:!text-black
-        "
-    >
-        {{ __('Log in') }}
-    </x-primary-button>
-</div>
-
+            <div class="col-6 text-end">
+                <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
+                    {{ __('Log in') }}
+                </x-primary-button>
+            </div>
         </div>
 
         <!-- Forgot Password Link -->
