@@ -696,10 +696,27 @@
 
                 <!-- Submit Button -->
                 <div class="text-center">
-                    <button type="submit" class="submit-button">
+                    <button type="submit" class="submit-button" onclick="playLoadingAnimation()">
                         CREATE
                     </button>
                 </div>
+                <script>
+                    function playLoadingAnimation() {
+                        const video = document.createElement('video');
+                        video.src = '/public/assets/images/Transition-Animation.mp4';
+                        video.autoplay = true;
+                        video.style.position = 'fixed';
+                        video.style.top = '0';
+                        video.style.left = '0';
+                        video.style.width = '100%';
+                        video.style.height = '100%';
+                        video.style.zIndex = '9999';
+                        document.body.appendChild(video);
+                        video.onended = function() {
+                            window.location.href = '/network-provisioning/store';
+                        };
+                    }
+                </script>
             </form>
             
             @if($errors->any())
