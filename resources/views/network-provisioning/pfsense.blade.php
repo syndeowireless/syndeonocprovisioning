@@ -12,7 +12,7 @@
     });
 
     // Generate the email body for sharing
-    $outlookBody = "Segue abaixo as informações dos IPs provisionados:\n\n";
+    $outlookBody = "IPs: \n\n";
     if ($hasMaster) {
         $outlookBody .= "DAS Master Unit IPs:\n";
         foreach ($ipAssignments as $assignment) {
@@ -34,10 +34,10 @@
         }
     }
     if (isset($xmlFile)) {
-        $outlookBody .= "Arquivo XML: " . route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) . "\n";
+        $outlookBody .= "XML File: " . route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) . "\n";
     }
     $mailtoBody = rawurlencode($outlookBody);
-    $mailtoSubject = rawurlencode('Provisionamento de IPs - ' . ($propertyName ?? 'PROPERTY NAME'));
+    $mailtoSubject = rawurlencode('IPs Provisioning - ' . ($propertyName ?? 'PROPERTY NAME'));
 @endphp
 <style>
     .pfsense-row {
@@ -77,15 +77,29 @@
         margin-bottom: 2rem;
         text-align: center;
     }
-    .pfsense-table-row {
-        display: flex;
-        justify-content: space-between;
+    /* --- NEW GRID LAYOUT FOR TABLES --- */
+    .pfsense-table-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr;
         align-items: center;
-        padding: .75rem 0;
         border-bottom: 1px solid #f1f5f9;
     }
-    .pfsense-table-row:last-child {
-        border-bottom: none;
+    .pfsense-table-grid-header {
+        font-weight: 600;
+        color: #475569;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: .5rem;
+        margin-bottom: 0;
+        background: none;
+    }
+    .pfsense-table-grid span,
+    .pfsense-table-grid-header span {
+        text-align: center;
+        padding: .5rem 0;
+    }
+    .pfsense-table-grid span:first-child,
+    .pfsense-table-grid-header span:first-child {
+        text-align: left;
     }
     .pfsense-label {
         font-size: .95rem;
@@ -96,7 +110,6 @@
         font-size: .95rem;
         color: #1e293b;
         font-weight: 500;
-        text-align: right;
     }
     .pfsense-value-center {
         text-align: center !important;
@@ -170,24 +183,6 @@
         font-weight: 500;
         width: 120px;
     }
-    .pfsense-table-header-ips {
-        display: flex;
-        justify-content: space-between;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: .93rem;
-        color: #475569;
-        font-weight: 600;
-    }
-    .pfsense-table-header-ips span {
-        flex: 1 1 0;
-        text-align: center;
-    }
-    .pfsense-table-value-center {
-        text-align: center !important;
-        width: 100%;
-        display: block;
-    }
 </style>
 <div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 w-100 mx-auto shadow-lg" style="margin-top: 10%; max-width: 1600px;">
     <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
@@ -201,17 +196,19 @@
                     <i class="mdi mdi-file-document" style="font-size:90px;border-radius:8px;display:inline-block;padding:10px;color: #13395d;"></i>
                 </div>
                 <div style="flex-grow:1;">
-                    <div class="pfsense-table-row">
-                        <span class="pfsense-label">user name</span>
-                        <span class="pfsense-value pfsense-value-center">siteA</span>
+                    <div class="pfsense-table-grid">
+                        <span class="pfsense-label" style="text-align:left;">user name</span>
+                        <span class="pfsense-value pfsense-value-center" colspan="2">siteA</span>
                     </div>
-                    <div class="pfsense-table-row">
-                        <span class="pfsense-label">password</span>
-                        <div class="password-group">
-                            <input class="password-input" type="password" value="{{$randomPassword}}" id="password_PFsense" readonly>
-                            <i class="mdi mdi-eye password-icon" onclick="show_password()" title="Show/Hide Password"></i>           
-                            <i class="mdi mdi-content-copy password-icon" onclick="copy_to_clipboard()" title="Copy to Clipboard"></i>
-                        </div>
+                    <div class="pfsense-table-grid" style="border-bottom: none;">
+                        <span class="pfsense-label" style="text-align:left;">password</span>
+                        <span colspan="2">
+                            <div class="password-group" style="justify-content:center;">
+                                <input class="password-input" type="password" value="{{$randomPassword}}" id="password_PFsense" readonly>
+                                <i class="mdi mdi-eye password-icon" onclick="show_password()" title="Show/Hide Password"></i>
+                                <i class="mdi mdi-content-copy password-icon" onclick="copy_to_clipboard()" title="Copy to Clipboard"></i>
+                            </div>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -241,41 +238,20 @@
         <!-- DAS Master Unit IPs (Dynamic) -->
         <div class="pfsense-segment">
             <h2>DAS Master Unit IPs</h2>
-            <div class="pfsense-table-header-ips">
+            <div class="pfsense-table-grid pfsense-table-grid-header">
                 <span></span>
-                <span class="pfsense-table-value-center">IP</span>
-                <span class="pfsense-table-value-center">Mask</span>
+                <span>IP</span>
+                <span>Mask</span>
             </div>
-            <div style="flex-grow:1;margin-bottom:2rem;">
-                @foreach($ipAssignments as $assignment)
-                    @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
-                        <div class="pfsense-table-row">
-                            <span class="pfsense-label">{{ $assignment['label'] }}</span>
-                            <span class="pfsense-value pfsense-table-value-center">
-                                {{ $assignment['ip'] ?? 'N/A' }}
-                            </span>
-                            <span class="pfsense-value pfsense-table-value-center">
-                                {{ $assignment['mask'] ?? 'N/A' }}
-                            </span>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-            <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
-                </button>
-                <a 
-                    class="pfsense-action-btn"
-                    style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
-                    href="mailto:?subject={{ $mailtoSubject }}&body={{ $mailtoBody }}"
-                    target="_blank"
-                >
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
-                </a>
-            </div>
+            @foreach($ipAssignments as $assignment)
+                @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
+                    <div class="pfsense-table-grid">
+                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['ip'] ?? 'N/A' }}</span>
+                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['mask'] ?? 'N/A' }}</span>
+                    </div>
+                @endif
+            @endforeach
         </div>
         @endif
 
@@ -283,41 +259,20 @@
         <!-- ERRCS BDA IPs (Dynamic) -->
         <div class="pfsense-segment">
             <h2>ERRCS BDA IPs</h2>
-            <div class="pfsense-table-header-ips">
+            <div class="pfsense-table-grid pfsense-table-grid-header">
                 <span></span>
-                <span class="pfsense-table-value-center">IP</span>
-                <span class="pfsense-table-value-center">Mask</span>
+                <span>IP</span>
+                <span>Mask</span>
             </div>
-            <div style="flex-grow:1;margin-bottom:2rem;">
-                @foreach($ipAssignments as $assignment)
-                    @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
-                        <div class="pfsense-table-row">
-                            <span class="pfsense-label">{{ $assignment['label'] }}</span>
-                            <span class="pfsense-value pfsense-table-value-center">
-                                {{ $assignment['ip'] ?? 'N/A' }}
-                            </span>
-                            <span class="pfsense-value pfsense-table-value-center">
-                                {{ $assignment['mask'] ?? 'N/A' }}
-                            </span>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-            <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <i class="mdi mdi-download" style="color: white;"></i>
-                    Download
-                </button>
-                <a 
-                    class="pfsense-action-btn"
-                    style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
-                    href="mailto:?subject={{ $mailtoSubject }}&body={{ $mailtoBody }}"
-                    target="_blank"
-                >
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
-                    Share
-                </a>
-            </div>
+            @foreach($ipAssignments as $assignment)
+                @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
+                    <div class="pfsense-table-grid">
+                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['ip'] ?? 'N/A' }}</span>
+                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['mask'] ?? 'N/A' }}</span>
+                    </div>
+                @endif
+            @endforeach
         </div>
         @endif
 
