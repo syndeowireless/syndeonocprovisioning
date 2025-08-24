@@ -198,7 +198,7 @@
                 <div style="flex-grow:1;">
                     <div class="pfsense-table-grid">
                         <span class="pfsense-label" style="text-align:left;">user name</span>
-                        <span class="pfsense-value pfsense-value-center" colspan="2">Admin</span>
+                        <span class="pfsense-value pfsense-value-center" colspan="2">admin</span>
                     </div>
                     <div class="pfsense-table-grid" style="border-bottom: none;">
                         <span class="pfsense-label" style="text-align:left;">password</span>
