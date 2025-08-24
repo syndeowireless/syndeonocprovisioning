@@ -44,6 +44,8 @@ class NetworkProvisioningController extends Controller
         $masterQty = (int) $request->input('master_unit_quantity', 0);
         $bdaQty = (int) $request->input('bda_quantity', 0);
 
+        
+
         // Helper to increment IP
         function ip_add($ip, $increment) {
             $ipLong = ip2long($ip);
@@ -80,6 +82,7 @@ class NetworkProvisioningController extends Controller
         $isStaticIp = $request->has('static_ip_check');
         $staticIp = $request->input('static_ip', '');
         $staticMask = $request->input('static_mask', '');
+        $static_gateway = $request->input('static_gateway', '');
 
         // Busca o template XML sempre pelo registro de id=1
         $templateRow = \App\Models\xmlTemplate::find(1);
@@ -99,7 +102,8 @@ class NetworkProvisioningController extends Controller
         if ($isStaticIp) {
             $placeholders['#wan.ipaddr#'] = $staticIp;
             $placeholders['#wan.mask#']   = $staticMask;
-            $placeholders['#lan.ipaddr#'] = '';
+            $placeholders['#lan.ipaddr#'] = ip_add($ipRow->first_usable_ip, 0);
+            $placeholders['#gateway#']    = $static_gateway;
         } else {
             $placeholders['#wan.ipaddr#'] = '';
             $placeholders['#wan.mask#']   = '';
