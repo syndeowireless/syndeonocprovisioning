@@ -696,157 +696,10 @@
 
                 <!-- Submit Button -->
                 <div class="text-center">
-                <button type="submit" class="submit-button">
-    CREATE
-</button>
+                    <button type="submit" class="submit-button">
+                        CREATE
+                    </button>
                 </div>
-                <script>
-function playLoadingAnimation(event) {
-    // Prevent the default form submission
-    event.preventDefault();
-    
-    // First validate the form
-    if (!validateRequiredFields()) {
-        return false;
-    }
-    
-    // Get the form reference
-    const form = document.getElementById('networkProvisioningForm');
-    
-    // Create video element
-    const video = document.createElement('video');
-    
-    // Fix the video path - remove /public from the path
-    video.src = '/assets/images/Transition_Animation.gif';
-    
-    // Set video properties
-    video.autoplay = true;
-    video.muted = true; // Important: browsers require muted videos for autoplay
-    video.loop = false;
-    video.preload = 'auto';
-    
-    // Style the video overlay
-    video.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        z-index: 9999;
-        background-color: #000;
-        pointer-events: none;
-    `;
-    
-    // Create loading overlay in case video fails
-    const loadingOverlay = document.createElement('div');
-    loadingOverlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: linear-gradient(45deg, #13395d, #FBBF0F);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9998;
-        color: white;
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 600;
-    `;
-    loadingOverlay.innerHTML = `
-        <div style="text-align: center;">
-            <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-top: 5px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-            <div>Processing...</div>
-        </div>
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-    `;
-    
-    // Disable the submit button and show loading state
-    const submitButton = event.target;
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'PROCESSING...';
-    submitButton.disabled = true;
-    
-    // Function to submit form after animation
-    function submitForm() {
-        console.log('Submitting form after animation...');
-        form.submit();
-    }
-    
-    // Function to handle animation completion
-    function handleAnimationComplete() {
-        console.log('Animation completed, submitting form...');
-        submitForm();
-    }
-    
-    // Add loading overlay first (fallback)
-    document.body.appendChild(loadingOverlay);
-    
-    // Video event handlers
-    video.addEventListener('loadstart', () => {
-        console.log('Video loading started...');
-    });
-    
-    video.addEventListener('canplay', () => {
-        console.log('Video can start playing...');
-        // Remove loading overlay when video is ready
-        if (loadingOverlay.parentNode) {
-            loadingOverlay.parentNode.removeChild(loadingOverlay);
-        }
-        // Add video to DOM
-        document.body.appendChild(video);
-    });
-    
-    video.addEventListener('ended', () => {
-        console.log('Video ended');
-        handleAnimationComplete();
-    });
-    
-    video.addEventListener('error', (e) => {
-        console.error('Video error:', e);
-        console.log('Submitting form without animation...');
-        // Remove video and overlay
-        if (video.parentNode) video.parentNode.removeChild(video);
-        if (loadingOverlay.parentNode) loadingOverlay.parentNode.removeChild(loadingOverlay);
-        // Submit form anyway after a short delay
-        setTimeout(submitForm, 1000);
-    });
-    
-    // Timeout fallback (in case video doesn't load or play)
-    setTimeout(() => {
-        console.log('Timeout reached, submitting form...');
-        if (document.body.contains(video) || document.body.contains(loadingOverlay)) {
-            handleAnimationComplete();
-        }
-    }, 5000); // 5 second timeout
-    
-    // Start loading the video
-    video.load();
-    
-    return false; // Prevent default form submission
-}
-
-// Add event listener to the form submit button
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('networkProvisioningForm');
-    const submitButton = form.querySelector('.submit-button');
-    
-    if (submitButton) {
-        // Add event listener for the loading animation
-        submitButton.addEventListener('click', function(event) {
-            playLoadingAnimation(event);
-        });
-    }
-});
-</script>
             </form>
             
             @if($errors->any())
@@ -1324,52 +1177,33 @@ function showToast(message, type = 'error') {
     }, 5000);
 }
 
-// REPLACE the existing validateRequiredFields() function with this:
-
+// Form validation function
 function validateRequiredFields() {
-    const systemType = document.getElementById('system_type').value;
-    
-    // Base required fields that are always required
-    const baseRequiredFields = [
+    const requiredFields = [
         { id: 'property_name', name: 'Property Name' },
         { id: 'property_address', name: 'Property Address' },
         { id: 'system_type', name: 'System Type' },
         { id: 'oem', name: 'OEM' },
+        { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+        { id: 'bda_quantity', name: 'BDA Quantity' },
         { id: 'hostname', name: 'Hostname (dyndns)' }
     ];
-    
-    // Add conditional required fields based on system type
-    let requiredFields = [...baseRequiredFields];
-    
-    if (systemType === 'DAS') {
-        requiredFields.push({ id: 'master_unit_quantity', name: 'Master Unit Quantity' });
-    } else if (systemType === 'ERRCS') {
-        requiredFields.push({ id: 'bda_quantity', name: 'BDA Quantity' });
-    } else if (systemType === 'DAS & ERRCS') {
-        requiredFields.push(
-            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-            { id: 'bda_quantity', name: 'BDA Quantity' }
-        );
-    } else {
-        // If no system type selected, require both for validation message
-        requiredFields.push(
-            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-            { id: 'bda_quantity', name: 'BDA Quantity' }
-        );
-    }
     
     let emptyFields = [];
     let hasErrors = false;
     
     // Reset all error states
-    document.querySelectorAll('.form-input, .form-select').forEach(element => {
-        element.classList.remove('error');
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+            element.classList.remove('error');
+        }
     });
     
     // Check each required field
     requiredFields.forEach(field => {
         const element = document.getElementById(field.id);
-        if (element && !element.disabled) { // Only validate if field is not disabled
+        if (element) {
             const value = element.value.trim();
             if (!value) {
                 emptyFields.push(field.name);
@@ -1386,10 +1220,10 @@ function validateRequiredFields() {
         
         showToast(message, 'error');
         
-        // Focus on the first empty field that's not disabled
+        // Focus on the first empty field
         const firstEmptyField = requiredFields.find(field => {
             const element = document.getElementById(field.id);
-            return element && !element.disabled && !element.value.trim();
+            return element && !element.value.trim();
         });
         
         if (firstEmptyField) {
@@ -1405,6 +1239,8 @@ function validateRequiredFields() {
     
     return true;
 }
+
+// Function to handle form submission
 function handleFormSubmission(event) {
     if (!validateRequiredFields()) {
         event.preventDefault();
@@ -1465,68 +1301,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-// REPLACE the existing updateFields script with this:
-
 document.addEventListener('DOMContentLoaded', function () {
     function updateFields() {
         const type = document.getElementById('system_type').value;
         const master = document.getElementById('master_unit_quantity');
         const bda = document.getElementById('bda_quantity');
-        
-        // Remove any existing error states when fields change
-        master.classList.remove('error');
-        bda.classList.remove('error');
-        
         if (type === 'DAS') {
             master.disabled = false;
-            master.required = true;
             bda.disabled = true;
-            bda.required = false;
             bda.value = '';
-            // Visual indication for disabled field
-            bda.style.backgroundColor = '#f9fafb';
-            bda.style.cursor = 'not-allowed';
-            master.style.backgroundColor = '';
-            master.style.cursor = '';
         } else if (type === 'ERRCS') {
             master.disabled = true;
-            master.required = false;
+            bda.disabled = false;
             master.value = '';
-            bda.disabled = false;
-            bda.required = true;
-            // Visual indication for disabled field
-            master.style.backgroundColor = '#f9fafb';
-            master.style.cursor = 'not-allowed';
-            bda.style.backgroundColor = '';
-            bda.style.cursor = '';
-        } else if (type === 'DAS & ERRCS') {
-            master.disabled = false;
-            master.required = true;
-            bda.disabled = false;
-            bda.required = true;
-            // Both fields enabled
-            master.style.backgroundColor = '';
-            master.style.cursor = '';
-            bda.style.backgroundColor = '';
-            bda.style.cursor = '';
         } else {
-            // No system type selected - enable both but don't require
             master.disabled = false;
-            master.required = false;
             bda.disabled = false;
-            bda.required = false;
-            master.style.backgroundColor = '';
-            master.style.cursor = '';
-            bda.style.backgroundColor = '';
-            bda.style.cursor = '';
         }
     }
-    
-    const systemTypeSelect = document.getElementById('system_type');
-    if (systemTypeSelect) {
-        systemTypeSelect.addEventListener('change', updateFields);
-        updateFields(); // Initial call to handle default value
-    }
+    document.getElementById('system_type').addEventListener('change', updateFields);
+    updateFields(); // Initial call to handle default value
 });
 </script>
 
