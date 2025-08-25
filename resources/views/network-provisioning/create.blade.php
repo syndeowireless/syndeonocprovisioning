@@ -738,41 +738,26 @@ const npLoadingOverlay = (function() {
         hide: function() { if (overlay) overlay.style.display = 'none'; }
     };
 })();
-function playLoadingAnimation(event) {
-    // Prevent the default form submission
-    event.preventDefault();
-    
-    // First validate the form
+// On-submit handler: validate and show overlay; allow natural submission
+function handleSubmitWithOverlay(e) {
     if (!validateRequiredFields()) {
+        e.preventDefault();
         return false;
     }
-    
-    // Get the form reference
-    const form = document.getElementById('networkProvisioningForm');
-    // Show the centered GIF overlay
+    const submitButton = e.submitter || document.querySelector('#networkProvisioningForm .submit-button');
+    if (submitButton) {
+        submitButton.textContent = 'PROCESSING...';
+        submitButton.disabled = true;
+    }
     npLoadingOverlay.show();
-    
-    // Disable the submit button and show loading state
-    const submitButton = event.target;
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'PROCESSING...';
-    submitButton.disabled = true;
-    
-    // Submit the form immediately; server navigation will replace the page
-    form.submit();
-    return false;
+    return true;
 }
 
 // Add event listener to the form submit button
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('networkProvisioningForm');
-    const submitButton = form.querySelector('.submit-button');
-    
-    if (submitButton) {
-        // Add event listener for the loading animation
-        submitButton.addEventListener('click', function(event) {
-            playLoadingAnimation(event);
-        });
+    if (form) {
+        form.addEventListener('submit', handleSubmitWithOverlay);
     }
 });
 </script>
