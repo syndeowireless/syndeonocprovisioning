@@ -702,180 +702,30 @@
                 </div>
                 <script>
 function playLoadingAnimation(event) {
-    // Prevent the default form submission
     event.preventDefault();
-    
-    // First validate the form
+    const form = document.querySelector('#networkProvisioningForm');
+
     if (!validateRequiredFields()) {
-        return false;
+        return;
     }
-    
-    // Get the form reference
-    const form = document.getElementById('networkProvisioningForm');
-    const submitButton = event.target;
-    
-    // Disable the submit button and show processing state
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'PROCESSING...';
+
+    // Disable the submit button
+    const submitButton = document.querySelector('#submitButton');
     submitButton.disabled = true;
-    submitButton.style.opacity = '0.7';
-    
-    // Create the loading overlay that covers the entire viewport
-    const loadingOverlay = document.createElement('div');
-    loadingOverlay.id = 'loading-overlay';
-    loadingOverlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(255, 255, 255, 0.98);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    `;
-    
-    // Create the GIF container
-    const gifContainer = document.createElement('div');
-    gifContainer.style.cssText = `
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 2.5rem;
-        background-color: white;
-        border-radius: 25px;
-        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
-        border: 2px solid rgba(19, 57, 93, 0.1);
-        max-width: 90vw;
-        max-height: 90vh;
-    `;
-    
-    // Create the GIF image element
-    const gifImage = document.createElement('img');
-    gifImage.src = '/assets/images/Transition_Animation.gif';
-    gifImage.alt = 'Loading...';
-    gifImage.style.cssText = `
-        max-width: 350px;
-        max-height: 350px;
-        width: auto;
-        height: auto;
-        border-radius: 15px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        border: 3px solid rgba(251, 191, 15, 0.3);
-    `;
-    
-    // Create loading text
-    const loadingText = document.createElement('div');
-    loadingText.textContent = 'Processing your request...';
-    loadingText.style.cssText = `
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #13395d;
-        margin-top: 1rem;
-        animation: pulse 2s infinite;
-    `;
-    
-    // Add CSS animation for the pulsing text and fade in effect
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: scale(0.8) translateY(20px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: scale(1) translateY(0); 
-            }
-        }
-        
-        #loading-overlay {
-            animation: fadeIn 0.4s ease-out;
-        }
-        
-        #loading-overlay .gif-container {
-            animation: fadeIn 0.6s ease-out 0.2s both;
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Add a class to the gif container for animation
-    gifContainer.className = 'gif-container';
-    
-    // Assemble the loading overlay
-    gifContainer.appendChild(gifImage);
-    gifContainer.appendChild(loadingText);
-    loadingOverlay.appendChild(gifContainer);
-    
-    // Add the overlay to the page
-    document.body.appendChild(loadingOverlay);
-    
-    // Function to submit the form after animation
-    function submitForm() {
-        console.log('Submitting form...');
-        form.submit();
-    }
-    
-    // Function to handle errors and cleanup
-    function handleError() {
-        console.error('Loading animation error, submitting form anyway...');
-        // Remove overlay
-        if (loadingOverlay && loadingOverlay.parentNode) {
-            loadingOverlay.parentNode.removeChild(loadingOverlay);
-        }
-        // Reset button
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
-        submitButton.style.opacity = '1';
-        // Remove style
-        if (style && style.parentNode) {
-            style.parentNode.removeChild(style);
-        }
-        // Submit form
-        submitForm();
-    }
-    
-    // Handle GIF load events
-    gifImage.addEventListener('load', () => {
-        console.log('GIF loaded successfully');
-        // Wait for a minimum time to show the animation (2.5 seconds)
-        setTimeout(() => {
-            submitForm();
-        }, 2500);
-    });
-    
-    gifImage.addEventListener('error', (e) => {
-        console.error('GIF failed to load:', e);
-        // Show fallback loading without GIF
-        gifImage.style.display = 'none';
-        loadingText.textContent = 'Processing...';
-        setTimeout(() => {
-            submitForm();
-        }, 2000);
-    });
-    
-    // Fallback timeout in case something goes wrong (8 seconds maximum)
+
+    // Show loading overlay
+    const loadingOverlay = document.querySelector('#loadingOverlay');
+    loadingOverlay.style.display = 'block';
+
+    // Submit the form programmatically
     setTimeout(() => {
-        console.log('Timeout reached, submitting form...');
-        if (document.body.contains(loadingOverlay)) {
-            submitForm();
-        }
-    }, 8000);
-    
-    return false; // Prevent default form submission
+        form.submit();
+    }, 500); // Adjust timeout if necessary
 }
+
+// Attach the playLoadingAnimation function to the form's submit event
+const form = document.querySelector('#networkProvisioningForm');
+form.addEventListener('submit', playLoadingAnimation);
 
 // Toast notification function (keeping your existing one)
 function showToast(message, type = 'error') {
