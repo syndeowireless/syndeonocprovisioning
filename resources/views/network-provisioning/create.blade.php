@@ -17,6 +17,176 @@
   width: 44px;
   height: 24px;
 }
+.loading-overlay {
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+/* Ensure the main content area is properly positioned for overlay */
+.main-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure sidebar and topbar stay above overlay when needed */
+.vertical-menu {
+    z-index: 10000 !important;
+}
+
+.navbar-header {
+    z-index: 10000 !important;
+}
+
+/* Loading animation container */
+.loading-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Loading GIF styles */
+.loading-gif {
+    max-width: 280px;
+    max-height: 280px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+/* Loading text styles */
+.loading-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2B2B22;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.loading-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #6b7280;
+    font-weight: 400;
+    line-height: 1.4;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* Fallback spinner styles */
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e5e7eb;
+    border-top: 6px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for loading overlay */
+@media (max-width: 992px) {
+    .loading-overlay {
+        left: 0 !important;
+        top: 60px !important; /* Adjust for mobile topbar */
+    }
+    
+    .loading-container {
+        max-width: 90%;
+        padding: 1.5rem;
+    }
+    
+    .loading-gif {
+        max-width: 220px;
+        max-height: 220px;
+    }
+    
+    .loading-title {
+        font-size: 1.25rem;
+    }
+    
+    .loading-subtitle {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .loading-overlay {
+        top: 50px !important;
+    }
+    
+    .loading-container {
+        padding: 1rem;
+    }
+    
+    .loading-gif {
+        max-width: 180px;
+        max-height: 180px;
+    }
+    
+    .loading-title {
+        font-size: 1.125rem;
+    }
+}
+
+/* Ensure proper stacking context */
+body.loading-active {
+    overflow: hidden; /* Prevent scrolling during loading */
+}
+
+/* Animation for loading overlay entrance */
+.loading-overlay.fade-in {
+    animation: fadeInOverlay 0.3s ease forwards;
+}
+
+.loading-overlay.fade-out {
+    animation: fadeOutOverlay 0.3s ease forwards;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOutOverlay {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
 
 .switch input {
   opacity: 0;
@@ -692,14 +862,240 @@
                    value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
         </div>
     </div>
+    <div class="grid-container">
+            <div class="form-group">
+                <label class="form-label" for="static_ip">Gateway</label>
+                <input class="form-input" type="text" id="static_gateway" name="static_gateway"
+                   value="{{ old('static_gateway') }}" placeholder="Type the Gateway">
+        </div> 
+    </div>
 </div>
 
                 <!-- Submit Button -->
                 <div class="text-center">
-                    <button type="submit" class="submit-button">
-                        CREATE
-                    </button>
+                <button type="submit" class="submit-button">
+    CREATE
+</button>
                 </div>
+                <script>
+function playLoadingAnimation(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+    
+    // First validate the form
+    if (!validateRequiredFields()) {
+        return false;
+    }
+    
+    // Get the form reference
+    const form = document.getElementById('networkProvisioningForm');
+    
+    // Create overlay that only covers the main content area (not sidebar/topbar)
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 70px; /* Height of topbar */
+        left: 240px; /* Width of sidebar */
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+    `;
+    
+    // Adjust overlay position for mobile screens
+    if (window.innerWidth <= 992) {
+        overlay.style.left = '0px'; // Full width on mobile
+        overlay.style.top = '60px'; // Adjust for mobile topbar height
+    }
+    
+    // Create container for the loading content
+    const loadingContainer = document.createElement('div');
+    loadingContainer.style.cssText = `
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    `;
+    
+    // Create GIF element
+    const gifElement = document.createElement('img');
+    gifElement.src = '/assets/images/Transition_Animation.gif';
+    gifElement.alt = 'Loading...';
+    gifElement.style.cssText = `
+        max-width: 300px;
+        max-height: 300px;
+        width: auto;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    `;
+    
+    // Create loading text
+    const loadingText = document.createElement('div');
+    loadingText.innerHTML = `
+        <div style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2B2B22;
+            margin-bottom: 0.5rem;
+        ">Processing...</div>
+        <div style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 400;
+        ">Please wait while we create your network provisioning</div>
+    `;
+    
+    // Create fallback loading spinner (in case GIF fails to load)
+    const spinner = document.createElement('div');
+    spinner.style.cssText = `
+        width: 60px;
+        height: 60px;
+        border: 6px solid #e5e7eb;
+        border-top: 6px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1.5rem;
+        display: none;
+    `;
+    
+    // Add CSS for spinner animation
+    if (!document.querySelector('#loading-spinner-style')) {
+        const style = document.createElement('style');
+        style.id = 'loading-spinner-style';
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Assemble the loading container
+    loadingContainer.appendChild(gifElement);
+    loadingContainer.appendChild(spinner);
+    loadingContainer.appendChild(loadingText);
+    overlay.appendChild(loadingContainer);
+    
+    // Disable the submit button and show loading state
+    const submitButton = event.target;
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'PROCESSING...';
+    submitButton.disabled = true;
+    
+    // Function to submit form after animation
+    function submitForm() {
+        console.log('Submitting form after animation...');
+        form.submit();
+    }
+    
+    // Handle GIF loading
+    let animationStarted = false;
+    let animationDuration = 3000; // Default 3 seconds if we can't detect GIF duration
+    
+    gifElement.addEventListener('load', () => {
+        console.log('GIF loaded successfully');
+        if (!animationStarted) {
+            animationStarted = true;
+            // Start the animation timer
+            setTimeout(submitForm, animationDuration);
+        }
+    });
+    
+    gifElement.addEventListener('error', () => {
+        console.log('GIF failed to load, showing spinner instead');
+        gifElement.style.display = 'none';
+        spinner.style.display = 'block';
+        if (!animationStarted) {
+            animationStarted = true;
+            setTimeout(submitForm, 2000); // Shorter duration for spinner
+        }
+    });
+    
+    // Add overlay to the main content area
+    document.body.appendChild(overlay);
+    
+    // Fade in the overlay
+    requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+    });
+    
+    // Handle window resize to adjust overlay position
+    const handleResize = () => {
+        if (window.innerWidth <= 992) {
+            overlay.style.left = '0px';
+            overlay.style.top = '60px';
+        } else {
+            overlay.style.left = '240px';
+            overlay.style.top = '70px';
+        }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Timeout fallback (in case something goes wrong)
+    setTimeout(() => {
+        console.log('Timeout reached, submitting form...');
+        if (!animationStarted) {
+            animationStarted = true;
+            submitForm();
+        }
+    }, 8000); // 8 second maximum timeout
+    
+    // Clean up function
+    const cleanup = () => {
+        window.removeEventListener('resize', handleResize);
+        if (overlay && overlay.parentNode) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }, 300);
+        }
+    };
+    
+    // Store cleanup function for potential use
+    window.cleanupLoadingAnimation = cleanup;
+    
+    return false; // Prevent default form submission
+}
+
+// Update the DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('networkProvisioningForm');
+    const submitButton = form.querySelector('.submit-button');
+    
+    if (submitButton) {
+        // Remove any existing event listeners
+        submitButton.removeEventListener('click', playLoadingAnimation);
+        
+        // Add the updated event listener
+        submitButton.addEventListener('click', function(event) {
+            playLoadingAnimation(event);
+        });
+    }
+    
+    // Handle potential navigation away from page
+    window.addEventListener('beforeunload', function() {
+        if (window.cleanupLoadingAnimation) {
+            window.cleanupLoadingAnimation();
+        }
+    });
+});
+</script>
             </form>
             
             @if($errors->any())
@@ -1177,33 +1573,52 @@ function showToast(message, type = 'error') {
     }, 5000);
 }
 
-// Form validation function
+// REPLACE the existing validateRequiredFields() function with this:
+
 function validateRequiredFields() {
-    const requiredFields = [
+    const systemType = document.getElementById('system_type').value;
+    
+    // Base required fields that are always required
+    const baseRequiredFields = [
         { id: 'property_name', name: 'Property Name' },
         { id: 'property_address', name: 'Property Address' },
         { id: 'system_type', name: 'System Type' },
         { id: 'oem', name: 'OEM' },
-        { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-        { id: 'bda_quantity', name: 'BDA Quantity' },
         { id: 'hostname', name: 'Hostname (dyndns)' }
     ];
+    
+    // Add conditional required fields based on system type
+    let requiredFields = [...baseRequiredFields];
+    
+    if (systemType === 'DAS') {
+        requiredFields.push({ id: 'master_unit_quantity', name: 'Master Unit Quantity' });
+    } else if (systemType === 'ERRCS') {
+        requiredFields.push({ id: 'bda_quantity', name: 'BDA Quantity' });
+    } else if (systemType === 'DAS & ERRCS') {
+        requiredFields.push(
+            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+            { id: 'bda_quantity', name: 'BDA Quantity' }
+        );
+    } else {
+        // If no system type selected, require both for validation message
+        requiredFields.push(
+            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+            { id: 'bda_quantity', name: 'BDA Quantity' }
+        );
+    }
     
     let emptyFields = [];
     let hasErrors = false;
     
     // Reset all error states
-    requiredFields.forEach(field => {
-        const element = document.getElementById(field.id);
-        if (element) {
-            element.classList.remove('error');
-        }
+    document.querySelectorAll('.form-input, .form-select').forEach(element => {
+        element.classList.remove('error');
     });
     
     // Check each required field
     requiredFields.forEach(field => {
         const element = document.getElementById(field.id);
-        if (element) {
+        if (element && !element.disabled) { // Only validate if field is not disabled
             const value = element.value.trim();
             if (!value) {
                 emptyFields.push(field.name);
@@ -1220,10 +1635,10 @@ function validateRequiredFields() {
         
         showToast(message, 'error');
         
-        // Focus on the first empty field
+        // Focus on the first empty field that's not disabled
         const firstEmptyField = requiredFields.find(field => {
             const element = document.getElementById(field.id);
-            return element && !element.value.trim();
+            return element && !element.disabled && !element.value.trim();
         });
         
         if (firstEmptyField) {
@@ -1239,8 +1654,6 @@ function validateRequiredFields() {
     
     return true;
 }
-
-// Function to handle form submission
 function handleFormSubmission(event) {
     if (!validateRequiredFields()) {
         event.preventDefault();
@@ -1301,26 +1714,68 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
+// REPLACE the existing updateFields script with this:
+
 document.addEventListener('DOMContentLoaded', function () {
     function updateFields() {
         const type = document.getElementById('system_type').value;
         const master = document.getElementById('master_unit_quantity');
         const bda = document.getElementById('bda_quantity');
+        
+        // Remove any existing error states when fields change
+        master.classList.remove('error');
+        bda.classList.remove('error');
+        
         if (type === 'DAS') {
             master.disabled = false;
+            master.required = true;
             bda.disabled = true;
+            bda.required = false;
             bda.value = '';
+            // Visual indication for disabled field
+            bda.style.backgroundColor = '#f9fafb';
+            bda.style.cursor = 'not-allowed';
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
         } else if (type === 'ERRCS') {
             master.disabled = true;
-            bda.disabled = false;
+            master.required = false;
             master.value = '';
-        } else {
-            master.disabled = false;
             bda.disabled = false;
+            bda.required = true;
+            // Visual indication for disabled field
+            master.style.backgroundColor = '#f9fafb';
+            master.style.cursor = 'not-allowed';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        } else if (type === 'DAS & ERRCS') {
+            master.disabled = false;
+            master.required = true;
+            bda.disabled = false;
+            bda.required = true;
+            // Both fields enabled
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        } else {
+            // No system type selected - enable both but don't require
+            master.disabled = false;
+            master.required = false;
+            bda.disabled = false;
+            bda.required = false;
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
         }
     }
-    document.getElementById('system_type').addEventListener('change', updateFields);
-    updateFields(); // Initial call to handle default value
+    
+    const systemTypeSelect = document.getElementById('system_type');
+    if (systemTypeSelect) {
+        systemTypeSelect.addEventListener('change', updateFields);
+        updateFields(); // Initial call to handle default value
+    }
 });
 </script>
 
