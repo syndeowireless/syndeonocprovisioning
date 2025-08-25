@@ -187,6 +187,8 @@
             document.addEventListener('submit', function(e) {
                 var form = e.target;
                 if (!form || form.target === '_blank') return;
+                // Allow specific forms to opt-out (e.g., custom loading overlays)
+                if (form.hasAttribute('data-skip-exit')) return;
                 // Let the form submit after exit animation
                 e.preventDefault();
                 startExitTransition(function() { form.submit(); });
