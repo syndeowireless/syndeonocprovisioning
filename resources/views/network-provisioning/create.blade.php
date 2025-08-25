@@ -702,245 +702,148 @@
                 </div>
                 <script>
 function playLoadingAnimation(event) {
+    // Prevent the default form submission
     event.preventDefault();
-    const form = document.querySelector('#networkProvisioningForm');
-
+    
+    // First validate the form
     if (!validateRequiredFields()) {
-        return;
-    }
-
-    // Disable the submit button
-    const submitButton = document.querySelector('#submitButton');
-    submitButton.disabled = true;
-
-    // Show loading overlay
-    const loadingOverlay = document.querySelector('#loadingOverlay');
-    loadingOverlay.style.display = 'block';
-
-    // Submit the form programmatically
-    setTimeout(() => {
-        form.submit();
-    }, 500); // Adjust timeout if necessary
-}
-
-// Attach the playLoadingAnimation function to the form's submit event
-const form = document.querySelector('#networkProvisioningForm');
-form.addEventListener('submit', playLoadingAnimation);
-
-// Toast notification function (keeping your existing one)
-function showToast(message, type = 'error') {
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20">
-                ${type === 'error' ? 
-                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>' :
-                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>'
-                }
-            </svg>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 100);
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            if (toast && toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
-        }, 300);
-    }, 5000);
-}
-
-// Your existing validateRequiredFields function (keep as is)
-function validateRequiredFields() {
-    const systemType = document.getElementById('system_type').value;
-    
-    const baseRequiredFields = [
-        { id: 'property_name', name: 'Property Name' },
-        { id: 'property_address', name: 'Property Address' },
-        { id: 'system_type', name: 'System Type' },
-        { id: 'oem', name: 'OEM' },
-        { id: 'hostname', name: 'Hostname (dyndns)' }
-    ];
-    
-    let requiredFields = [...baseRequiredFields];
-    
-    if (systemType === 'DAS') {
-        requiredFields.push({ id: 'master_unit_quantity', name: 'Master Unit Quantity' });
-    } else if (systemType === 'ERRCS') {
-        requiredFields.push({ id: 'bda_quantity', name: 'BDA Quantity' });
-    } else if (systemType === 'DAS & ERRCS') {
-        requiredFields.push(
-            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-            { id: 'bda_quantity', name: 'BDA Quantity' }
-        );
-    } else {
-        requiredFields.push(
-            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-            { id: 'bda_quantity', name: 'BDA Quantity' }
-        );
-    }
-    
-    let emptyFields = [];
-    let hasErrors = false;
-    
-    document.querySelectorAll('.form-input, .form-select').forEach(element => {
-        element.classList.remove('error');
-    });
-    
-    requiredFields.forEach(field => {
-        const element = document.getElementById(field.id);
-        if (element && !element.disabled) {
-            const value = element.value.trim();
-            if (!value) {
-                emptyFields.push(field.name);
-                element.classList.add('error');
-                hasErrors = true;
-            }
-        }
-    });
-    
-    if (hasErrors) {
-        const message = emptyFields.length === 1 
-            ? `Please fill in the ${emptyFields[0]} field.`
-            : `Please fill in all required fields: ${emptyFields.join(', ')}.`;
-        
-        showToast(message, 'error');
-        
-        const firstEmptyField = requiredFields.find(field => {
-            const element = document.getElementById(field.id);
-            return element && !element.disabled && !element.value.trim();
-        });
-        
-        if (firstEmptyField) {
-            const element = document.getElementById(firstEmptyField.id);
-            if (element) {
-                element.focus();
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-        
         return false;
     }
     
-    return true;
-}
-
-// Your existing toggle functions (keep as is)
-function toggleStaticIpFields() {
-    var checkbox = document.getElementById('static_ip_check');
-    var fields = document.getElementById('static-ip-fields');
-    fields.style.display = checkbox.checked ? 'block' : 'none';
-}
-
-function toggleGrafanaEmail() {
-    const toggle = document.getElementById('grafana_toggle');
-    const emailField = document.getElementById('grafana-email-field');
-    emailField.style.display = toggle.checked ? 'block' : 'none';
-}
-
-// Main DOMContentLoaded event listener - UPDATED
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize form and loading animation
+    // Get the form reference
     const form = document.getElementById('networkProvisioningForm');
-    const submitButton = form ? form.querySelector('.submit-button') : null;
     
-    if (form && submitButton) {
-        // Add the loading animation event listener
+    // Create video element
+    const video = document.createElement('video');
+    
+    // Fix the video path - remove /public from the path
+    video.src = '/assets/images/Transition_Animation.gif';
+    
+    // Set video properties
+    video.autoplay = true;
+    video.muted = true; // Important: browsers require muted videos for autoplay
+    video.loop = false;
+    video.preload = 'auto';
+    
+    // Style the video overlay
+    video.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 9999;
+        background-color: #000;
+        pointer-events: none;
+    `;
+    
+    // Create loading overlay in case video fails
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(45deg, #13395d, #FBBF0F);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9998;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+    `;
+    loadingOverlay.innerHTML = `
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-top: 5px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div>Processing...</div>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    
+    // Disable the submit button and show loading state
+    const submitButton = event.target;
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'PROCESSING...';
+    submitButton.disabled = true;
+    
+    // Function to submit form after animation
+    function submitForm() {
+        console.log('Submitting form after animation...');
+        form.submit();
+    }
+    
+    // Function to handle animation completion
+    function handleAnimationComplete() {
+        console.log('Animation completed, submitting form...');
+        submitForm();
+    }
+    
+    // Add loading overlay first (fallback)
+    document.body.appendChild(loadingOverlay);
+    
+    // Video event handlers
+    video.addEventListener('loadstart', () => {
+        console.log('Video loading started...');
+    });
+    
+    video.addEventListener('canplay', () => {
+        console.log('Video can start playing...');
+        // Remove loading overlay when video is ready
+        if (loadingOverlay.parentNode) {
+            loadingOverlay.parentNode.removeChild(loadingOverlay);
+        }
+        // Add video to DOM
+        document.body.appendChild(video);
+    });
+    
+    video.addEventListener('ended', () => {
+        console.log('Video ended');
+        handleAnimationComplete();
+    });
+    
+    video.addEventListener('error', (e) => {
+        console.error('Video error:', e);
+        console.log('Submitting form without animation...');
+        // Remove video and overlay
+        if (video.parentNode) video.parentNode.removeChild(video);
+        if (loadingOverlay.parentNode) loadingOverlay.parentNode.removeChild(loadingOverlay);
+        // Submit form anyway after a short delay
+        setTimeout(submitForm, 1000);
+    });
+    
+    // Timeout fallback (in case video doesn't load or play)
+    setTimeout(() => {
+        console.log('Timeout reached, submitting form...');
+        if (document.body.contains(video) || document.body.contains(loadingOverlay)) {
+            handleAnimationComplete();
+        }
+    }, 5000); // 5 second timeout
+    
+    // Start loading the video
+    video.load();
+    
+    return false; // Prevent default form submission
+}
+
+// Add event listener to the form submit button
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('networkProvisioningForm');
+    const submitButton = form.querySelector('.submit-button');
+    
+    if (submitButton) {
+        // Add event listener for the loading animation
         submitButton.addEventListener('click', function(event) {
             playLoadingAnimation(event);
         });
-    }
-    
-    // Initialize map handler and other functionality
-    setTimeout(() => {
-        if (typeof OpenStreetMapHandler !== 'undefined') {
-            mapHandler = new OpenStreetMapHandler();
-            
-            // Check for existing coordinates
-            const latInput = document.getElementById('latitude');
-            const lngInput = document.getElementById('longitude');
-            
-            if (latInput && lngInput && latInput.value && lngInput.value) {
-                const lat = parseFloat(latInput.value);
-                const lng = parseFloat(lngInput.value);
-                
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    setTimeout(() => {
-                        mapHandler.checkManualCoordinates();
-                    }, 200);
-                }
-            }
-        }
-    }, 100);
-    
-    // Initialize system type field updates
-    function updateFields() {
-        const type = document.getElementById('system_type').value;
-        const master = document.getElementById('master_unit_quantity');
-        const bda = document.getElementById('bda_quantity');
-        
-        master.classList.remove('error');
-        bda.classList.remove('error');
-        
-        if (type === 'DAS') {
-            master.disabled = false;
-            master.required = true;
-            bda.disabled = true;
-            bda.required = false;
-            bda.value = '';
-            bda.style.backgroundColor = '#f9fafb';
-            bda.style.cursor = 'not-allowed';
-            master.style.backgroundColor = '';
-            master.style.cursor = '';
-        } else if (type === 'ERRCS') {
-            master.disabled = true;
-            master.required = false;
-            master.value = '';
-            bda.disabled = false;
-            bda.required = true;
-            master.style.backgroundColor = '#f9fafb';
-            master.style.cursor = 'not-allowed';
-            bda.style.backgroundColor = '';
-            bda.style.cursor = '';
-        } else if (type === 'DAS & ERRCS') {
-            master.disabled = false;
-            master.required = true;
-            bda.disabled = false;
-            bda.required = true;
-            master.style.backgroundColor = '';
-            master.style.cursor = '';
-            bda.style.backgroundColor = '';
-            bda.style.cursor = '';
-        } else {
-            master.disabled = false;
-            master.required = false;
-            bda.disabled = false;
-            bda.required = false;
-            master.style.backgroundColor = '';
-            master.style.cursor = '';
-            bda.style.backgroundColor = '';
-            bda.style.cursor = '';
-        }
-    }
-    
-    const systemTypeSelect = document.getElementById('system_type');
-    if (systemTypeSelect) {
-        systemTypeSelect.addEventListener('change', updateFields);
-        updateFields();
     }
 });
 </script>
