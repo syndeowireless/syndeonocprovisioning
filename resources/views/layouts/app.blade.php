@@ -41,6 +41,9 @@
             will-change: left;
         }
 
+        /* Allow content-scoped overlays without covering sidebar/header */
+        .page-content { position: relative; }
+
         /* Ensure content shifts on small screens when sidebar is opened */
         @media (max-width: 992px) {
             body.sidebar-enable .main-content { margin-left: 240px; }

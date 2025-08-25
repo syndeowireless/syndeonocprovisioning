@@ -707,212 +707,37 @@
     CREATE
 </button>
                 </div>
-                // Enhanced Loading overlay with better error handling and styling
+                <script>
+// Loading overlay element scoped to main page content (keeps sidebar/header visible)
 const npLoadingOverlay = (function() {
-    let overlay = null;
-    
-    const createOverlay = function() {
-        if (overlay) return overlay;
-        
-        // Create overlay container
+    let overlay; let container;
+    function ensure() {
+        if (overlay) return;
+        container = document.querySelector('.page-content');
+        if (!container) { container = document.body; }
         overlay = document.createElement('div');
         overlay.id = 'np-loading-overlay';
         overlay.style.cssText = [
-            'position: fixed',
-            'top: 0',
-            'left: 0',
-            'right: 0', 
-            'bottom: 0',
-            'z-index: 99999',
-            'background: rgba(255, 255, 255, 0.95)',
-            'backdrop-filter: blur(4px)',
-            '-webkit-backdrop-filter: blur(4px)',
+            'position: absolute',
+            'inset: 0',
+            'z-index: 25',
+            'background: rgba(255,255,255,1)',
             'display: none',
             'align-items: center',
-            'justify-content: center',
-            'flex-direction: column'
+            'justify-content: center'
         ].join(';');
-        
-        // Create loading container
-        const loadingContainer = document.createElement('div');
-        loadingContainer.style.cssText = [
-            'text-align: center',
-            'padding: 2rem',
-            'background: white',
-            'border-radius: 12px',
-            'box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15)',
-            'border: 1px solid #e5e7eb',
-            'max-width: 300px'
-        ].join(';');
-        
-        // Create loading image
         const img = document.createElement('img');
-        img.src = '/assets/images/Transition_Animation.gif';
+        img.src = "{{ asset('assets/images/Transition_Animation.gif') }}";
         img.alt = 'Loading...';
-        img.style.cssText = [
-            'width: 80px',
-            'height: 80px',
-            'object-fit: contain',
-            'margin-bottom: 1rem',
-            'border-radius: 8px'
-        ].join(';');
-        
-        // Handle image load error
-        img.onerror = function() {
-            console.warn('Loading GIF not found, using CSS spinner');
-            img.style.display = 'none';
-            
-            // Create CSS spinner as fallback
-            const spinner = document.createElement('div');
-            spinner.style.cssText = [
-                'width: 40px',
-                'height: 40px',
-                'border: 4px solid #f3f4f6',
-                'border-top: 4px solid #3b82f6',
-                'border-radius: 50%',
-                'animation: spin 1s linear infinite',
-                'margin: 0 auto 1rem auto'
-            ].join(';');
-            
-            // Add spinner animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            loadingContainer.insertBefore(spinner, loadingText);
-        };
-        
-        // Create loading text
-        const loadingText = document.createElement('div');
-        loadingText.textContent = 'Processing your request...';
-        loadingText.style.cssText = [
-            'color: #374151',
-            'font-size: 0.875rem',
-            'font-weight: 500',
-            'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-        ].join(';');
-        
-        // Assemble components
-        loadingContainer.appendChild(img);
-        loadingContainer.appendChild(loadingText);
-        overlay.appendChild(loadingContainer);
-        
-        return overlay;
-    };
-    
+        img.style.cssText = 'width: 96px; height: 96px; object-fit: contain; image-rendering: -webkit-optimize-contrast;';
+        overlay.appendChild(img);
+        container.appendChild(overlay);
+    }
     return {
-        show: function() {
-            if (!overlay) {
-                overlay = createOverlay();
-                document.body.appendChild(overlay);
-            }
-            
-            overlay.style.display = 'flex';
-            // Smooth fade in
-            requestAnimationFrame(() => {
-                overlay.style.opacity = '0';
-                overlay.style.transition = 'opacity 0.3s ease';
-                requestAnimationFrame(() => {
-                    overlay.style.opacity = '1';
-                });
-            });
-        },
-        hide: function() {
-            if (overlay) {
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 300);
-            }
-        }
+        show: function() { ensure(); overlay.style.display = 'flex'; },
+        hide: function() { if (overlay) overlay.style.display = 'none'; }
     };
 })();
-
-function validateRequiredFields() {
-    const systemType = document.getElementById('system_type').value;
-    
-    // Base required fields that are always required
-    const baseRequiredFields = [
-        { id: 'property_name', name: 'Property Name' },
-        { id: 'property_address', name: 'Property Address' },
-        { id: 'system_type', name: 'System Type' },
-        { id: 'oem', name: 'OEM' },
-        { id: 'hostname', name: 'Hostname (dyndns)' }
-    ];
-    
-    // Add conditional required fields based on system type
-    let requiredFields = [...baseRequiredFields];
-    
-    if (systemType === 'DAS') {
-        requiredFields.push({ id: 'master_unit_quantity', name: 'Master Unit Quantity' });
-    } else if (systemType === 'ERRCS') {
-        requiredFields.push({ id: 'bda_quantity', name: 'BDA Quantity' });
-    } else if (systemType === 'DAS & ERRCS') {
-        requiredFields.push(
-            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-            { id: 'bda_quantity', name: 'BDA Quantity' }
-        );
-    } else {
-        // If no system type selected, require both for validation message
-        requiredFields.push(
-            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
-            { id: 'bda_quantity', name: 'BDA Quantity' }
-        );
-    }
-    
-    let emptyFields = [];
-    let hasErrors = false;
-    
-    // Reset all error states
-    document.querySelectorAll('.form-input, .form-select').forEach(element => {
-        element.classList.remove('error');
-    });
-    
-    // Check each required field
-    requiredFields.forEach(field => {
-        const element = document.getElementById(field.id);
-        if (element && !element.disabled) {
-            const value = element.value.trim();
-            if (!value) {
-                emptyFields.push(field.name);
-                element.classList.add('error');
-                hasErrors = true;
-            }
-        }
-    });
-    
-    if (hasErrors) {
-        const message = emptyFields.length === 1 
-            ? `Please fill in the ${emptyFields[0]} field.`
-            : `Please fill in all required fields: ${emptyFields.join(', ')}.`;
-        
-        showToast(message, 'error');
-        
-        // Focus on the first empty field that's not disabled
-        const firstEmptyField = requiredFields.find(field => {
-            const element = document.getElementById(field.id);
-            return element && !element.disabled && !element.value.trim();
-        });
-        
-        if (firstEmptyField) {
-            const element = document.getElementById(firstEmptyField.id);
-            if (element) {
-                element.focus();
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-        
-        return false;
-    }
-    
-    return true;
-}
-
 function playLoadingAnimation(event) {
     // Prevent the default form submission
     event.preventDefault();
@@ -924,8 +749,7 @@ function playLoadingAnimation(event) {
     
     // Get the form reference
     const form = document.getElementById('networkProvisioningForm');
-    
-    // Show the loading overlay immediately
+    // Show the centered GIF overlay
     npLoadingOverlay.show();
     
     // Disable the submit button and show loading state
@@ -933,81 +757,25 @@ function playLoadingAnimation(event) {
     const originalText = submitButton.textContent;
     submitButton.textContent = 'PROCESSING...';
     submitButton.disabled = true;
-    submitButton.style.cursor = 'not-allowed';
-    submitButton.style.opacity = '0.7';
     
-    // Small delay to ensure the overlay is visible before form submission
-    setTimeout(() => {
-        form.submit();
-    }, 100);
-    
+    // Submit the form immediately; server navigation will replace the page
+    form.submit();
     return false;
 }
 
-// Toast notification function (keep existing)
-function showToast(message, type = 'error') {
-    // Remove existing toast if any
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-    
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20">
-                ${type === 'error' ? 
-                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>' :
-                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>'
-                }
-            </svg>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    // Add toast to DOM
-    document.body.appendChild(toast);
-    
-    // Show toast with animation
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 100);
-    
-    // Auto-hide toast after 5 seconds
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            if (toast && toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
-        }, 300);
-    }, 5000);
-}
-
-// Initialize when DOM is ready
+// Add event listener to the form submit button
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('networkProvisioningForm');
-    const submitButton = form?.querySelector('.submit-button');
+    const submitButton = form.querySelector('.submit-button');
     
     if (submitButton) {
-        // Remove any existing event listeners and add the new one
-        submitButton.removeEventListener('click', playLoadingAnimation);
-        submitButton.addEventListener('click', playLoadingAnimation);
-    }
-    
-    // Also handle form submit event as backup
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            if (!e.target.hasAttribute('data-loading-handled')) {
-                e.preventDefault();
-                playLoadingAnimation(e);
-                e.target.setAttribute('data-loading-handled', 'true');
-            }
+        // Add event listener for the loading animation
+        submitButton.addEventListener('click', function(event) {
+            playLoadingAnimation(event);
         });
     }
 });
+</script>
             </form>
             
             @if($errors->any())
