@@ -41,9 +41,6 @@
             will-change: left;
         }
 
-        /* Allow content-scoped overlays without covering sidebar/header */
-        .page-content { position: relative; }
-
         /* Ensure content shifts on small screens when sidebar is opened */
         @media (max-width: 992px) {
             body.sidebar-enable .main-content { margin-left: 240px; }
@@ -190,8 +187,6 @@
             document.addEventListener('submit', function(e) {
                 var form = e.target;
                 if (!form || form.target === '_blank') return;
-                // Allow specific forms to opt-out (e.g., custom loading overlays)
-                if (form.hasAttribute('data-skip-exit')) return;
                 // Let the form submit after exit animation
                 e.preventDefault();
                 startExitTransition(function() { form.submit(); });

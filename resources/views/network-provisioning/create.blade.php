@@ -540,7 +540,7 @@
         <div class="form-wrapper">
             <h1 class="form-title text-center">Create Network Provisioning</h1>
 
-            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6" id="networkProvisioningForm" data-skip-exit>
+            <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6" id="networkProvisioningForm">
                 @csrf
 
                 <!-- Linha 1: Property Name / Property Type -->
@@ -692,13 +692,6 @@
                    value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
         </div>
     </div>
-    <div class="grid-container">
-            <div class="form-group">
-                <label class="form-label" for="static_ip">Gateway</label>
-                <input class="form-input" type="text" id="static_gateway" name="static_gateway"
-                   value="{{ old('static_gateway') }}" placeholder="Type the Gateway">
-        </div> 
-    </div>
 </div>
 
                 <!-- Submit Button -->
@@ -708,56 +701,149 @@
 </button>
                 </div>
                 <script>
-// Loading overlay element scoped to main page content (keeps sidebar/header visible)
-const npLoadingOverlay = (function() {
-    let overlay; let container;
-    function ensure() {
-        if (overlay) return;
-        container = document.querySelector('.page-content');
-        if (!container) { container = document.body; }
-        overlay = document.createElement('div');
-        overlay.id = 'np-loading-overlay';
-        overlay.style.cssText = [
-            'position: absolute',
-            'inset: 0',
-            'z-index: 25',
-            'background: rgba(255,255,255,1)',
-            'display: none',
-            'align-items: center',
-            'justify-content: center'
-        ].join(';');
-        const img = document.createElement('img');
-        img.src = "{{ asset('assets/images/Transition_Animation.gif') }}";
-        img.alt = 'Loading...';
-        img.style.cssText = 'width: 96px; height: 96px; object-fit: contain; image-rendering: -webkit-optimize-contrast;';
-        overlay.appendChild(img);
-        container.appendChild(overlay);
-    }
-    return {
-        show: function() { ensure(); overlay.style.display = 'flex'; },
-        hide: function() { if (overlay) overlay.style.display = 'none'; }
-    };
-})();
-// On-submit handler: validate and show overlay; allow natural submission
-function handleSubmitWithOverlay(e) {
+function playLoadingAnimation(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+    
+    // First validate the form
     if (!validateRequiredFields()) {
-        e.preventDefault();
         return false;
     }
-    const submitButton = e.submitter || document.querySelector('#networkProvisioningForm .submit-button');
-    if (submitButton) {
-        submitButton.textContent = 'PROCESSING...';
-        submitButton.disabled = true;
+    
+    // Get the form reference
+    const form = document.getElementById('networkProvisioningForm');
+    
+    // Create video element
+    const video = document.createElement('video');
+    
+    // Fix the video path - remove /public from the path
+    video.src = '/assets/images/Transition_Animation.gif';
+    
+    // Set video properties
+    video.autoplay = true;
+    video.muted = true; // Important: browsers require muted videos for autoplay
+    video.loop = false;
+    video.preload = 'auto';
+    
+    // Style the video overlay
+    video.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 9999;
+        background-color: #000;
+        pointer-events: none;
+    `;
+    
+    // Create loading overlay in case video fails
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(45deg, #13395d, #FBBF0F);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9998;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+    `;
+    loadingOverlay.innerHTML = `
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-top: 5px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div>Processing...</div>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    
+    // Disable the submit button and show loading state
+    const submitButton = event.target;
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'PROCESSING...';
+    submitButton.disabled = true;
+    
+    // Function to submit form after animation
+    function submitForm() {
+        console.log('Submitting form after animation...');
+        form.submit();
     }
-    npLoadingOverlay.show();
-    return true;
+    
+    // Function to handle animation completion
+    function handleAnimationComplete() {
+        console.log('Animation completed, submitting form...');
+        submitForm();
+    }
+    
+    // Add loading overlay first (fallback)
+    document.body.appendChild(loadingOverlay);
+    
+    // Video event handlers
+    video.addEventListener('loadstart', () => {
+        console.log('Video loading started...');
+    });
+    
+    video.addEventListener('canplay', () => {
+        console.log('Video can start playing...');
+        // Remove loading overlay when video is ready
+        if (loadingOverlay.parentNode) {
+            loadingOverlay.parentNode.removeChild(loadingOverlay);
+        }
+        // Add video to DOM
+        document.body.appendChild(video);
+    });
+    
+    video.addEventListener('ended', () => {
+        console.log('Video ended');
+        handleAnimationComplete();
+    });
+    
+    video.addEventListener('error', (e) => {
+        console.error('Video error:', e);
+        console.log('Submitting form without animation...');
+        // Remove video and overlay
+        if (video.parentNode) video.parentNode.removeChild(video);
+        if (loadingOverlay.parentNode) loadingOverlay.parentNode.removeChild(loadingOverlay);
+        // Submit form anyway after a short delay
+        setTimeout(submitForm, 1000);
+    });
+    
+    // Timeout fallback (in case video doesn't load or play)
+    setTimeout(() => {
+        console.log('Timeout reached, submitting form...');
+        if (document.body.contains(video) || document.body.contains(loadingOverlay)) {
+            handleAnimationComplete();
+        }
+    }, 5000); // 5 second timeout
+    
+    // Start loading the video
+    video.load();
+    
+    return false; // Prevent default form submission
 }
 
 // Add event listener to the form submit button
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('networkProvisioningForm');
-    if (form) {
-        form.addEventListener('submit', handleSubmitWithOverlay);
+    const submitButton = form.querySelector('.submit-button');
+    
+    if (submitButton) {
+        // Add event listener for the loading animation
+        submitButton.addEventListener('click', function(event) {
+            playLoadingAnimation(event);
+        });
     }
 });
 </script>
