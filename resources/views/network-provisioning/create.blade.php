@@ -692,6 +692,13 @@
                    value="{{ old('static_mask') }}" placeholder="Type the subnet mask">
         </div>
     </div>
+    <div class="grid-container">
+            <div class="form-group">
+                <label class="form-label" for="static_ip">Gateway</label>
+                <input class="form-input" type="text" id="static_gateway" name="static_gateway"
+                   value="{{ old('static_gateway') }}" placeholder="Type the Gateway">
+        </div> 
+    </div>
 </div>
 
                 <!-- Submit Button -->
