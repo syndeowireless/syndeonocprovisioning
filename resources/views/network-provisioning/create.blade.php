@@ -701,7 +701,6 @@
 </button>
                 </div>
                 <script>
-// Replace the existing playLoadingAnimation function with this clean implementation
 function playLoadingAnimation(event) {
     // Prevent the default form submission
     event.preventDefault();
@@ -721,7 +720,7 @@ function playLoadingAnimation(event) {
     submitButton.disabled = true;
     submitButton.style.opacity = '0.7';
     
-    // Create the loading overlay that covers only the main content area
+    // Create the loading overlay that covers the entire viewport
     const loadingOverlay = document.createElement('div');
     loadingOverlay.id = 'loading-overlay';
     loadingOverlay.style.cssText = `
@@ -730,13 +729,13 @@ function playLoadingAnimation(event) {
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(255, 255, 255, 0.95);
+        background-color: rgba(255, 255, 255, 0.98);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 9999;
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
+        z-index: 99999;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     `;
     
     // Create the GIF container
@@ -747,11 +746,13 @@ function playLoadingAnimation(event) {
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 2rem;
+        padding: 2.5rem;
         background-color: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 25px;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(19, 57, 93, 0.1);
+        max-width: 90vw;
+        max-height: 90vh;
     `;
     
     // Create the GIF image element
@@ -759,13 +760,14 @@ function playLoadingAnimation(event) {
     gifImage.src = '/assets/images/Transition_Animation.gif';
     gifImage.alt = 'Loading...';
     gifImage.style.cssText = `
-        max-width: 300px;
-        max-height: 300px;
+        max-width: 350px;
+        max-height: 350px;
         width: auto;
         height: auto;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        border: 3px solid rgba(251, 191, 15, 0.3);
     `;
     
     // Create loading text
@@ -773,14 +775,14 @@ function playLoadingAnimation(event) {
     loadingText.textContent = 'Processing your request...';
     loadingText.style.cssText = `
         font-family: 'Poppins', sans-serif;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         font-weight: 600;
         color: #13395d;
         margin-top: 1rem;
         animation: pulse 2s infinite;
     `;
     
-    // Add CSS animation for the pulsing text
+    // Add CSS animation for the pulsing text and fade in effect
     const style = document.createElement('style');
     style.textContent = `
         @keyframes pulse {
@@ -789,15 +791,28 @@ function playLoadingAnimation(event) {
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from { 
+                opacity: 0; 
+                transform: scale(0.8) translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); 
+            }
         }
         
         #loading-overlay {
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        #loading-overlay .gif-container {
+            animation: fadeIn 0.6s ease-out 0.2s both;
         }
     `;
     document.head.appendChild(style);
+    
+    // Add a class to the gif container for animation
+    gifContainer.className = 'gif-container';
     
     // Assemble the loading overlay
     gifContainer.appendChild(gifImage);
@@ -835,79 +850,248 @@ function playLoadingAnimation(event) {
     // Handle GIF load events
     gifImage.addEventListener('load', () => {
         console.log('GIF loaded successfully');
-        // Wait for a minimum time to show the animation (2 seconds)
+        // Wait for a minimum time to show the animation (2.5 seconds)
+        setTimeout(() => {
+            submitForm();
+        }, 2500);
+    });
+    
+    gifImage.addEventListener('error', (e) => {
+        console.error('GIF failed to load:', e);
+        // Show fallback loading without GIF
+        gifImage.style.display = 'none';
+        loadingText.textContent = 'Processing...';
         setTimeout(() => {
             submitForm();
         }, 2000);
     });
     
-    gifImage.addEventListener('error', (e) => {
-        console.error('GIF failed to load:', e);
-        handleError();
-    });
-    
-    // Fallback timeout in case something goes wrong (10 seconds maximum)
+    // Fallback timeout in case something goes wrong (8 seconds maximum)
     setTimeout(() => {
         console.log('Timeout reached, submitting form...');
         if (document.body.contains(loadingOverlay)) {
             submitForm();
         }
-    }, 10000);
+    }, 8000);
     
     return false; // Prevent default form submission
 }
 
-// Enhanced form submission handler
-function handleFormSubmission(event) {
-    // Validate required fields first
-    if (!validateRequiredFields()) {
-        event.preventDefault();
+// Toast notification function (keeping your existing one)
+function showToast(message, type = 'error') {
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20">
+                ${type === 'error' ? 
+                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>' :
+                    '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>'
+                }
+            </svg>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast && toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Your existing validateRequiredFields function (keep as is)
+function validateRequiredFields() {
+    const systemType = document.getElementById('system_type').value;
+    
+    const baseRequiredFields = [
+        { id: 'property_name', name: 'Property Name' },
+        { id: 'property_address', name: 'Property Address' },
+        { id: 'system_type', name: 'System Type' },
+        { id: 'oem', name: 'OEM' },
+        { id: 'hostname', name: 'Hostname (dyndns)' }
+    ];
+    
+    let requiredFields = [...baseRequiredFields];
+    
+    if (systemType === 'DAS') {
+        requiredFields.push({ id: 'master_unit_quantity', name: 'Master Unit Quantity' });
+    } else if (systemType === 'ERRCS') {
+        requiredFields.push({ id: 'bda_quantity', name: 'BDA Quantity' });
+    } else if (systemType === 'DAS & ERRCS') {
+        requiredFields.push(
+            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+            { id: 'bda_quantity', name: 'BDA Quantity' }
+        );
+    } else {
+        requiredFields.push(
+            { id: 'master_unit_quantity', name: 'Master Unit Quantity' },
+            { id: 'bda_quantity', name: 'BDA Quantity' }
+        );
+    }
+    
+    let emptyFields = [];
+    let hasErrors = false;
+    
+    document.querySelectorAll('.form-input, .form-select').forEach(element => {
+        element.classList.remove('error');
+    });
+    
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element && !element.disabled) {
+            const value = element.value.trim();
+            if (!value) {
+                emptyFields.push(field.name);
+                element.classList.add('error');
+                hasErrors = true;
+            }
+        }
+    });
+    
+    if (hasErrors) {
+        const message = emptyFields.length === 1 
+            ? `Please fill in the ${emptyFields[0]} field.`
+            : `Please fill in all required fields: ${emptyFields.join(', ')}.`;
+        
+        showToast(message, 'error');
+        
+        const firstEmptyField = requiredFields.find(field => {
+            const element = document.getElementById(field.id);
+            return element && !element.disabled && !element.value.trim();
+        });
+        
+        if (firstEmptyField) {
+            const element = document.getElementById(firstEmptyField.id);
+            if (element) {
+                element.focus();
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
         return false;
     }
     
-    // If validation passes, play the loading animation
-    return playLoadingAnimation(event);
+    return true;
 }
 
-// Update the DOMContentLoaded event listener
+// Your existing toggle functions (keep as is)
+function toggleStaticIpFields() {
+    var checkbox = document.getElementById('static_ip_check');
+    var fields = document.getElementById('static-ip-fields');
+    fields.style.display = checkbox.checked ? 'block' : 'none';
+}
+
+function toggleGrafanaEmail() {
+    const toggle = document.getElementById('grafana_toggle');
+    const emailField = document.getElementById('grafana-email-field');
+    emailField.style.display = toggle.checked ? 'block' : 'none';
+}
+
+// Main DOMContentLoaded event listener - UPDATED
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize form and loading animation
     const form = document.getElementById('networkProvisioningForm');
     const submitButton = form ? form.querySelector('.submit-button') : null;
     
     if (form && submitButton) {
-        // Remove any existing event listeners and add the new one
-        submitButton.removeEventListener('click', playLoadingAnimation);
+        // Add the loading animation event listener
         submitButton.addEventListener('click', function(event) {
             playLoadingAnimation(event);
-        });
-        
-        // Also handle form submission event as a backup
-        form.addEventListener('submit', function(event) {
-            if (!event.defaultPrevented) {
-                handleFormSubmission(event);
-            }
         });
     }
     
     // Initialize map handler and other functionality
     setTimeout(() => {
-        mapHandler = new OpenStreetMapHandler();
-        
-        // Check for existing coordinates
-        const latInput = document.getElementById('latitude');
-        const lngInput = document.getElementById('longitude');
-        
-        if (latInput && lngInput && latInput.value && lngInput.value) {
-            const lat = parseFloat(latInput.value);
-            const lng = parseFloat(lngInput.value);
+        if (typeof OpenStreetMapHandler !== 'undefined') {
+            mapHandler = new OpenStreetMapHandler();
             
-            if (!isNaN(lat) && !isNaN(lng)) {
-                setTimeout(() => {
-                    mapHandler.checkManualCoordinates();
-                }, 200);
+            // Check for existing coordinates
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            
+            if (latInput && lngInput && latInput.value && lngInput.value) {
+                const lat = parseFloat(latInput.value);
+                const lng = parseFloat(lngInput.value);
+                
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    setTimeout(() => {
+                        mapHandler.checkManualCoordinates();
+                    }, 200);
+                }
             }
         }
     }, 100);
+    
+    // Initialize system type field updates
+    function updateFields() {
+        const type = document.getElementById('system_type').value;
+        const master = document.getElementById('master_unit_quantity');
+        const bda = document.getElementById('bda_quantity');
+        
+        master.classList.remove('error');
+        bda.classList.remove('error');
+        
+        if (type === 'DAS') {
+            master.disabled = false;
+            master.required = true;
+            bda.disabled = true;
+            bda.required = false;
+            bda.value = '';
+            bda.style.backgroundColor = '#f9fafb';
+            bda.style.cursor = 'not-allowed';
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+        } else if (type === 'ERRCS') {
+            master.disabled = true;
+            master.required = false;
+            master.value = '';
+            bda.disabled = false;
+            bda.required = true;
+            master.style.backgroundColor = '#f9fafb';
+            master.style.cursor = 'not-allowed';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        } else if (type === 'DAS & ERRCS') {
+            master.disabled = false;
+            master.required = true;
+            bda.disabled = false;
+            bda.required = true;
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        } else {
+            master.disabled = false;
+            master.required = false;
+            bda.disabled = false;
+            bda.required = false;
+            master.style.backgroundColor = '';
+            master.style.cursor = '';
+            bda.style.backgroundColor = '';
+            bda.style.cursor = '';
+        }
+    }
+    
+    const systemTypeSelect = document.getElementById('system_type');
+    if (systemTypeSelect) {
+        systemTypeSelect.addEventListener('change', updateFields);
+        updateFields();
+    }
 });
 </script>
             </form>
