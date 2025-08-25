@@ -717,7 +717,7 @@ function playLoadingAnimation(event) {
     const video = document.createElement('video');
     
     // Fix the video path - remove /public from the path
-    video.src = '/assets/images/Transition-Animation.mp4';
+    video.src = '/assets/images/Transition_Animation.gif';
     
     // Set video properties
     video.autoplay = true;
