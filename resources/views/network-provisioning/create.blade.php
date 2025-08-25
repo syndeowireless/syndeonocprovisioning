@@ -934,8 +934,6 @@ function playLoadingAnimation(event) {
         max-height: 300px;
         width: auto;
         height: auto;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         margin-bottom: 1.5rem;
     `;
     
@@ -948,13 +946,13 @@ function playLoadingAnimation(event) {
             font-weight: 600;
             color: #2B2B22;
             margin-bottom: 0.5rem;
-        ">Processing...</div>
+        "></div>
         <div style="
             font-family: 'Poppins', sans-serif;
             font-size: 1rem;
             color: #6b7280;
             font-weight: 400;
-        ">Please wait while we create your network provisioning</div>
+        "></div>
     `;
     
     // Create fallback loading spinner (in case GIF fails to load)
