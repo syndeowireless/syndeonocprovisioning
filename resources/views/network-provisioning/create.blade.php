@@ -702,46 +702,6 @@
                 </div>
                 <script>
 function playLoadingAnimation(event) {
-    // ... existing code ...
-    
-    // Create video element
-    const video = document.createElement('video');
-    
-    // Update the video source to use an img element since it's a GIF
-    const loadingImg = document.createElement('img');
-    loadingImg.src = '/assets/images/Transition_Animation.gif';
-    loadingImg.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10000;
-        pointer-events: none;
-    `;
-    
-    // Create white overlay
-    const whiteOverlay = document.createElement('div');
-    whiteOverlay.style.cssText = `
-        position: fixed;
-        top: 80px; /* Height of the header */
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: white;
-        z-index: 9999;
-    `;
-    
-    // Add overlay and loading image
-    document.body.appendChild(whiteOverlay);
-    document.body.appendChild(loadingImg);
-    
-    // Submit form after a short delay
-    setTimeout(() => {
-        form.submit();
-    }, 500);
-    
-    return false;
-}
     // Prevent the default form submission
     event.preventDefault();
     
@@ -883,7 +843,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add event listener for the loading animation
         submitButton.addEventListener('click', function(event) {
             playLoadingAnimation(event);
-        });
         });
     }
 });
