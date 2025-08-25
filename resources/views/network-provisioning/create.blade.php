@@ -701,6 +701,7 @@
 </button>
                 </div>
                 <script>
+// Replace the existing playLoadingAnimation function with this clean implementation
 function playLoadingAnimation(event) {
     // Prevent the default form submission
     event.preventDefault();
@@ -712,139 +713,201 @@ function playLoadingAnimation(event) {
     
     // Get the form reference
     const form = document.getElementById('networkProvisioningForm');
+    const submitButton = event.target;
     
-    // Create video element
-    const video = document.createElement('video');
+    // Disable the submit button and show processing state
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'PROCESSING...';
+    submitButton.disabled = true;
+    submitButton.style.opacity = '0.7';
     
-    // Fix the video path - remove /public from the path
-    video.src = '/assets/images/Transition_Animation.gif';
-    
-    // Set video properties
-    video.autoplay = true;
-    video.muted = true; // Important: browsers require muted videos for autoplay
-    video.loop = false;
-    video.preload = 'auto';
-    
-    // Style the video overlay
-    video.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        z-index: 9999;
-        background-color: #000;
-        pointer-events: none;
-    `;
-    
-    // Create loading overlay in case video fails
+    // Create the loading overlay that covers only the main content area
     const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loading-overlay';
     loadingOverlay.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(45deg, #13395d, #FBBF0F);
+        background-color: rgba(255, 255, 255, 0.95);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 9998;
-        color: white;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    `;
+    
+    // Create the GIF container
+    const gifContainer = document.createElement('div');
+    gifContainer.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    `;
+    
+    // Create the GIF image element
+    const gifImage = document.createElement('img');
+    gifImage.src = '/assets/images/Transition_Animation.gif';
+    gifImage.alt = 'Loading...';
+    gifImage.style.cssText = `
+        max-width: 300px;
+        max-height: 300px;
+        width: auto;
+        height: auto;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    `;
+    
+    // Create loading text
+    const loadingText = document.createElement('div');
+    loadingText.textContent = 'Processing your request...';
+    loadingText.style.cssText = `
         font-family: 'Poppins', sans-serif;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 600;
-    `;
-    loadingOverlay.innerHTML = `
-        <div style="text-align: center;">
-            <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-top: 5px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-            <div>Processing...</div>
-        </div>
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
+        color: #13395d;
+        margin-top: 1rem;
+        animation: pulse 2s infinite;
     `;
     
-    // Disable the submit button and show loading state
-    const submitButton = event.target;
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'PROCESSING...';
-    submitButton.disabled = true;
+    // Add CSS animation for the pulsing text
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        #loading-overlay {
+            animation: fadeIn 0.3s ease-out;
+        }
+    `;
+    document.head.appendChild(style);
     
-    // Function to submit form after animation
+    // Assemble the loading overlay
+    gifContainer.appendChild(gifImage);
+    gifContainer.appendChild(loadingText);
+    loadingOverlay.appendChild(gifContainer);
+    
+    // Add the overlay to the page
+    document.body.appendChild(loadingOverlay);
+    
+    // Function to submit the form after animation
     function submitForm() {
-        console.log('Submitting form after animation...');
+        console.log('Submitting form...');
         form.submit();
     }
     
-    // Function to handle animation completion
-    function handleAnimationComplete() {
-        console.log('Animation completed, submitting form...');
+    // Function to handle errors and cleanup
+    function handleError() {
+        console.error('Loading animation error, submitting form anyway...');
+        // Remove overlay
+        if (loadingOverlay && loadingOverlay.parentNode) {
+            loadingOverlay.parentNode.removeChild(loadingOverlay);
+        }
+        // Reset button
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+        submitButton.style.opacity = '1';
+        // Remove style
+        if (style && style.parentNode) {
+            style.parentNode.removeChild(style);
+        }
+        // Submit form
         submitForm();
     }
     
-    // Add loading overlay first (fallback)
-    document.body.appendChild(loadingOverlay);
-    
-    // Video event handlers
-    video.addEventListener('loadstart', () => {
-        console.log('Video loading started...');
+    // Handle GIF load events
+    gifImage.addEventListener('load', () => {
+        console.log('GIF loaded successfully');
+        // Wait for a minimum time to show the animation (2 seconds)
+        setTimeout(() => {
+            submitForm();
+        }, 2000);
     });
     
-    video.addEventListener('canplay', () => {
-        console.log('Video can start playing...');
-        // Remove loading overlay when video is ready
-        if (loadingOverlay.parentNode) {
-            loadingOverlay.parentNode.removeChild(loadingOverlay);
-        }
-        // Add video to DOM
-        document.body.appendChild(video);
+    gifImage.addEventListener('error', (e) => {
+        console.error('GIF failed to load:', e);
+        handleError();
     });
     
-    video.addEventListener('ended', () => {
-        console.log('Video ended');
-        handleAnimationComplete();
-    });
-    
-    video.addEventListener('error', (e) => {
-        console.error('Video error:', e);
-        console.log('Submitting form without animation...');
-        // Remove video and overlay
-        if (video.parentNode) video.parentNode.removeChild(video);
-        if (loadingOverlay.parentNode) loadingOverlay.parentNode.removeChild(loadingOverlay);
-        // Submit form anyway after a short delay
-        setTimeout(submitForm, 1000);
-    });
-    
-    // Timeout fallback (in case video doesn't load or play)
+    // Fallback timeout in case something goes wrong (10 seconds maximum)
     setTimeout(() => {
         console.log('Timeout reached, submitting form...');
-        if (document.body.contains(video) || document.body.contains(loadingOverlay)) {
-            handleAnimationComplete();
+        if (document.body.contains(loadingOverlay)) {
+            submitForm();
         }
-    }, 5000); // 5 second timeout
-    
-    // Start loading the video
-    video.load();
+    }, 10000);
     
     return false; // Prevent default form submission
 }
 
-// Add event listener to the form submit button
+// Enhanced form submission handler
+function handleFormSubmission(event) {
+    // Validate required fields first
+    if (!validateRequiredFields()) {
+        event.preventDefault();
+        return false;
+    }
+    
+    // If validation passes, play the loading animation
+    return playLoadingAnimation(event);
+}
+
+// Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('networkProvisioningForm');
-    const submitButton = form.querySelector('.submit-button');
+    const submitButton = form ? form.querySelector('.submit-button') : null;
     
-    if (submitButton) {
-        // Add event listener for the loading animation
+    if (form && submitButton) {
+        // Remove any existing event listeners and add the new one
+        submitButton.removeEventListener('click', playLoadingAnimation);
         submitButton.addEventListener('click', function(event) {
             playLoadingAnimation(event);
         });
+        
+        // Also handle form submission event as a backup
+        form.addEventListener('submit', function(event) {
+            if (!event.defaultPrevented) {
+                handleFormSubmission(event);
+            }
+        });
     }
+    
+    // Initialize map handler and other functionality
+    setTimeout(() => {
+        mapHandler = new OpenStreetMapHandler();
+        
+        // Check for existing coordinates
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        
+        if (latInput && lngInput && latInput.value && lngInput.value) {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                setTimeout(() => {
+                    mapHandler.checkManualCoordinates();
+                }, 200);
+            }
+        }
+    }, 100);
 });
 </script>
             </form>
