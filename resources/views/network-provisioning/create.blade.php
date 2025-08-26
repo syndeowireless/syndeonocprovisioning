@@ -63,12 +63,13 @@
 .loading-gif {
     max-width: 420px;
     max-height: 420px;
-    width: auto;
-    height: auto;
+    width: 420px;
+    height: 420px;
     border-radius: 18px;
     box-shadow: 0 12px 37.5px rgba(0, 0, 0, 0.15);
     margin-bottom: 2.25rem;
     display: block;
+    object-fit: contain;
 }
 
 /* Loading text styles */
