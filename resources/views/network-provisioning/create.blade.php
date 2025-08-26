@@ -51,56 +51,55 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
+    padding: 2rem;
     background: white;
-    border-radius: 24px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
     margin: 0 auto;
 }
 
 /* Loading GIF styles */
 .loading-gif {
-    max-width: 420px;
-    max-height: 420px;
-    width: 420px;
-    height: 420px;
-    border-radius: 18px;
-    box-shadow: 0 12px 37.5px rgba(0, 0, 0, 0.15);
-    margin-bottom: 2.25rem;
+    max-width: 280px;
+    max-height: 280px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1.5rem;
     display: block;
-    object-fit: contain;
 }
 
 /* Loading text styles */
 .loading-title {
     font-family: 'Poppins', sans-serif;
-    font-size: 2.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #2B2B22;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     line-height: 1.3;
 }
 
 .loading-subtitle {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: #6b7280;
     font-weight: 400;
     line-height: 1.4;
-    max-width: 450px;
+    max-width: 300px;
     margin: 0 auto;
 }
 
 /* Fallback spinner styles */
 .loading-spinner {
-    width: 90px;
-    height: 90px;
-    border: 9px solid #e5e7eb;
-    border-top: 9px solid #3b82f6;
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e5e7eb;
+    border-top: 6px solid #3b82f6;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin: 0 auto 2.25rem;
+    margin: 0 auto 1.5rem;
 }
 
 @keyframes spin {
