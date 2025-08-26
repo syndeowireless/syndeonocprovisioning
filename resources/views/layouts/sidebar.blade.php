@@ -53,7 +53,7 @@
                                     <li style="background-color: #13395d !important;"><a href="javascript: void(0);" class="has-arrow" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 40px; display: block;">Network mgmt.</a>
                                         <ul class="sub-menu" aria-expanded="true" style="background-color: #13395d !important;">
                                             <li style="background-color: #13395d !important;"><a href="{{ route('network-provisioning.create') }}" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 60px; display: block;">New Provisioning</a></li>
-                                            <li style="background-color: #13395d !important;"><a href="#" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 60px; display: block;">Search Provisioning</a></li>
+                                            <li style="background-color: #13395d !important;"><a href="{{ route('network-provisioning.search') }}" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 60px; display: block;">Search Provisioning</a></li>
                                         </ul>
                                     </li>
                                 </ul>
