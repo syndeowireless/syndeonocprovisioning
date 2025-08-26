@@ -75,19 +75,11 @@
                     
                     @foreach($dummyData as $index => $row)
                         <tr class="table-row" data-index="{{ $index + 1 }}">
-                            <td class="fw-medium">{{ $row[0] }}</td>
-                            <td>
-                                <span class="badge bg-{{ $row[1] === 'Residential' ? 'success' : 'info' }} bg-opacity-10 text-{{ $row[1] === 'Residential' ? 'success' : 'info' }}">
-                                    {{ $row[1] }}
-                                </span>
-                            </td>
-                            <td class="text-muted">{{ $row[2] }}</td>
-                            <td>
-                                <span class="badge bg-{{ $row[3] === 'Fiber Optic' ? 'primary' : ($row[3] === 'Copper' ? 'warning' : 'secondary') }} bg-opacity-10 text-{{ $row[3] === 'Fiber Optic' ? 'primary' : ($row[3] === 'Copper' ? 'warning' : 'secondary') }}">
-                                    {{ $row[3] }}
-                                </span>
-                            </td>
-                            <td class="fw-bold text-primary">{{ number_format($row[4]) }}</td>
+                            <td>{{ $row[0] }}</td>
+                            <td>{{ $row[1] }}</td>
+                            <td>{{ $row[2] }}</td>
+                            <td>{{ $row[3] }}</td>
+                            <td>{{ number_format($row[4]) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -130,7 +122,7 @@
 }
 
 .table th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #13395d;
     color: white;
     font-weight: 600;
     border: none;
@@ -146,21 +138,11 @@
 
 .sortable {
     cursor: pointer;
-    transition: all 0.3s ease;
     user-select: none;
-}
-
-.sortable:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .sortable i {
     opacity: 0.6;
-    transition: all 0.3s ease;
-}
-
-.sortable:hover i {
-    opacity: 1;
 }
 
 .sortable.sort-asc i:before {
@@ -172,13 +154,7 @@
 }
 
 .table-row {
-    transition: all 0.3s ease;
-}
-
-.table-row:hover {
-    background-color: #f8f9ff !important;
-    transform: scale(1.01);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* No animations or hover effects */
 }
 
 .badge {
@@ -226,12 +202,6 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {

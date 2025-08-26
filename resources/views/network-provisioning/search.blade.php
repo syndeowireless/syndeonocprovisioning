@@ -13,43 +13,17 @@
     <!-- Modern Search Bar Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body py-4">
-                    <div class="search-container">
-                        <div class="row align-items-center">
-                            <div class="col-lg-8 col-md-7">
-                                <div class="search-input-wrapper position-relative">
-                                    <input type="text" 
-                                           class="form-control search-input" 
-                                           id="searchInput"
-                                           placeholder="Search by property name, type, address, or system..."
-                                           autocomplete="off">
-                                    <div class="search-icon">
-                                        <i class="fas fa-search"></i>
-                                    </div>
-                                    <div class="search-clear d-none" id="clearSearch">
-                                        <i class="fas fa-times"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-5 mt-3 mt-md-0">
-                                <div class="d-flex gap-2">
-                                    <button type="button" 
-                                            class="btn btn-primary search-btn flex-fill"
-                                            id="searchBtn">
-                                        <i class="fas fa-search me-1"></i>
-                                        Search
-                                    </button>
-                                    <button type="button" 
-                                            class="btn btn-outline-secondary reset-btn"
-                                            id="resetBtn">
-                                        <i class="fas fa-redo me-1"></i>
-                                        Reset
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="search-input-wrapper position-relative">
+                <input type="text" 
+                       class="form-control search-input" 
+                       id="searchInput"
+                       placeholder="Search by property name, type, address, or system..."
+                       autocomplete="off">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="search-clear d-none" id="clearSearch">
+                    <i class="fas fa-times"></i>
                 </div>
             </div>
         </div>
