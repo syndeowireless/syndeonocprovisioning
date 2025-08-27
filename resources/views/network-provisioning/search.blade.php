@@ -38,15 +38,10 @@
 </div>
 
 <style>
-.search-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    padding: 20px;
-    margin: -10px;
-}
-
 .search-input-wrapper {
     position: relative;
+    max-width: 240px;
+    margin: 0 auto;
 }
 
 .search-input {
