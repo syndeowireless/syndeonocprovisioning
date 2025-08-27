@@ -27,12 +27,6 @@
                         <i class="fas fa-times"></i>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary search-btn" id="searchBtn">
-                    <i class="fas fa-search me-1"></i>Search
-                </button>
-                <button type="button" class="btn btn-outline-secondary reset-btn" id="resetBtn">
-                    <i class="fas fa-undo me-1"></i>Reset
-                </button>
             </div>
         </div>
     </div>
@@ -99,41 +93,6 @@
     color: #dc3545;
 }
 
-.search-btn {
-    border-radius: 25px;
-    padding: 12px 25px;
-    font-weight: 600;
-    background: linear-gradient(45deg, #28a745, #20c997);
-    border: none;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-    transition: all 0.3s ease;
-    height: 50px;
-}
-
-.search-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-    background: linear-gradient(45deg, #218838, #1e7e34);
-}
-
-.reset-btn {
-    border-radius: 25px;
-    padding: 12px 20px;
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: #667eea;
-    transition: all 0.3s ease;
-    height: 50px;
-}
-
-.reset-btn:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-    color: #5a67d8;
-}
-
 @media (max-width: 768px) {
     .search-container {
         margin: -15px;
@@ -144,11 +103,6 @@
         height: 45px;
         font-size: 14px;
     }
-    
-    .search-btn, .reset-btn {
-        height: 45px;
-        font-size: 14px;
-    }
 }
 </style>
 
@@ -156,8 +110,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const clearSearch = document.getElementById('clearSearch');
-    const searchBtn = document.getElementById('searchBtn');
-    const resetBtn = document.getElementById('resetBtn');
 
     // Show/hide clear button
     searchInput.addEventListener('input', function() {
@@ -178,34 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
             window.resetProvisioningTableFilter();
         }
     });
-
-    // Search functionality
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-            performSearch();
-        });
-    }
-
-    // Search on Enter key
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-    }
-
-    // Reset functionality
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            clearSearch.classList.add('d-none');
-            // Reset the table filter
-            if (window.resetProvisioningTableFilter) {
-                window.resetProvisioningTableFilter();
-            }
-        });
-    }
 
     function performSearch() {
         const query = searchInput.value.trim();
