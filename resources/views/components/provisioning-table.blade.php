@@ -24,25 +24,20 @@
             <table class="table table-hover mb-0" id="provisioningTable">
                 <thead class="table-primary">
                     <tr>
-                        <th scope="col" class="sortable" data-column="property_name">
+                        <th scope="col">
                             Property Name
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th scope="col" class="sortable" data-column="property_type">
+                        <th scope="col">
                             Property Type
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th scope="col" class="sortable" data-column="property_address">
+                        <th scope="col">
                             Property Address
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th scope="col" class="sortable" data-column="system_type">
+                        <th scope="col">
                             System Type
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
-                        <th scope="col" class="sortable" data-column="master_unit_quantity">
+                        <th scope="col">
                             Master Unit Quantity
-                            <i class="fas fa-sort ms-1"></i>
                         </th>
                     </tr>
                 </thead>
@@ -136,23 +131,6 @@
     border-bottom: 1px solid #e9ecef;
 }
 
-.sortable {
-    cursor: pointer;
-    user-select: none;
-}
-
-.sortable i {
-    opacity: 0.6;
-}
-
-.sortable.sort-asc i:before {
-    content: "\f0de";
-}
-
-.sortable.sort-desc i:before {
-    content: "\f0dd";
-}
-
 .table-row {
     /* No animations or hover effects */
 }
@@ -238,16 +216,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const showingEnd = document.getElementById('showingEnd');
     const totalEntries = document.getElementById('totalEntries');
     const pagination = document.getElementById('pagination');
-    const sortableHeaders = document.querySelectorAll('.sortable');
     
     let currentPage = 1;
     let rowsPerPage = 20;
-    let sortColumn = null;
-    let sortDirection = 'asc';
     
-    // Get all table rows
-    const allRows = Array.from(tableBody.querySelectorAll('.table-row'));
-    const totalRows = allRows.length;
+    // Create all table rows data (convert HTML to data)
+    const allRowsData = Array.from(tableBody.querySelectorAll('.table-row')).map(row => {
+        return Array.from(row.children).map(cell => cell.textContent.trim());
+    });
+    const totalRows = allRowsData.length;
     
     // Initialize
     updateTable();
@@ -259,55 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTable();
     });
     
-    // Handle sorting
-    sortableHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-            const column = this.getAttribute('data-column');
-            
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
-            }
-            
-            // Update header classes
-            sortableHeaders.forEach(h => {
-                h.classList.remove('sort-asc', 'sort-desc');
-            });
-            this.classList.add(`sort-${sortDirection}`);
-            
-            sortTable();
-            updateTable();
-        });
-    });
-    
-    function sortTable() {
-        const columnIndex = {
-            'property_name': 0,
-            'property_type': 1,
-            'property_address': 2,
-            'system_type': 3,
-            'master_unit_quantity': 4
-        };
-        
-        const index = columnIndex[sortColumn];
-        
-        allRows.sort((a, b) => {
-            const aValue = a.children[index].textContent.trim();
-            const bValue = b.children[index].textContent.trim();
-            
-            let comparison = 0;
-            if (index === 4) { // Master Unit Quantity - numeric sort
-                comparison = parseInt(aValue.replace(/,/g, '')) - parseInt(bValue.replace(/,/g, ''));
-            } else {
-                comparison = aValue.localeCompare(bValue);
-            }
-            
-            return sortDirection === 'asc' ? comparison : -comparison;
-        });
-    }
-    
     function updateTable() {
         // Clear current table
         tableBody.innerHTML = '';
@@ -315,10 +243,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Calculate pagination
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
-        const visibleRows = allRows.slice(startIndex, endIndex);
+        const visibleRowsData = allRowsData.slice(startIndex, endIndex);
         
         // Add visible rows to table
-        visibleRows.forEach(row => tableBody.appendChild(row));
+        visibleRowsData.forEach(rowData => {
+            // Create new row element with data
+            const row = document.createElement('tr');
+            row.className = 'table-row';
+            row.innerHTML = `
+                <td>${rowData[0]}</td>
+                <td>${rowData[1]}</td>
+                <td>${rowData[2]}</td>
+                <td>${rowData[3]}</td>
+                <td>${rowData[4]}</td>
+            `;
+            tableBody.appendChild(row);
+        });
         
         // Update showing info
         showingStart.textContent = totalRows > 0 ? startIndex + 1 : 0;

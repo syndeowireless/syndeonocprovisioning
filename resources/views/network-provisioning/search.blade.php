@@ -41,7 +41,7 @@
 .search-input-wrapper {
     position: relative;
     max-width: 240px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .search-input {
