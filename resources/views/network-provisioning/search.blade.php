@@ -42,7 +42,7 @@
 <style>
 .search-input-wrapper {
     position: relative;
-    max-width: 100%;
+    max-width: 40%;
     margin: 0;
 }
 
