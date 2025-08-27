@@ -40,7 +40,7 @@
 <style>
 .search-input-wrapper {
     position: relative;
-    max-width: 240px;
+    max-width: 400px;
     margin: 0;
 }
 
