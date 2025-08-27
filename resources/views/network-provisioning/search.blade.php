@@ -13,18 +13,26 @@
     <!-- Modern Search Bar Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="search-input-wrapper position-relative">
-                <input type="text" 
-                       class="form-control search-input" 
-                       id="searchInput"
-                       placeholder="Search by property name, type, address, or system..."
-                       autocomplete="off">
-                <div class="search-icon">
-                    <i class="fas fa-search"></i>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="search-input-wrapper position-relative flex-grow-1">
+                    <input type="text" 
+                           class="form-control search-input" 
+                           id="searchInput"
+                           placeholder="Search by property name, type, address, or system..."
+                           autocomplete="off">
+                    <div class="search-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="search-clear d-none" id="clearSearch">
+                        <i class="fas fa-times"></i>
+                    </div>
                 </div>
-                <div class="search-clear d-none" id="clearSearch">
-                    <i class="fas fa-times"></i>
-                </div>
+                <button type="button" class="btn btn-primary search-btn" id="searchBtn">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <button type="button" class="btn btn-outline-secondary reset-btn" id="resetBtn">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </button>
             </div>
         </div>
     </div>
@@ -40,7 +48,7 @@
 <style>
 .search-input-wrapper {
     position: relative;
-    max-width: 400px;
+    max-width: 100%;
     margin: 0;
 }
 
@@ -165,35 +173,63 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.value = '';
         clearSearch.classList.add('d-none');
         searchInput.focus();
-    });
-
-    // Search functionality
-    searchBtn.addEventListener('click', function() {
-        performSearch();
-    });
-
-    // Search on Enter key
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            performSearch();
+        // Also reset the table filter
+        if (window.resetProvisioningTableFilter) {
+            window.resetProvisioningTableFilter();
         }
     });
 
+    // Search functionality
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            performSearch();
+        });
+    }
+
+    // Search on Enter key
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+
     // Reset functionality
-    resetBtn.addEventListener('click', function() {
-        searchInput.value = '';
-        clearSearch.classList.add('d-none');
-        // Add reset logic here
-        console.log('Reset search');
-    });
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            clearSearch.classList.add('d-none');
+            // Reset the table filter
+            if (window.resetProvisioningTableFilter) {
+                window.resetProvisioningTableFilter();
+            }
+        });
+    }
 
     function performSearch() {
         const query = searchInput.value.trim();
         if (query) {
-            // Add search logic here
-            console.log('Searching for:', query);
+            // Trigger search on the provisioning table
+            if (window.filterProvisioningTable) {
+                window.filterProvisioningTable(query);
+            }
+        } else {
+            // If empty query, show all data
+            if (window.resetProvisioningTableFilter) {
+                window.resetProvisioningTableFilter();
+            }
         }
     }
+
+    // Real-time search as user types
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performSearch();
+        }, 300); // Debounce search for 300ms
+    });
 });
 </script>
 @endsection

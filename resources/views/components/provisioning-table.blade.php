@@ -37,46 +37,20 @@
                             System Type
                         </th>
                         <th scope="col">
-                            Master Unit Quantity
+                            PfSense IP
                         </th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    {{-- Dummy Data Rows --}}
-                    @php
-                        $dummyData = [
-                            ['Sunset Plaza', 'Residential', '123 Sunset Blvd, Los Angeles, CA', 'Fiber Optic', '150'],
-                            ['Tech Tower', 'Commercial', '456 Tech Street, San Francisco, CA', 'Copper', '300'],
-                            ['Green Valley Apartments', 'Residential', '789 Valley Road, Phoenix, AZ', 'Fiber Optic', '200'],
-                            ['Downtown Office Complex', 'Commercial', '321 Business Ave, New York, NY', 'Hybrid', '500'],
-                            ['Riverside Condos', 'Residential', '654 River Lane, Miami, FL', 'Fiber Optic', '120'],
-                            ['Central Business Hub', 'Commercial', '987 Central Plaza, Chicago, IL', 'Copper', '400'],
-                            ['Mountain View Estates', 'Residential', '147 Mountain Dr, Denver, CO', 'Fiber Optic', '180'],
-                            ['Innovation Center', 'Commercial', '258 Innovation Way, Austin, TX', 'Hybrid', '250'],
-                            ['Lakeside Towers', 'Residential', '369 Lake Shore Dr, Seattle, WA', 'Fiber Optic', '220'],
-                            ['Metro Square', 'Commercial', '741 Metro Blvd, Boston, MA', 'Copper', '350'],
-                            ['Palm Gardens', 'Residential', '852 Palm Street, San Diego, CA', 'Fiber Optic', '160'],
-                            ['Corporate Plaza', 'Commercial', '963 Corporate Dr, Atlanta, GA', 'Hybrid', '450'],
-                            ['Oceanview Apartments', 'Residential', '174 Ocean Ave, Portland, OR', 'Fiber Optic', '190'],
-                            ['Business District Center', 'Commercial', '285 District St, Dallas, TX', 'Copper', '380'],
-                            ['Hillcrest Homes', 'Residential', '396 Hill Road, Nashville, TN', 'Fiber Optic', '140'],
-                            ['Technology Park', 'Commercial', '507 Tech Park Dr, Raleigh, NC', 'Hybrid', '320'],
-                            ['Meadow Brook', 'Residential', '618 Meadow Lane, Kansas City, MO', 'Fiber Optic', '170'],
-                            ['Executive Suites', 'Commercial', '729 Executive Blvd, Tampa, FL', 'Copper', '280'],
-                            ['Garden City Complex', 'Residential', '840 Garden Way, Salt Lake City, UT', 'Fiber Optic', '210'],
-                            ['Professional Center', 'Commercial', '951 Professional Dr, Minneapolis, MN', 'Hybrid', '420'],
-                        ];
-                    @endphp
-                    
-                    @foreach($dummyData as $index => $row)
-                        <tr class="table-row" data-index="{{ $index + 1 }}">
-                            <td>{{ $row[0] }}</td>
-                            <td>{{ $row[1] }}</td>
-                            <td>{{ $row[2] }}</td>
-                            <td>{{ $row[3] }}</td>
-                            <td>{{ number_format($row[4]) }}</td>
-                        </tr>
-                    @endforeach
+                    {{-- Data will be loaded via API --}}
+                    <tr id="loadingRow">
+                        <td colspan="5" class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="mt-2">Loading network management data...</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -170,6 +144,14 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+code {
+    background-color: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
     .table-responsive {
         font-size: 0.875rem;
@@ -207,15 +189,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let currentPage = 1;
     let rowsPerPage = parseInt(perPageSelect.value) || 20;
+    let allRowsData = [];
+    let totalRows = 0;
     
-    // Create all table rows data (convert HTML to data)
-    const allRowsData = Array.from(tableBody.querySelectorAll('.table-row')).map(row => {
-        return Array.from(row.children).map(cell => cell.textContent.trim());
-    });
-    const totalRows = allRowsData.length;
-    
-    // Initialize
-    updateTable();
+    // Initialize by fetching data from API
+    fetchNetworkManagementData();
     
     // Handle rows per page change
     perPageSelect.addEventListener('change', function() {
@@ -223,10 +201,141 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPage = 1;
         updateTable();
     });
+
+    // Function to fetch data from API
+    async function fetchNetworkManagementData() {
+        try {
+            // Show loading state
+            tableBody.innerHTML = `
+                <tr id="loadingRow">
+                    <td colspan="5" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="mt-2">Loading network management data...</div>
+                    </td>
+                </tr>
+            `;
+
+            // Get CSRF token
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            
+            const response = await fetch('/api/network-management', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // Transform API data to table format
+                originalData = result.data.map(item => [
+                    item.property_name || '',
+                    item.property_type || '',
+                    item.property_address || '',
+                    item.system_type || '',
+                    item.first_usable_ip || ''
+                ]);
+                allRowsData = [...originalData]; // Copy for current display
+                totalRows = allRowsData.length;
+                
+                // Update table with fetched data
+                updateTable();
+            } else {
+                showError('Failed to load data: ' + (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error fetching network management data:', error);
+            showError('Failed to load network management data. Please try again.');
+        }
+    }
+
+    // Function to show error state
+    function showError(message) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center py-4 text-danger">
+                    <i class="fas fa-exclamation-triangle mb-2"></i>
+                    <div>${message}</div>
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="location.reload()">Retry</button>
+                </td>
+            </tr>
+        `;
+        
+        // Reset pagination info
+        showingStart.textContent = '0';
+        showingEnd.textContent = '0';
+        totalEntries.textContent = '0';
+        pagination.innerHTML = '';
+    }
+
+    // Search functionality
+    let originalData = [];
+    let filteredData = [];
+    let isFiltered = false;
+
+    // Expose search functions globally for the search page
+    window.filterProvisioningTable = function(query) {
+        if (!query || query.trim() === '') {
+            resetProvisioningTableFilter();
+            return;
+        }
+
+        const searchQuery = query.toLowerCase();
+        filteredData = originalData.filter(row => {
+            return row.some(cell => 
+                cell.toLowerCase().includes(searchQuery)
+            );
+        });
+
+        isFiltered = true;
+        allRowsData = filteredData;
+        totalRows = filteredData.length;
+        currentPage = 1;
+        updateTable();
+    };
+
+    window.resetProvisioningTableFilter = function() {
+        isFiltered = false;
+        allRowsData = originalData;
+        totalRows = originalData.length;
+        currentPage = 1;
+        updateTable();
+    };
     
     function updateTable() {
         // Clear current table
         tableBody.innerHTML = '';
+        
+        // Handle empty data case
+        if (totalRows === 0) {
+            const emptyMessage = isFiltered ? 'No results found for your search.' : 'No data available.';
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        <i class="fas fa-search mb-2"></i>
+                        <div>${emptyMessage}</div>
+                    </td>
+                </tr>
+            `;
+            
+            // Reset pagination info
+            showingStart.textContent = '0';
+            showingEnd.textContent = '0';
+            totalEntries.textContent = '0';
+            pagination.innerHTML = '';
+            return;
+        }
         
         // Calculate pagination
         const startIndex = (currentPage - 1) * rowsPerPage;
@@ -243,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${rowData[1]}</td>
                 <td>${rowData[2]}</td>
                 <td>${rowData[3]}</td>
-                <td>${rowData[4]}</td>
+                <td><code class="text-muted">${rowData[4]}</code></td>
             `;
             tableBody.appendChild(row);
         });

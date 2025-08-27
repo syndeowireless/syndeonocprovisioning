@@ -32,7 +32,8 @@ class NetworkManagement extends Model
         'longitude',
         'property_type',
         'average_density',
-        'system_type'
+        'system_type',
+        'first_usable_ip'
     ];
 
 }

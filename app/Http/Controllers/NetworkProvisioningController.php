@@ -133,4 +133,32 @@ class NetworkProvisioningController extends Controller
     {
         return \Illuminate\Support\Facades\Storage::disk('local')->download('xml/' . $fileName, $fileName);
     }
+
+    /**
+     * Get all network management data for the provisioning table
+     */
+    public function getNetworkManagementData()
+    {
+        try {
+            $data = NetworkManagement::select([
+                'property_name',
+                'property_type', 
+                'property_address',
+                'system_type',
+                'first_usable_ip'
+            ])->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching network management data: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching data'
+            ], 500);
+        }
+    }
 }

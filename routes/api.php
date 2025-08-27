@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NetworkProvisioningController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Network Management API Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/network-management', [NetworkProvisioningController::class, 'getNetworkManagementData']);
 });
