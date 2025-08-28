@@ -19,7 +19,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-building me-2"></i>
                         Property Information
@@ -55,7 +55,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-cogs me-2"></i>
                         System Configuration
@@ -97,7 +97,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-layer-group me-2"></i>
                         Unit Quantities
@@ -133,7 +133,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header text-white" style="background-color: #13395d;">
+                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-map-marker-alt me-2"></i>
                         Location Information
@@ -177,7 +177,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-info-circle me-2"></i>
                         Record Information
