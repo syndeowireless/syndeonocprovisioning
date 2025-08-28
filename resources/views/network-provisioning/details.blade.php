@@ -6,10 +6,10 @@
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('network-provisioning.search') }}" class="btn btn-outline-secondary me-3">
+                    <a href="{{ route('network-provisioning.search') }}" class="btn btn-custom me-3">
                         <i class="fas fa-arrow-left me-2"></i>Back to Search
                     </a>
-                    <h4 class="mb-0">Network Provisioning Details</h4>
+                    <h4 class="mb-0">{{ $networkManagement->property_name ?? 'Property' }} Details</h4>
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
+            <div class="card-header text-white" style="background-color: #13395d;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-building me-2"></i>
                         Property Information
@@ -55,7 +55,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-success text-white">
+            <div class="card-header text-white" style="background-color: #13395d;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-cogs me-2"></i>
                         System Configuration
@@ -97,7 +97,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-info text-white">
+            <div class="card-header text-white" style="background-color: #13395d;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-layer-group me-2"></i>
                         Unit Quantities
@@ -133,7 +133,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-warning text-dark">
+                <div class="card-header text-white" style="background-color: #13395d;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-map-marker-alt me-2"></i>
                         Location Information
@@ -160,7 +160,7 @@
                                 <div class="mt-2">
                                     <a href="https://www.google.com/maps?q={{ $networkManagement->latitude }},{{ $networkManagement->longitude }}" 
                                        target="_blank" 
-                                       class="btn btn-outline-primary">
+                                       class="btn btn-custom">
                                         <i class="fas fa-external-link-alt me-2"></i>View on Google Maps
                                     </a>
                                 </div>
@@ -177,7 +177,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-secondary text-white">
+            <div class="card-header text-white" style="background-color: #13395d;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-info-circle me-2"></i>
                         Record Information
@@ -256,14 +256,71 @@ code {
     font-size: 0.9rem;
 }
 
-.btn {
+/* Custom Button Styling */
+.btn-custom {
+    background: #13395d;
+    color: white;
+    border: 2px solid #fbbf0f;
     border-radius: 8px;
     font-weight: 500;
-    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    z-index: 1;
 }
 
-.btn:hover {
+.btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(251, 191, 15, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+    z-index: -1;
+}
+
+.btn-custom:hover {
+    background: #FBBF0F;
+    border: 2px solid #13395D;
+    color: #000;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(19, 57, 93, 0.3);
+}
+
+.btn-custom:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-custom:active {
+    transform: translateY(0);
+}
+
+/* Ripple effect on click */
+.btn-custom:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(19, 57, 93, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    to {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+    }
 }
 
 .page-title-box {
