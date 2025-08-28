@@ -97,6 +97,11 @@
     /* No animations or hover effects */
 }
 
+.clickable-row:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
 .badge {
     font-size: 0.75rem;
     padding: 0.35rem 0.65rem;
@@ -238,13 +243,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             
             if (result.success) {
-                // Transform API data to table format
+                // Transform API data to table format with ID for navigation
                 originalData = result.data.map(item => [
                     item.property_name || '',
                     item.property_type || '',
                     item.property_address || '',
                     item.system_type || '',
-                    item.first_usable_ip || ''
+                    item.first_usable_ip || '',
+                    item.id // Store ID for navigation
                 ]);
                 allRowsData = [...originalData]; // Copy for current display
                 totalRows = allRowsData.length;
@@ -346,7 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
         visibleRowsData.forEach(rowData => {
             // Create new row element with data
             const row = document.createElement('tr');
-            row.className = 'table-row';
+            row.className = 'table-row clickable-row';
+            row.style.cursor = 'pointer';
             row.innerHTML = `
                 <td>${rowData[0]}</td>
                 <td>${rowData[1]}</td>
@@ -354,6 +361,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${rowData[3]}</td>
                 <td><code class="text-muted">${rowData[4]}</code></td>
             `;
+            
+            // Add click event listener for navigation
+            row.addEventListener('click', function() {
+                const id = rowData[5]; // ID is stored in the 6th position (index 5)
+                if (id) {
+                    window.location.href = `/network-provisioning/details/${id}`;
+                }
+            });
+            
             tableBody.appendChild(row);
         });
         

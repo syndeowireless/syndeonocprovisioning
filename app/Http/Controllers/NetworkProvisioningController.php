@@ -141,6 +141,7 @@ class NetworkProvisioningController extends Controller
     {
         try {
             $data = NetworkManagement::select([
+                'id',
                 'property_name',
                 'property_type', 
                 'property_address',
@@ -159,6 +160,25 @@ class NetworkProvisioningController extends Controller
                 'success' => false,
                 'message' => 'Error fetching data'
             ], 500);
+        }
+    }
+
+    /**
+     * Show detailed view of a specific network management record
+     */
+    public function showDetails($id)
+    {
+        try {
+            $networkManagement = NetworkManagement::findOrFail($id);
+            
+            return view('network-provisioning.details', [
+                'networkManagement' => $networkManagement
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching network management details: ' . $e->getMessage());
+            
+            return redirect()->route('network-provisioning.search')
+                ->with('error', 'Network management record not found.');
         }
     }
 }

@@ -91,6 +91,11 @@ Route::get('/network-provisioning/pfsense', function () {
 
 Route::get('/network-provisioning/download-xml/{fileName}', [NetworkProvisioningController::class, 'downloadXml'])->name('network-provisioning.downloadXml');
 
-Route::get('/network-provisioning/search', function () {
-    return view('network-provisioning.search');
-})->name('network-provisioning.search');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/network-provisioning/search', function () {
+        return view('network-provisioning.search');
+    })->name('network-provisioning.search');
+    
+    Route::get('/network-provisioning/details/{id}', [NetworkProvisioningController::class, 'showDetails'])
+        ->name('network-provisioning.details');
+});
