@@ -277,10 +277,33 @@
         @endif
 
     </div>
-    <button class="pfsense-main-btn">
+    <button id="start-provisioning" class="pfsense-main-btn">
         Start Provisioning
     </button>
 </div>
+
+<script>
+document.getElementById('start-provisioning').addEventListener('click', function() {
+    fetch('/provision/start', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            // Add any data you want to send
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Provisioning started!'); // Or handle success feedback
+    })
+    .catch(error => {
+        alert('Provisioning failed!');
+    });
+});
+</script>
+
 <script>
 function copy_to_clipboard() {
     var copyText = document.getElementById("password_PFsense");

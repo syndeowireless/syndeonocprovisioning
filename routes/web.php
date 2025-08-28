@@ -4,6 +4,7 @@ use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NetworkProvisioningController;
+use App\Http\Controllers\ProvisionController;
 
 
 Route::get('/', function () {
@@ -99,3 +100,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/network-provisioning/details/{id}', [NetworkProvisioningController::class, 'showDetails'])
         ->name('network-provisioning.details');
 });
+
+Route::post('/provision/start', [App\Http\Controllers\ProvisionController::class, 'start']);
