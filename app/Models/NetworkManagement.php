@@ -33,7 +33,8 @@ class NetworkManagement extends Model
         'property_type',
         'average_density',
         'system_type',
-        'first_usable_ip'
+        'first_usable_ip',
+        'xml_config_file'
     ];
 
 }

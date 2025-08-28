@@ -31,7 +31,7 @@ class NetworkProvisioningController extends Controller
             'system_type' => 'nullable|string|max:255',
         ]);
 
-        NetworkManagement::create($validated);
+        $networkManagement = NetworkManagement::create($validated);
 
         $ipRow = Ip::where('in_use', false)->first();
         if (!$ipRow) {
@@ -119,6 +119,38 @@ class NetworkProvisioningController extends Controller
         // Salvar arquivo XML
         $xmlFileName = 'config_file_' . $validated['property_name'] . '.xml';
         \Illuminate\Support\Facades\Storage::disk('local')->put('xml/' . $xmlFileName, $templateString);
+
+        // Determine the first_usable_ip based on system type
+        $firstUsableIp = null;
+        $systemType = $validated['system_type'] ?? '';
+        
+        if (strtolower($systemType) === 'das' || strtolower($systemType) === 'das and errcs') {
+            // For DAS or DAS and ERRCS, use Master Unit Sector 1 IP
+            if (!empty($ipAssignments)) {
+                foreach ($ipAssignments as $assignment) {
+                    if (strpos($assignment['label'], 'Master Unit Sector 1') !== false) {
+                        $firstUsableIp = $assignment['ip'];
+                        break;
+                    }
+                }
+            }
+        } elseif (strtolower($systemType) === 'errcs') {
+            // For ERRCS only, use ERRCS BDA 1 IP
+            if (!empty($ipAssignments)) {
+                foreach ($ipAssignments as $assignment) {
+                    if (strpos($assignment['label'], 'ERRCS BDA 1') !== false) {
+                        $firstUsableIp = $assignment['ip'];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Update the NetworkManagement record with the generated data
+        $networkManagement->update([
+            'first_usable_ip' => $firstUsableIp,
+            'xml_config_file' => $templateString
+        ]);
 
         // Retorno para a view
         return view('network-provisioning.pfsense', [
