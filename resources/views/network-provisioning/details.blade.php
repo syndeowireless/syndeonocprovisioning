@@ -211,16 +211,64 @@
 </div>
 
 <style>
+/* Import Poppins Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Apply Poppins font and consistent color to all text */
+* {
+    font-family: 'Poppins', sans-serif !important;
+    color: #2B2B22 !important;
+}
+
+/* Override specific text colors to maintain consistency */
+h1, h2, h3, h4, h5, h6, p, span, div, label, a, li, td, th, input, textarea, select {
+    color: #2B2B22 !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* Exception for white text in headers and buttons */
+.card-header, .card-header *, .text-white, .text-white * {
+    color: white !important;
+}
+
+/* Exception for button text colors */
+.btn-custom {
+    color: white !important;
+}
+
+.btn-custom:hover {
+    color: #2B2B22 !important;
+}
+
+/* Exception for muted text - keep slightly lighter but within color family */
+.text-muted {
+    color: #6B6B5A !important; /* Lighter shade of #2B2B22 */
+}
+
+/* Exception for code text */
+code {
+    color: #2B2B22 !important;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+/* Exception for specific colored elements - but still keeping them readable */
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
 .card {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 .card-header {
@@ -246,20 +294,21 @@
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
 code {
     background-color: #f8f9fa;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
-    font-family: 'Courier New', monospace;
+    font-family: 'Poppins', monospace !important;
     font-size: 0.9rem;
 }
 
 /* Custom Button Styling */
 .btn-custom {
     background: #13395d;
-    color: white;
+    color: white !important;
     border: 2px solid #fbbf0f;
     border-radius: 8px;
     font-weight: 500;
@@ -268,6 +317,7 @@ code {
     overflow: hidden;
     transition: all 0.3s ease;
     z-index: 1;
+    font-family: 'Poppins', sans-serif !important;
 }
 
 .btn-custom::before {
@@ -287,7 +337,7 @@ code {
 .btn-custom:hover {
     background: #FBBF0F;
     border: 2px solid #13395D;
-    color: #000;
+    color: #2B2B22 !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(19, 57, 93, 0.3);
 }
