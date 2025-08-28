@@ -110,6 +110,27 @@
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const clearSearch = document.getElementById('clearSearch');
+    
+    // Function to check if table functions are available
+    function checkTableReady() {
+        return window.filterProvisioningTable && window.resetProvisioningTableFilter;
+    }
+    
+    // Wait for table to be ready
+    function waitForTable(callback, maxAttempts = 50) {
+        let attempts = 0;
+        const checkInterval = setInterval(() => {
+            attempts++;
+            if (checkTableReady()) {
+                clearInterval(checkInterval);
+                console.log('Table functions are ready!');
+                callback();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                console.error('Table functions not available after maximum attempts');
+            }
+        }, 100);
+    }
 
     // Show/hide clear button
     searchInput.addEventListener('input', function() {
@@ -126,22 +147,45 @@ document.addEventListener('DOMContentLoaded', function() {
         clearSearch.classList.add('d-none');
         searchInput.focus();
         // Also reset the table filter
-        if (window.resetProvisioningTableFilter) {
+        if (checkTableReady()) {
+            console.log('Calling resetProvisioningTableFilter from clear button'); // Debug log
             window.resetProvisioningTableFilter();
+        } else {
+            console.log('Table not ready for clear, waiting...'); // Debug log
+            waitForTable(() => {
+                console.log('Calling resetProvisioningTableFilter after table ready from clear button'); // Debug log
+                window.resetProvisioningTableFilter();
+            });
         }
     });
 
     function performSearch() {
         const query = searchInput.value.trim();
+        console.log('Performing search for:', query); // Debug log
+        
         if (query) {
             // Trigger search on the provisioning table
-            if (window.filterProvisioningTable) {
+            if (checkTableReady()) {
+                console.log('Calling filterProvisioningTable with:', query); // Debug log
                 window.filterProvisioningTable(query);
+            } else {
+                console.log('Table not ready, waiting...'); // Debug log
+                waitForTable(() => {
+                    console.log('Calling filterProvisioningTable after table ready with:', query); // Debug log
+                    window.filterProvisioningTable(query);
+                });
             }
         } else {
             // If empty query, show all data
-            if (window.resetProvisioningTableFilter) {
+            if (checkTableReady()) {
+                console.log('Calling resetProvisioningTableFilter'); // Debug log
                 window.resetProvisioningTableFilter();
+            } else {
+                console.log('Table not ready, waiting...'); // Debug log
+                waitForTable(() => {
+                    console.log('Calling resetProvisioningTableFilter after table ready'); // Debug log
+                    window.resetProvisioningTableFilter();
+                });
             }
         }
     }
@@ -152,8 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             performSearch();
-        }, 300); // Debounce search for 300ms
+        }, 150); // Reduced debounce time for more responsive search
     });
+    
+    // Initialize search functionality when page loads
+    console.log('Search functionality initialized');
 });
 </script>
 @endsection
