@@ -123,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
             attempts++;
             if (checkTableReady()) {
                 clearInterval(checkInterval);
-                console.log('Table functions are ready!');
                 callback();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkInterval);
@@ -148,12 +147,9 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.focus();
         // Also reset the table filter
         if (checkTableReady()) {
-            console.log('Calling resetProvisioningTableFilter from clear button'); // Debug log
             window.resetProvisioningTableFilter();
         } else {
-            console.log('Table not ready for clear, waiting...'); // Debug log
             waitForTable(() => {
-                console.log('Calling resetProvisioningTableFilter after table ready from clear button'); // Debug log
                 window.resetProvisioningTableFilter();
             });
         }
@@ -161,29 +157,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function performSearch() {
         const query = searchInput.value.trim();
-        console.log('Performing search for:', query); // Debug log
         
         if (query) {
             // Trigger search on the provisioning table
             if (checkTableReady()) {
-                console.log('Calling filterProvisioningTable with:', query); // Debug log
                 window.filterProvisioningTable(query);
             } else {
-                console.log('Table not ready, waiting...'); // Debug log
                 waitForTable(() => {
-                    console.log('Calling filterProvisioningTable after table ready with:', query); // Debug log
                     window.filterProvisioningTable(query);
                 });
             }
         } else {
             // If empty query, show all data
             if (checkTableReady()) {
-                console.log('Calling resetProvisioningTableFilter'); // Debug log
                 window.resetProvisioningTableFilter();
             } else {
-                console.log('Table not ready, waiting...'); // Debug log
                 waitForTable(() => {
-                    console.log('Calling resetProvisioningTableFilter after table ready'); // Debug log
                     window.resetProvisioningTableFilter();
                 });
             }
@@ -200,7 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Initialize search functionality when page loads
-    console.log('Search functionality initialized');
 });
 </script>
 @endsection

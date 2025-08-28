@@ -245,12 +245,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.success) {
                 // Transform API data to table format with ID for navigation
                 originalData = result.data.map(item => [
-                    item.property_name || '',
-                    item.property_type || '',
-                    item.property_address || '',
-                    item.system_type || '',
-                    item.first_usable_ip || '',
-                    item.id // Store ID for navigation
+                    String(item.property_name || ''),
+                    String(item.property_type || ''),
+                    String(item.property_address || ''),
+                    String(item.system_type || ''),
+                    String(item.first_usable_ip || ''),
+                    item.id // Store ID for navigation (keep as number for navigation)
                 ]);
                 allRowsData = [...originalData]; // Copy for current display
                 totalRows = allRowsData.length;
@@ -299,8 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const searchQuery = query.toLowerCase();
         filteredData = originalData.filter(row => {
-            return row.some(cell => 
-                cell.toLowerCase().includes(searchQuery)
+            // Search only the first 5 columns (excluding the ID column at index 5)
+            return row.slice(0, 5).some(cell => 
+                cell && typeof cell === 'string' && cell.toLowerCase().includes(searchQuery)
             );
         });
 
