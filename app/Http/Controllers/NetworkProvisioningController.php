@@ -125,21 +125,21 @@ class NetworkProvisioningController extends Controller
         $systemType = $validated['system_type'] ?? '';
         
         if (strtolower($systemType) === 'das' || strtolower($systemType) === 'das and errcs') {
-            // For DAS or DAS and ERRCS, use Master Unit Sector 1 IP
+            // For DAS or DAS and ERRCS, use Master Unit Sector 1 IP minus 1
             if (!empty($ipAssignments)) {
                 foreach ($ipAssignments as $assignment) {
                     if (strpos($assignment['label'], 'Master Unit Sector 1') !== false) {
-                        $firstUsableIp = $assignment['ip'];
+                        $firstUsableIp = ip_add($assignment['ip'], -1); // Subtract 1 from Master Unit Sector 1 IP
                         break;
                     }
                 }
             }
         } elseif (strtolower($systemType) === 'errcs') {
-            // For ERRCS only, use ERRCS BDA 1 IP
+            // For ERRCS only, use ERRCS BDA 1 IP minus 1
             if (!empty($ipAssignments)) {
                 foreach ($ipAssignments as $assignment) {
                     if (strpos($assignment['label'], 'ERRCS BDA 1') !== false) {
-                        $firstUsableIp = $assignment['ip'];
+                        $firstUsableIp = ip_add($assignment['ip'], -1); // Subtract 1 from ERRCS BDA 1 IP
                         break;
                     }
                 }
