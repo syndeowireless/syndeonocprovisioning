@@ -184,10 +184,11 @@
                             <i class="fas fa-file-code me-2"></i>
                             PfSense Configuration File
                         </h5>
-                        <a href="{{ route('network-provisioning.downloadXmlFromDatabase', $networkManagement->id) }}" 
-                           class="btn btn-custom btn-sm">
+                        <button type="button" 
+                                class="btn btn-custom btn-sm" 
+                                onclick="downloadXmlFile({{ $networkManagement->id }})">
                             <i class="fas fa-download me-2"></i>Download XML
-                        </a>
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -242,22 +243,7 @@
                                 <p class="mb-0 fs-5">{{ $networkManagement->updated_at ? $networkManagement->updated_at->format('M d, Y H:i:s') : 'N/A' }}</p>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Configuration Status</label>
-                                <p class="mb-0 fs-5">
-                                    @if($networkManagement->xml_config_file)
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check-circle me-1"></i>Configured
-                                        </span>
-                                    @else
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>Not Configured
-                                        </span>
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -467,6 +453,19 @@ function toggleXmlPreview() {
         toggleText.textContent = 'Show XML';
         toggleIcon.className = 'fas fa-eye me-1';
     }
+}
+
+function downloadXmlFile(id) {
+    // Create a hidden iframe to handle the download without page reload
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = `/network-provisioning/download-xml-db/${id}`;
+    document.body.appendChild(iframe);
+    
+    // Remove the iframe after a short delay
+    setTimeout(() => {
+        document.body.removeChild(iframe);
+    }, 1000);
 }
 </script>
 @endsection
