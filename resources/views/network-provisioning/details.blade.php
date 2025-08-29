@@ -213,43 +213,6 @@
     </div>
     @endif
 
-    <!-- Record Information Card -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Record Information
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Record ID</label>
-                                <p class="mb-0 fs-5"><code class="text-muted">#{{ $networkManagement->id }}</code></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Created At</label>
-                                <p class="mb-0 fs-5">{{ $networkManagement->created_at ? $networkManagement->created_at->format('M d, Y H:i:s') : 'N/A' }}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Last Updated</label>
-                                <p class="mb-0 fs-5">{{ $networkManagement->updated_at ? $networkManagement->updated_at->format('M d, Y H:i:s') : 'N/A' }}</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Start Provisioning Button -->
     <div class="row mt-4">
         <div class="col-12 text-center">
