@@ -184,6 +184,45 @@ code {
 </style>
 
 <script>
+// Function to subtract 1 from an IP address
+function subtractOneFromIP(ip) {
+    if (!ip || typeof ip !== 'string') {
+        return ip || '';
+    }
+    
+    // Validate IP format
+    const ipRegex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+    const match = ip.match(ipRegex);
+    
+    if (!match) {
+        return ip; // Return original if not a valid IP
+    }
+    
+    // Convert IP to long integer
+    const parts = match.slice(1, 5).map(Number);
+    
+    // Validate each part is between 0-255
+    if (parts.some(part => part < 0 || part > 255)) {
+        return ip; // Return original if invalid
+    }
+    
+    // Convert to long integer
+    let long = (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
+    
+    // Subtract 1
+    long -= 1;
+    
+    // Convert back to IP
+    const newParts = [
+        (long >>> 24) & 0xFF,
+        (long >>> 16) & 0xFF,
+        (long >>> 8) & 0xFF,
+        long & 0xFF
+    ];
+    
+    return newParts.join('.');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const perPageSelect = document.getElementById('perPage');
     const tableBody = document.getElementById('tableBody');
@@ -360,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${rowData[1]}</td>
                 <td>${rowData[2]}</td>
                 <td>${rowData[3]}</td>
-                <td><code class="text-muted">${rowData[4]}</code></td>
+                <td><code class="text-muted">${subtractOneFromIP(rowData[4])}</code></td>
             `;
             
             // Add click event listener for navigation
