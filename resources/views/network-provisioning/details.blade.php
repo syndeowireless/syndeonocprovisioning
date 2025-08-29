@@ -84,7 +84,7 @@
                         <div class="col-md-6">
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">First Usable IP</label>
-                                <p class="mb-0 fs-5"><code class="text-primary">{{ $networkManagement->first_usable_ip ?? 'N/A' }}</code></p>
+                                <p class="mb-0 fs-5"><code class="text-primary">{{ $networkManagement->first_usable_ip ? \App\Helpers\IpHelper::subtractOne($networkManagement->first_usable_ip) : 'N/A' }}</code></p>
                             </div>
                         </div>
                     </div>

@@ -16,7 +16,7 @@
             <div class="d-flex gap-3 align-items-center">
                 <div class="search-input-wrapper position-relative flex-grow-1">
                     <input type="text" 
-                           class="form-control search-input" 
+                           class="form-control search-input"
                            id="searchInput"
                            placeholder="Search by property name, type, address, or system..."
                            autocomplete="off">
