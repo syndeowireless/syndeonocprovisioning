@@ -177,7 +177,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-info-circle me-2"></i>
                         Record Information
@@ -206,6 +206,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Start Provisioning Button -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <button class="btn btn-custom btn-lg">
+                Start Provisioning
+            </button>
         </div>
     </div>
 </div>
@@ -262,6 +271,11 @@ code {
     overflow: hidden;
     transition: all 0.3s ease;
     z-index: 1;
+}
+
+.btn-custom.btn-lg {
+    font-size: 1.2rem;
+    padding: 0.75rem 2rem;
 }
 
 .btn-custom::before {
