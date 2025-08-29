@@ -167,6 +167,32 @@ class NetworkProvisioningController extends Controller
     }
 
     /**
+     * Download XML config file from database
+     */
+    public function downloadXmlFromDatabase($id)
+    {
+        try {
+            $networkManagement = NetworkManagement::findOrFail($id);
+            
+            if (!$networkManagement->xml_config_file) {
+                return redirect()->back()->with('error', 'No XML configuration file found for this record.');
+            }
+
+            $fileName = $networkManagement->property_name . '_config.xml';
+            $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $fileName); // Sanitize filename
+            
+            return response($networkManagement->xml_config_file)
+                ->header('Content-Type', 'application/xml')
+                ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+                
+        } catch (\Exception $e) {
+            Log::error('Error downloading XML config file: ' . $e->getMessage());
+            
+            return redirect()->back()->with('error', 'Error downloading XML configuration file.');
+        }
+    }
+
+    /**
      * Get all network management data for the provisioning table
      */
     public function getNetworkManagementData()
@@ -178,7 +204,8 @@ class NetworkProvisioningController extends Controller
                 'property_type', 
                 'property_address',
                 'system_type',
-                'first_usable_ip'
+                'first_usable_ip',
+                'xml_config_file'
             ])->get();
 
             return response()->json([

@@ -19,7 +19,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-building me-2"></i>
                         Property Information
@@ -55,7 +55,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-cogs me-2"></i>
                         System Configuration
@@ -97,7 +97,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
+            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-layer-group me-2"></i>
                         Unit Quantities
@@ -133,7 +133,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 2px solid #fbbf0f;">
+                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-map-marker-alt me-2"></i>
                         Location Information
@@ -173,6 +173,45 @@
         </div>
     </div>
 
+    <!-- PfSense Configuration Card -->
+    @if($networkManagement->xml_config_file)
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-file-code me-2"></i>
+                            PfSense Configuration File
+                        </h5>
+                        <a href="{{ route('network-provisioning.downloadXmlFromDatabase', $networkManagement->id) }}" 
+                           class="btn btn-custom btn-sm">
+                            <i class="fas fa-download me-2"></i>Download XML
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="xml-preview-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label fw-bold text-muted mb-0">XML Configuration Preview</label>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleXmlPreview()">
+                                <i class="fas fa-eye me-1"></i><span id="toggleText">Show XML</span>
+                            </button>
+                        </div>
+                        <div id="xmlPreview" class="xml-content" style="display: none;">
+                            <pre class="bg-light p-3 rounded border" style="max-height: 400px; overflow-y: auto; font-size: 0.85rem;"><code>{{ $networkManagement->xml_config_file }}</code></pre>
+                        </div>
+                        <div class="text-muted small mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Click "Show XML" to preview the configuration or use the download button to save the file.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Record Information Card -->
     <div class="row">
         <div class="col-12">
@@ -201,6 +240,22 @@
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">Last Updated</label>
                                 <p class="mb-0 fs-5">{{ $networkManagement->updated_at ? $networkManagement->updated_at->format('M d, Y H:i:s') : 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Configuration Status</label>
+                                <p class="mb-0 fs-5">
+                                    @if($networkManagement->xml_config_file)
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>Configured
+                                        </span>
+                                    @else
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Not Configured
+                                        </span>
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -352,5 +407,66 @@ code {
         font-size: 1.1rem !important;
     }
 }
+
+/* XML Preview Styling */
+.xml-content pre {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    font-family: 'Courier New', monospace;
+    line-height: 1.4;
+}
+
+.xml-content code {
+    color: #495057;
+    background: none;
+    padding: 0;
+    font-size: 0.85rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+}
+
+/* XML Preview Animation */
+.xml-content {
+    transition: all 0.3s ease;
+}
+
+.xml-content.show {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>
+
+<script>
+function toggleXmlPreview() {
+    const xmlPreview = document.getElementById('xmlPreview');
+    const toggleText = document.getElementById('toggleText');
+    const toggleIcon = document.querySelector('#xmlPreview').previousElementSibling.querySelector('i');
+    
+    if (xmlPreview.style.display === 'none') {
+        xmlPreview.style.display = 'block';
+        xmlPreview.classList.add('show');
+        toggleText.textContent = 'Hide XML';
+        toggleIcon.className = 'fas fa-eye-slash me-1';
+    } else {
+        xmlPreview.style.display = 'none';
+        xmlPreview.classList.remove('show');
+        toggleText.textContent = 'Show XML';
+        toggleIcon.className = 'fas fa-eye me-1';
+    }
+}
+</script>
 @endsection

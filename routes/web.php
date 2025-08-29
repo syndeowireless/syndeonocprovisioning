@@ -91,6 +91,7 @@ Route::get('/network-provisioning/pfsense', function () {
 
 
 Route::get('/network-provisioning/download-xml/{fileName}', [NetworkProvisioningController::class, 'downloadXml'])->name('network-provisioning.downloadXml');
+Route::get('/network-provisioning/download-xml-db/{id}', [NetworkProvisioningController::class, 'downloadXmlFromDatabase'])->name('network-provisioning.downloadXmlFromDatabase');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/network-provisioning/search', function () {
