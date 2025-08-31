@@ -82,14 +82,13 @@ class ProvisionController extends Controller
 
     private function grafanaApiRequest($method, $endpoint, $data = [])
     {
-        $url = 'https://dashboard.syndeonoc.com/' . $endpoint; // <---- CHANGE THIS
-        $apiKey = env('GRAFANA_API_KEY');                    // <---- CHANGE THIS
-
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $apiKey,
-            'Content-Type' => 'application/json',
-        ])->$method($url, $data);
-
+        $url = 'https://dashboard.syndeonoc.com/api' . $endpoint; // Ensure /api prefix
+        $username = 'support';
+        $password = 'syndeo@123';
+        
+        $response = Http::withBasicAuth($username, $password)
+            ->$method($url, $data);
+        
         return $response->json();
     }
 }
