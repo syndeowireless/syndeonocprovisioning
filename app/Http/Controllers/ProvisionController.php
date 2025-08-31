@@ -9,11 +9,7 @@ class ProvisionController extends Controller
 {
     public function start(Request $request)
     {
-        // Here you will add the Zabbix and Grafana API logic in follow-up steps.
-        // For now, just return a placeholder response.
-
-
-        // Step 1: Login
+        // Step 1: Login Zabbix
         $zabbixToken = $this->zabbixLogin();
         if (!$zabbixToken) return response()->json(['success' => false, 'error' => 'Zabbix login failed']);
 
@@ -24,7 +20,7 @@ class ProvisionController extends Controller
 
         // Step 3: Create Host
         $hostParams = [
-            'host' => 'MyNewHost', // You can make this dynamic
+            'host' => 'MyNewHost', // Make dynamic if needed
             'interfaces' => [[
                 'type' => 1, 'main' => 1, 'useip' => 1, 'ip' => '127.0.0.1', 'dns' => '', 'port' => '10050'
             ]],
@@ -32,8 +28,7 @@ class ProvisionController extends Controller
         ];
         $createResp = $this->zabbixApiRequest('host.create', $hostParams, $zabbixToken);
 
-        //Grafana logic here...
-        // Add user
+        // Grafana: Add user
         $userResp = $this->grafanaApiRequest('post', '/admin/users', [
             'name' => 'Provisioned User',
             'email' => 'provisioned@example.com',
@@ -41,7 +36,7 @@ class ProvisionController extends Controller
             'password' => 'changeme123',
         ]);
         
-        // Add dashboard (simple example)
+        // Grafana: Add dashboard
         $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
             'dashboard' => [
                 'id' => null,
@@ -51,16 +46,17 @@ class ProvisionController extends Controller
             'overwrite' => false,
         ]);
 
-
-
-
-
-        return response()->json(['success' => true, 'zabbix' => $createResp]);
+        return response()->json([
+            'success' => true,
+            'zabbix' => $createResp,
+            'grafana_user' => $userResp,
+            'grafana_dashboard' => $dashboardResp,
+        ]);
     }
 
     private function zabbixApiRequest($method, $params, $auth = null)
     {
-        $url = 'http://your-zabbix-server/api_jsonrpc.php'; // Update this!
+        $url = 'http://10.200.1.4/zabbix/api_jsonrpc.php'; // <---- CHANGE THIS
         $post = [
             'jsonrpc' => '2.0',
             'method' => $method,
@@ -75,8 +71,8 @@ class ProvisionController extends Controller
 
     private function zabbixLogin()
     {
-        $user = 'your_zabbix_user';
-        $password = 'your_zabbix_password';
+        $user = 'support';      // <---- CHANGE IF NEEDED
+        $password = 'syndeo@123'; // <---- CHANGE IF NEEDED
         $result = $this->zabbixApiRequest('user.login', [
             'user' => $user,
             'password' => $password,
@@ -86,13 +82,15 @@ class ProvisionController extends Controller
 
     private function grafanaApiRequest($method, $endpoint, $data = [])
     {
-        $url = 'http://your-grafana-server/api' . $endpoint; // Update this!
-        $apiKey = 'your_grafana_api_key';
+        $url = 'https://dashboard.syndeonoc.com/' . $endpoint; // <---- CHANGE THIS
+        $apiKey = env('GRAFANA_API_KEY');                    // <---- CHANGE THIS
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $apiKey,
+            'Content-Type' => 'application/json',
         ])->$method($url, $data);
 
         return $response->json();
     }
 }
+
