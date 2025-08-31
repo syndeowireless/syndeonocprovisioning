@@ -30,7 +30,7 @@ class ProvisionController extends Controller
 
         // Grafana: Add user
         $userResp = $this->grafanaApiRequest('post', '/admin/users', [
-            'name' => 'Provisioned User',
+            'name' => 'Test Grafana',
             'email' => 'provisioned@example.com',
             'login' => 'provisioned',
             'password' => 'changeme123',
