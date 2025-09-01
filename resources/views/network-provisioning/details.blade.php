@@ -457,11 +457,13 @@ function navigateWithOverlay(url) {
             opacity: 0;
         `;
 
+        // Responsive offsets
         if (window.innerWidth <= 992) {
             overlay.style.left = '0px';
             overlay.style.top = '60px';
         }
 
+        // Loading container
         const loadingContainer = document.createElement('div');
         loadingContainer.style.cssText = `
             text-align: center;
@@ -472,6 +474,7 @@ function navigateWithOverlay(url) {
             padding: 2rem;
         `;
 
+        // GIF element
         const gifElement = document.createElement('img');
         gifElement.src = '/assets/images/Transition_Animation.gif';
         gifElement.alt = 'Loading...';
@@ -483,6 +486,7 @@ function navigateWithOverlay(url) {
             margin-bottom: 1.5rem;
         `;
 
+        // Spinner fallback
         const spinner = document.createElement('div');
         spinner.style.cssText = `
             width: 60px;
@@ -495,23 +499,57 @@ function navigateWithOverlay(url) {
             display: none;
         `;
 
+        // Ensure keyframes exist (defensive)
+        if (!document.querySelector('#loading-spinner-style')) {
+            const style = document.createElement('style');
+            style.id = 'loading-spinner-style';
+            style.textContent = `@keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }`;
+            document.head.appendChild(style);
+        }
+
+        let proceeded = false;
+        const proceed = () => {
+            if (proceeded) return;
+            proceeded = true;
+            window.location.href = url;
+        };
+
+        gifElement.addEventListener('load', () => {
+            // Keep the overlay visible briefly to show the GIF
+            setTimeout(proceed, 3000);
+        });
+
         gifElement.addEventListener('error', () => {
             gifElement.style.display = 'none';
             spinner.style.display = 'block';
+            setTimeout(proceed, 1500);
         });
 
+        // Assemble DOM
         loadingContainer.appendChild(gifElement);
         loadingContainer.appendChild(spinner);
         overlay.appendChild(loadingContainer);
         document.body.appendChild(overlay);
 
+        // Fade in
         requestAnimationFrame(() => {
             overlay.style.opacity = '1';
-            // Slight delay ensures overlay paints before navigation
-            setTimeout(() => {
-                window.location.href = url;
-            }, 50);
         });
+
+        // Keep offsets correct on resize
+        const handleResize = () => {
+            if (window.innerWidth <= 992) {
+                overlay.style.left = '0px';
+                overlay.style.top = '60px';
+            } else {
+                overlay.style.left = '240px';
+                overlay.style.top = '70px';
+            }
+        };
+        window.addEventListener('resize', handleResize);
+
+        // Safety timeout
+        setTimeout(proceed, 8000);
     } catch (e) {
         window.location.href = url;
     }

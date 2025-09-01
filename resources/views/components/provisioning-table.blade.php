@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let allRowsData = [];
     let totalRows = 0;
     
-    // Helper: show transition overlay and navigate
+    // Helper: show transition overlay and navigate (mirrors create.blade behavior)
     function navigateWithOverlay(url) {
         try {
             const overlay = document.createElement('div');
@@ -262,11 +262,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 opacity: 0;
             `;
 
+            // Responsive offsets
             if (window.innerWidth <= 992) {
                 overlay.style.left = '0px';
                 overlay.style.top = '60px';
             }
 
+            // Loading container
             const loadingContainer = document.createElement('div');
             loadingContainer.style.cssText = `
                 text-align: center;
@@ -277,6 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 padding: 2rem;
             `;
 
+            // GIF element
             const gifElement = document.createElement('img');
             gifElement.src = '/assets/images/Transition_Animation.gif';
             gifElement.alt = 'Loading...';
@@ -288,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 margin-bottom: 1.5rem;
             `;
 
+            // Spinner fallback
             const spinner = document.createElement('div');
             spinner.style.cssText = `
                 width: 60px;
@@ -300,25 +304,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 display: none;
             `;
 
+            // Add CSS keyframes if not present
+            if (!document.querySelector('#loading-spinner-style')) {
+                const style = document.createElement('style');
+                style.id = 'loading-spinner-style';
+                style.textContent = `
+                    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+                `;
+                document.head.appendChild(style);
+            }
+
+            let proceeded = false;
+            const proceed = () => {
+                if (proceeded) return;
+                proceeded = true;
+                window.location.href = url;
+            };
+
+            gifElement.addEventListener('load', () => {
+                // Show the overlay for a short, visible duration (like create flow)
+                setTimeout(proceed, 3000);
+            });
+
             gifElement.addEventListener('error', () => {
                 gifElement.style.display = 'none';
                 spinner.style.display = 'block';
+                setTimeout(proceed, 1500);
             });
 
+            // Assemble DOM
             loadingContainer.appendChild(gifElement);
             loadingContainer.appendChild(spinner);
             overlay.appendChild(loadingContainer);
             document.body.appendChild(overlay);
 
+            // Fade in, and timeout fallback
             requestAnimationFrame(() => {
                 overlay.style.opacity = '1';
-                // Slight delay ensures overlay paints before navigation
-                setTimeout(() => {
-                    window.location.href = url;
-                }, 50);
             });
+
+            const handleResize = () => {
+                if (window.innerWidth <= 992) {
+                    overlay.style.left = '0px';
+                    overlay.style.top = '60px';
+                } else {
+                    overlay.style.left = '240px';
+                    overlay.style.top = '70px';
+                }
+            };
+            window.addEventListener('resize', handleResize);
+
+            // Max timeout safeguard
+            setTimeout(proceed, 8000);
         } catch (e) {
-            // Fallback to direct navigation if anything fails
             window.location.href = url;
         }
     }
