@@ -22,14 +22,33 @@ class NetworkProvisioningController extends Controller
             'oem' => 'nullable|string|max:255',
             'property_address' => 'nullable|string|max:255',
             'remote_unit_quantity' => 'nullable|integer',
-            'master_unit_quantity' => 'nullable|integer',
-            'bda_quantity' => 'nullable|integer',
+            'master_unit_quantity' => 'nullable|integer|min:0',
+            'bda_quantity' => 'nullable|integer|min:0',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'property_type' => 'nullable|string|max:255',
             'average_density' => 'nullable|string|max:255',
             'system_type' => 'nullable|string|max:255',
         ]);
+        
+        // Additional validation based on system type
+        $systemType = $validated['system_type'] ?? '';
+        if (strtolower($systemType) === 'das') {
+            if (empty($validated['master_unit_quantity']) && $validated['master_unit_quantity'] !== 0) {
+                return back()->withErrors(['master_unit_quantity' => 'Master Unit Quantity is required for DAS system type.']);
+            }
+        } elseif (strtolower($systemType) === 'errcs') {
+            if (empty($validated['bda_quantity']) && $validated['bda_quantity'] !== 0) {
+                return back()->withErrors(['bda_quantity' => 'BDA Quantity is required for ERRCS system type.']);
+            }
+        } elseif (strtolower($systemType) === 'das and errcs') {
+            if (empty($validated['master_unit_quantity']) && $validated['master_unit_quantity'] !== 0) {
+                return back()->withErrors(['master_unit_quantity' => 'Master Unit Quantity is required for DAS & ERRCS system type.']);
+            }
+            if (empty($validated['bda_quantity']) && $validated['bda_quantity'] !== 0) {
+                return back()->withErrors(['bda_quantity' => 'BDA Quantity is required for DAS & ERRCS system type.']);
+            }
+        }
 
         $networkManagement = NetworkManagement::create($validated);
 
@@ -37,6 +56,14 @@ class NetworkProvisioningController extends Controller
         if (!$ipRow) {
             return back()->with('error', 'No available IP ranges.');
         }
+        
+        // Ensure the IP row has a valid first_usable_ip
+        if (empty($ipRow->first_usable_ip)) {
+            return back()->with('error', 'Invalid IP range configuration.');
+        }
+        
+        Log::info('Using IP range with first_usable_ip: ' . $ipRow->first_usable_ip);
+        
         $ipRow->in_use = true;
         $ipRow->save();
 
@@ -75,6 +102,9 @@ class NetworkProvisioningController extends Controller
             ];
             $currentIncrement++;
         }
+        
+        // Log the IP assignments for debugging
+        Log::info('IP Assignments created:', $ipAssignments);
 
         
         // Novos campos do formulário
@@ -124,15 +154,27 @@ class NetworkProvisioningController extends Controller
         $firstUsableIp = null;
         $systemType = $validated['system_type'] ?? '';
         
+        // Log the system type and quantities for debugging
+        Log::info('System Type: ' . $systemType . ', Master Qty: ' . $masterQty . ', BDA Qty: ' . $bdaQty);
+        Log::info('IP Assignments count: ' . count($ipAssignments));
+        
         if (strtolower($systemType) === 'das' || strtolower($systemType) === 'das and errcs') {
             // For DAS or DAS and ERRCS, use Master Unit Sector 1 IP
             if (!empty($ipAssignments)) {
                 foreach ($ipAssignments as $assignment) {
                     if (strpos($assignment['label'], 'Master Unit Sector 1') !== false) {
                         $firstUsableIp = $assignment['ip'];
+                        Log::info('Found Master Unit Sector 1 IP: ' . $firstUsableIp);
                         break;
                     }
                 }
+            }
+            
+            // If no IP assignment found in the array (e.g., quantities are 0), 
+            // use the first usable IP from the IP range
+            if ($firstUsableIp === null) {
+                $firstUsableIp = ip_add($ipRow->first_usable_ip, 1);
+                Log::info('Using fallback IP for DAS/DAS & ERRCS: ' . $firstUsableIp);
             }
         } elseif (strtolower($systemType) === 'errcs') {
             // For ERRCS only, use ERRCS BDA 1 IP
@@ -140,10 +182,26 @@ class NetworkProvisioningController extends Controller
                 foreach ($ipAssignments as $assignment) {
                     if (strpos($assignment['label'], 'ERRCS BDA 1') !== false) {
                         $firstUsableIp = $assignment['ip'];
+                        Log::info('Found ERRCS BDA 1 IP: ' . $firstUsableIp);
                         break;
                     }
                 }
             }
+            
+            // If no IP assignment found in the array (e.g., quantities are 0), 
+            // use the first usable IP from the IP range
+            if ($firstUsableIp === null) {
+                $firstUsableIp = ip_add($ipRow->first_usable_ip, 1);
+                Log::info('Using fallback IP for ERRCS: ' . $firstUsableIp);
+            }
+        }
+        
+        Log::info('Final first_usable_ip: ' . $firstUsableIp);
+        
+        // Ensure first_usable_ip is never null
+        if ($firstUsableIp === null) {
+            Log::error('first_usable_ip is still null after all logic. Using fallback.');
+            $firstUsableIp = ip_add($ipRow->first_usable_ip, 1);
         }
 
         // Update the NetworkManagement record with the generated data

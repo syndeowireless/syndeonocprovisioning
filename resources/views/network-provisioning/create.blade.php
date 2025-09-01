@@ -1618,10 +1618,19 @@ function validateRequiredFields() {
         const element = document.getElementById(field.id);
         if (element && !element.disabled) { // Only validate if field is not disabled
             const value = element.value.trim();
-            if (!value) {
-                emptyFields.push(field.name);
-                element.classList.add('error');
-                hasErrors = true;
+            // For quantity fields, allow 0 as a valid value
+            if (field.id === 'master_unit_quantity' || field.id === 'bda_quantity') {
+                if (value === '' || isNaN(parseInt(value)) || parseInt(value) < 0) {
+                    emptyFields.push(field.name);
+                    element.classList.add('error');
+                    hasErrors = true;
+                }
+            } else {
+                if (!value) {
+                    emptyFields.push(field.name);
+                    element.classList.add('error');
+                    hasErrors = true;
+                }
             }
         }
     });
