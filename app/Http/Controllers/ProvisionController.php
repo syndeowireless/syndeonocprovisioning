@@ -33,7 +33,7 @@ class ProvisionController extends Controller
             'name' => 'Test Grafana',
             'email' => 'provisioned@example.com',
             'login' => 'provisioned',
-            'password' => '$ynd30@noc',
+            'password' => 'changeme123',
         ]);
         
         // Grafana: Add dashboard
@@ -178,4 +178,3 @@ class ProvisionController extends Controller
         return $response->json();
     }
 }
-

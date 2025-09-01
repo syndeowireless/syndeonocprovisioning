@@ -246,7 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function navigateWithOverlay(url) {
         try {
             const overlay = document.createElement('div');
-            overlay.id = 'transition-overlay';
             overlay.style.cssText = `
                 position: fixed;
                 top: 70px; /* Height of topbar */
@@ -319,7 +318,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const proceed = () => {
                 if (proceeded) return;
                 proceeded = true;
-                try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
                 window.location.href = url;
             };
 
