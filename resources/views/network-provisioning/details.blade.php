@@ -75,12 +75,12 @@
                                 <p class="mb-0 fs-5">{{ $networkManagement->oem ?? 'N/A' }}</p>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">Average Density</label>
                                 <p class="mb-0 fs-5">{{ $networkManagement->average_density ?? 'N/A' }}</p>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-md-6">
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">First Usable IP</label>
