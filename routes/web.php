@@ -85,8 +85,9 @@ Route::get('/network-provisioning', function () {
     return view('network-provisioning.index');
 })->name('network-provisioning.index');
 
-Route::get('/network-provisioning/pfsense', [NetworkProvisioningController::class, 'showPfsense'])
-    ->name('network-provisioning.pfsense');
+Route::get('/network-provisioning/pfsense', function () {
+    return view('network-provisioning.pfsense');
+})->name('network-provisioning.pfsense');
 
 
 Route::get('/network-provisioning/download-xml/{fileName}', [NetworkProvisioningController::class, 'downloadXml'])->name('network-provisioning.downloadXml');
