@@ -108,6 +108,24 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Cleanup any lingering transition overlay (e.g., when coming back via bfcache)
+    function removeTransitionOverlay() {
+        const existing = document.getElementById('transition-overlay');
+        if (existing && existing.parentNode) {
+            existing.parentNode.removeChild(existing);
+        }
+    }
+    removeTransitionOverlay();
+    window.addEventListener('pageshow', function(event) {
+        // If restored from bfcache or any case, ensure overlay is gone
+        if (event.persisted) {
+            removeTransitionOverlay();
+        } else {
+            // Defensive cleanup on normal navigation too
+            removeTransitionOverlay();
+        }
+    });
+
     const searchInput = document.getElementById('searchInput');
     const clearSearch = document.getElementById('clearSearch');
     

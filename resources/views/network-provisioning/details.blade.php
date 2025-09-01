@@ -6,7 +6,7 @@
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('network-provisioning.search') }}" class="btn btn-custom me-3" id="backToSearchBtn">
+                    <a href="{{ route('network-provisioning.search') }}" class="btn btn-custom me-3" id="backToSearchBtn" onclick="return navigateWithOverlay(this.href)">
                         <i class="fas fa-arrow-left me-2"></i>Back to Search
                     </a>
                     <h4 class="mb-0">{{ $networkManagement->property_name ?? 'Property' }} Details</h4>
@@ -441,6 +441,7 @@ function downloadXmlFile(id) {
 function navigateWithOverlay(url) {
     try {
         const overlay = document.createElement('div');
+        overlay.id = 'transition-overlay';
         overlay.style.cssText = `
             position: fixed;
             top: 70px; /* Height of topbar */
@@ -553,15 +554,18 @@ function navigateWithOverlay(url) {
     } catch (e) {
         window.location.href = url;
     }
+    return false; // prevent default navigation when used inline
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     const backBtn = document.getElementById('backToSearchBtn');
     if (backBtn) {
+        // Defensive: ensure JS handler also prevents default and triggers overlay
         backBtn.addEventListener('click', function(e) {
             e.preventDefault();
             const url = this.getAttribute('href');
             navigateWithOverlay(url);
+            return false;
         });
     }
 });
