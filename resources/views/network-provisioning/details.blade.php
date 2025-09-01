@@ -89,6 +89,12 @@
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Subnet Mask</label>
+                                <p class="mb-0 fs-5"><code class="text-info">255.255.255.192</code></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">Master Unit Quantity</label>
                                 <p class="mb-0 fs-4 text-primary">{{ $networkManagement->master_unit_quantity ?? '0' }}</p>
                             </div>
@@ -149,11 +155,8 @@
                     @endphp
 
                     @if(count($masterUnitIPs) > 0 || count($bdaIPs) > 0)
-                    <hr class="my-4">
+                    
                     <div class="row">
-                        <div class="col-12">
-                            <h6 class="fw-bold text-muted mb-3">IP Address Assignments</h6>
-                        </div>
                         
                         @if(count($masterUnitIPs) > 0)
                         <div class="col-md-6">
@@ -189,41 +192,7 @@
         </div>
     </div>
 
-    <!-- Unit Quantities Card -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-            <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-layer-group me-2"></i>
-                        Unit Quantities
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- <div class="col-md-4">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Master Unit Quantity</label>
-                                <p class="mb-0 fs-4 text-primary">{{ $networkManagement->master_unit_quantity ?? '0' }}</p>
-                            </div>
-                        </div> -->
-                        <!-- <div class="col-md-4">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Remote Unit Quantity</label>
-                                <p class="mb-0 fs-4 text-success">{{ $networkManagement->remote_unit_quantity ?? '0' }}</p>
-                            </div>
-                        </div> -->
-                        <!-- <div class="col-md-4">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">BDA Quantity</label>
-                                <p class="mb-0 fs-4 text-warning">{{ $networkManagement->bda_quantity ?? '0' }}</p>
-                            </div>
-                        </div> -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Location Information Card -->
     <div class="row mb-4">
@@ -283,16 +252,16 @@
                         <button type="button" 
                                 class="btn btn-custom btn-sm" 
                                 onclick="downloadXmlFile({{ $networkManagement->id }})">
-                            <i class="fas fa-download me-2"></i>Download XML
+                            <i class="fas fa-download me-2"></i>Download Config File
                         </button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="xml-preview-container">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-label fw-bold text-muted mb-0">XML Configuration Preview</label>
+                            <label class="form-label fw-bold text-muted mb-0">Configuration File Preview</label>
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleXmlPreview()">
-                                <i class="fas fa-eye me-1"></i><span id="toggleText">Show XML</span>
+                                <i class="fas fa-eye me-1"></i><span id="toggleText">Show config file</span>
                             </button>
                         </div>
                         <div id="xmlPreview" class="xml-content" style="display: none;">
@@ -300,7 +269,7 @@
                         </div>
                         <div class="text-muted small mt-2">
                             <i class="fas fa-info-circle me-1"></i>
-                            Click "Show XML" to preview the configuration or use the download button to save the file.
+                            Click "Show config file" to preview the configuration or use the download button to save the file.
                         </div>
                     </div>
                 </div>
@@ -500,19 +469,13 @@ code {
     to { transform: rotate(360deg); }
 }
 
-/* IP Assignment Styling */
+/* IP Assignment Styling - Removed hover effects */
 .bg-light {
     background-color: #f8f9fa !important;
 }
 
 .d-flex.justify-content-between.align-items-center.mb-2.p-2.bg-light.rounded {
     border: 1px solid #e9ecef;
-    transition: all 0.2s ease;
-}
-
-.d-flex.justify-content-between.align-items-center.mb-2.p-2.bg-light.rounded:hover {
-    background-color: #e9ecef !important;
-    transform: translateX(2px);
 }
 </style>
 
@@ -525,12 +488,12 @@ function toggleXmlPreview() {
     if (xmlPreview.style.display === 'none') {
         xmlPreview.style.display = 'block';
         xmlPreview.classList.add('show');
-        toggleText.textContent = 'Hide XML';
+        toggleText.textContent = 'Hide config file';
         toggleIcon.className = 'fas fa-eye-slash me-1';
     } else {
         xmlPreview.style.display = 'none';
         xmlPreview.classList.remove('show');
-        toggleText.textContent = 'Show XML';
+        toggleText.textContent = 'Show config file';
         toggleIcon.className = 'fas fa-eye me-1';
     }
 }
