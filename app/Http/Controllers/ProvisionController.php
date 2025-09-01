@@ -33,7 +33,7 @@ class ProvisionController extends Controller
             'name' => 'Test Grafana',
             'email' => 'provisioned@example.com',
             'login' => 'provisioned',
-            'password' => 'changeme123',
+            'password' => '$ynd30@noc',
         ]);
         
         // Grafana: Add dashboard
