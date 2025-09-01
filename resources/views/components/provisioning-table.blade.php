@@ -181,6 +181,12 @@ code {
         justify-content: center;
     }
 }
+
+/* Spinner animation used as a fallback if GIF fails to load */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 </style>
 
 <script>
@@ -236,6 +242,87 @@ document.addEventListener('DOMContentLoaded', function() {
     let allRowsData = [];
     let totalRows = 0;
     
+    // Helper: show transition overlay and navigate
+    function navigateWithOverlay(url) {
+        try {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 70px; /* Height of topbar */
+                left: 240px; /* Width of sidebar */
+                right: 0;
+                bottom: 0;
+                background-color: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(8px);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.3s ease;
+                opacity: 0;
+            `;
+
+            if (window.innerWidth <= 992) {
+                overlay.style.left = '0px';
+                overlay.style.top = '60px';
+            }
+
+            const loadingContainer = document.createElement('div');
+            loadingContainer.style.cssText = `
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+            `;
+
+            const gifElement = document.createElement('img');
+            gifElement.src = '/assets/images/Transition_Animation.gif';
+            gifElement.alt = 'Loading...';
+            gifElement.style.cssText = `
+                max-width: 300px;
+                max-height: 300px;
+                width: auto;
+                height: auto;
+                margin-bottom: 1.5rem;
+            `;
+
+            const spinner = document.createElement('div');
+            spinner.style.cssText = `
+                width: 60px;
+                height: 60px;
+                border: 6px solid #e5e7eb;
+                border-top: 6px solid #3b82f6;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 1.5rem;
+                display: none;
+            `;
+
+            gifElement.addEventListener('error', () => {
+                gifElement.style.display = 'none';
+                spinner.style.display = 'block';
+            });
+
+            loadingContainer.appendChild(gifElement);
+            loadingContainer.appendChild(spinner);
+            overlay.appendChild(loadingContainer);
+            document.body.appendChild(overlay);
+
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                // Slight delay ensures overlay paints before navigation
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 50);
+            });
+        } catch (e) {
+            // Fallback to direct navigation if anything fails
+            window.location.href = url;
+        }
+    }
+
     // Initialize by fetching data from API
     fetchNetworkManagementData();
     
@@ -402,11 +489,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td><code class="text-muted">${subtractOneFromIP(rowData[4])}</code></td>
             `;
             
-            // Add click event listener for navigation
+            // Add click event listener for navigation with transition overlay
             row.addEventListener('click', function() {
                 const id = rowData[5]; // ID is stored in the 6th position (index 5)
                 if (id) {
-                    window.location.href = `/network-provisioning/details/${id}`;
+                    navigateWithOverlay(`/network-provisioning/details/${id}`);
                 }
             });
             
