@@ -87,6 +87,18 @@
                                 <p class="mb-0 fs-5"><code class="text-primary">{{ $networkManagement->first_usable_ip ? \App\Helpers\IpHelper::subtractOne($networkManagement->first_usable_ip) : 'N/A' }}</code></p>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Master Unit Quantity</label>
+                                <p class="mb-0 fs-4 text-primary">{{ $networkManagement->master_unit_quantity ?? '0' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">BDA Quantity</label>
+                                <p class="mb-0 fs-4 text-warning">{{ $networkManagement->bda_quantity ?? '0' }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,24 +117,24 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <!-- <div class="col-md-4">
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">Master Unit Quantity</label>
                                 <p class="mb-0 fs-4 text-primary">{{ $networkManagement->master_unit_quantity ?? '0' }}</p>
                             </div>
-                        </div>
-                        <div class="col-md-4">
+                        </div> -->
+                        <!-- <div class="col-md-4">
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">Remote Unit Quantity</label>
                                 <p class="mb-0 fs-4 text-success">{{ $networkManagement->remote_unit_quantity ?? '0' }}</p>
                             </div>
-                        </div>
-                        <div class="col-md-4">
+                        </div> -->
+                        <!-- <div class="col-md-4">
                             <div class="info-item mb-3">
                                 <label class="form-label fw-bold text-muted">BDA Quantity</label>
                                 <p class="mb-0 fs-4 text-warning">{{ $networkManagement->bda_quantity ?? '0' }}</p>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
