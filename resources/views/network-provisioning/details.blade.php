@@ -512,6 +512,7 @@ function navigateWithOverlay(url) {
         const proceed = () => {
             if (proceeded) return;
             proceeded = true;
+            try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
             window.location.href = url;
         };
 

@@ -319,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const proceed = () => {
                 if (proceeded) return;
                 proceeded = true;
+                try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
                 window.location.href = url;
             };
 
