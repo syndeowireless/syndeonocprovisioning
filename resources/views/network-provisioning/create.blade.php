@@ -1786,4 +1786,36 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<script>
+// Prevent form resubmission on page refresh
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('networkProvisioningForm');
+    if (form) {
+        // Store form submission state
+        let isSubmitted = false;
+        
+        form.addEventListener('submit', function() {
+            if (isSubmitted) {
+                event.preventDefault();
+                return false;
+            }
+            isSubmitted = true;
+            
+            // Disable submit button to prevent double submission
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+            }
+        });
+        
+        // Prevent form resubmission on page refresh
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            // Page was navigated back/forward, clear form
+            form.reset();
+        }
+    }
+});
+</script>
+
 @endsection

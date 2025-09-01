@@ -17,6 +17,14 @@ class NetworkProvisioningController extends Controller
 
     public function store(Request $request)
     {
+        // Check if this is a duplicate submission using session
+        $submissionKey = 'network_provisioning_' . md5(serialize($request->all()));
+        if (session()->has($submissionKey)) {
+            // If this is a duplicate submission, redirect to the result page
+            $existingId = session($submissionKey);
+            return redirect()->route('network-provisioning.pfsense')->with('error', 'This form has already been submitted.');
+        }
+
         $validated = $request->validate([
             'property_name' => 'required|string|max:255',
             'oem' => 'nullable|string|max:255',
@@ -210,12 +218,46 @@ class NetworkProvisioningController extends Controller
             'xml_config_file' => $templateString
         ]);
 
-        // Retorno para a view
+        // Store submission key in session to prevent duplicates
+        session([$submissionKey => $networkManagement->id]);
+        
+        // Store the data in session for the result page
+        session([
+            'provisioning_result' => [
+                'propertyName' => $validated['property_name'],
+                'ipAssignments' => $ipAssignments,
+                'xmlFile' => $xmlFileName,
+                'randomPassword' => $randomPassword
+            ]
+        ]);
+
+        // Redirect to a GET route instead of returning view directly (PRG pattern)
+        // This prevents duplicate form submissions on page refresh
+        return redirect()->route('network-provisioning.pfsense')->with('success', 'Network provisioning created successfully!');
+    }
+
+    /**
+     * Show the PFsense configuration page with provisioning results
+     */
+    public function showPfsense()
+    {
+        // Get the provisioning result from session
+        $provisioningData = session('provisioning_result');
+        
+        if (!$provisioningData) {
+            // If no session data, redirect to create page
+            return redirect()->route('network-provisioning.create')
+                ->with('error', 'No provisioning data found. Please create a new provisioning.');
+        }
+        
+        // Clear the session data after retrieving it to prevent it from persisting
+        session()->forget('provisioning_result');
+        
         return view('network-provisioning.pfsense', [
-            'propertyName' => $validated['property_name'],
-            'ipAssignments' => $ipAssignments,
-            'xmlFile' => $xmlFileName,
-            'randomPassword' => $randomPassword
+            'propertyName' => $provisioningData['propertyName'],
+            'ipAssignments' => $provisioningData['ipAssignments'],
+            'xmlFile' => $provisioningData['xmlFile'],
+            'randomPassword' => $provisioningData['randomPassword']
         ]);
     }
 
