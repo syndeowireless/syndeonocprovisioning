@@ -88,6 +88,90 @@
                             </div>
                         </div>
                     </div>
+
+                    @php
+                        $masterUnitQty = (int) ($networkManagement->master_unit_quantity ?? 0);
+                        $bdaQty = (int) ($networkManagement->bda_quantity ?? 0);
+                        $firstUsableIp = $networkManagement->first_usable_ip;
+                        
+                        $masterUnitIPs = [];
+                        $bdaIPs = [];
+                        
+                        if ($firstUsableIp && ($masterUnitQty > 0 || $bdaQty > 0)) {
+                            // Convert IP to integer for calculation
+                            $ipParts = explode('.', $firstUsableIp);
+                            if (count($ipParts) == 4) {
+                                $baseIp = ($ipParts[0] << 24) + ($ipParts[1] << 16) + ($ipParts[2] << 8) + $ipParts[3];
+                                
+                                $currentIp = $baseIp;
+                                
+                                // If both Master Unit and BDA quantities > 0, Master Units come first
+                                // If only Master Unit quantity > 0, Master Units come first
+                                // If only BDA quantity > 0, BDA comes first
+                                
+                                if ($masterUnitQty > 0) {
+                                    // Generate Master Unit Sector IPs
+                                    for ($i = 1; $i <= $masterUnitQty; $i++) {
+                                        $ip = long2ip($currentIp);
+                                        $masterUnitIPs[] = [
+                                            'label' => "Master Unit Sector {$i}",
+                                            'ip' => $ip
+                                        ];
+                                        $currentIp++;
+                                    }
+                                }
+                                
+                                if ($bdaQty > 0) {
+                                    // Generate ERRCS BDA IPs
+                                    for ($i = 1; $i <= $bdaQty; $i++) {
+                                        $ip = long2ip($currentIp);
+                                        $bdaIPs[] = [
+                                            'label' => "ERRCS BDA {$i}",
+                                            'ip' => $ip
+                                        ];
+                                        $currentIp++;
+                                    }
+                                }
+                            }
+                        }
+                    @endphp
+
+                    @if(count($masterUnitIPs) > 0 || count($bdaIPs) > 0)
+                    <hr class="my-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="fw-bold text-muted mb-3">IP Address Assignments</h6>
+                        </div>
+                        
+                        @if(count($masterUnitIPs) > 0)
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Master Unit Sectors</label>
+                                @foreach($masterUnitIPs as $masterUnit)
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span class="fw-medium">{{ $masterUnit['label'] }}</span>
+                                    <code class="text-primary">{{ $masterUnit['ip'] }}</code>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+                        
+                        @if(count($bdaIPs) > 0)
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">ERRCS BDA Units</label>
+                                @foreach($bdaIPs as $bda)
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span class="fw-medium">{{ $bda['label'] }}</span>
+                                    <code class="text-success">{{ $bda['ip'] }}</code>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -402,6 +486,21 @@ code {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* IP Assignment Styling */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.d-flex.justify-content-between.align-items-center.mb-2.p-2.bg-light.rounded {
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.d-flex.justify-content-between.align-items-center.mb-2.p-2.bg-light.rounded:hover {
+    background-color: #e9ecef !important;
+    transform: translateX(2px);
 }
 </style>
 
