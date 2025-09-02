@@ -45,6 +45,32 @@
                                 <p class="mb-0 fs-5">{{ $networkManagement->property_address ?? 'N/A' }}</p>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Latitude</label>
+                                <p class="mb-0 fs-5">{{ $networkManagement->latitude ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Longitude</label>
+                                <p class="mb-0 fs-5">{{ $networkManagement->longitude ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                        @if($networkManagement->latitude && $networkManagement->longitude)
+                        <div class="col-12">
+                            <div class="info-item">
+                                <label class="form-label fw-bold text-muted">Map Location</label>
+                                <div class="mt-2">
+                                    <a href="https://www.google.com/maps?q={{ $networkManagement->latitude }},{{ $networkManagement->longitude }}" 
+                                       target="_blank" 
+                                       class="btn btn-custom">
+                                        <i class="fas fa-external-link-alt me-2"></i>View on Google Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -199,52 +225,6 @@
                         @endif
                     </div>
                     @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
-
-    <!-- Location Information Card -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        Location Information
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Latitude</label>
-                                <p class="mb-0 fs-5">{{ $networkManagement->latitude ?? 'N/A' }}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-item mb-3">
-                                <label class="form-label fw-bold text-muted">Longitude</label>
-                                <p class="mb-0 fs-5">{{ $networkManagement->longitude ?? 'N/A' }}</p>
-                            </div>
-                        </div>
-                        @if($networkManagement->latitude && $networkManagement->longitude)
-                        <div class="col-12">
-                            <div class="info-item">
-                                <label class="form-label fw-bold text-muted">Map Location</label>
-                                <div class="mt-2">
-                                    <a href="https://www.google.com/maps?q={{ $networkManagement->latitude }},{{ $networkManagement->longitude }}" 
-                                       target="_blank" 
-                                       class="btn btn-custom">
-                                        <i class="fas fa-external-link-alt me-2"></i>View on Google Maps
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                    </div>
                 </div>
             </div>
         </div>
