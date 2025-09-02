@@ -4,7 +4,7 @@
                     <div class="sidebar-logo" style="text-align: center; padding: 16px 0; background-color: #13395d;">
                         <a href="{{ url('/') }}">
                         @if(file_exists(public_path('assets/images/logo-light.png')))
-    <img src="{{ asset('assets/images/logo-light.png') }}" alt="Logo" height="50">
+    <img src="{{ asset('assets/images/logo-white.png') }}" alt="Logo" height="50">
 @else
     <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Logo" height="50">
 @endif
