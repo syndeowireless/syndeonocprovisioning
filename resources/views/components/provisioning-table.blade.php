@@ -39,12 +39,18 @@
                         <th scope="col">
                             PfSense IP
                         </th>
+                        <th scope="col">
+                            Created At
+                        </th>
+                        <th scope="col">
+                            Last Updated
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                     {{-- Data will be loaded via API --}}
                     <tr id="loadingRow">
-                        <td colspan="5" class="text-center py-4">
+                        <td colspan="7" class="text-center py-4">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
@@ -229,6 +235,34 @@ function subtractOneFromIP(ip) {
     return newParts.join('.');
 }
 
+// Function to format date like Laravel's format('M d, Y H:i:s')
+function formatDateTime(dateString) {
+    if (!dateString) {
+        return 'N/A';
+    }
+    
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'N/A';
+        }
+        
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        const month = months[date.getMonth()];
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+        return `${month} ${day}, ${year} ${hours}:${minutes}:${seconds}`;
+    } catch (error) {
+        return 'N/A';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const perPageSelect = document.getElementById('perPage');
     const tableBody = document.getElementById('tableBody');
@@ -377,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show loading state
             tableBody.innerHTML = `
                 <tr id="loadingRow">
-                    <td colspan="5" class="text-center py-4">
+                    <td colspan="7" class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
@@ -414,6 +448,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     String(item.property_address || ''),
                     String(item.system_type || ''),
                     String(item.first_usable_ip || ''),
+                    String(item.created_at || ''), // Created At
+                    String(item.updated_at || ''), // Last Updated
                     item.id // Store ID for navigation (keep as number for navigation)
                 ]);
                 allRowsData = [...originalData]; // Copy for current display
@@ -434,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(message) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="text-center py-4 text-danger">
+                <td colspan="7" class="text-center py-4 text-danger">
                     <i class="fas fa-exclamation-triangle mb-2"></i>
                     <div>${message}</div>
                     <button class="btn btn-sm btn-outline-primary mt-2" onclick="location.reload()">Retry</button>
@@ -463,8 +499,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const searchQuery = query.toLowerCase();
         filteredData = originalData.filter(row => {
-            // Search only the first 5 columns (excluding the ID column at index 5)
-            return row.slice(0, 5).some(cell => 
+            // Search only the first 7 columns (excluding the ID column at index 7)
+            return row.slice(0, 7).some(cell => 
                 cell && typeof cell === 'string' && cell.toLowerCase().includes(searchQuery)
             );
         });
@@ -493,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const emptyMessage = isFiltered ? 'No results found for your search.' : 'No data available.';
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
+                    <td colspan="7" class="text-center py-4 text-muted">
                         <i class="fas fa-search mb-2"></i>
                         <div>${emptyMessage}</div>
                     </td>
@@ -525,11 +561,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${rowData[2]}</td>
                 <td>${rowData[3]}</td>
                 <td><code class="text-muted">${subtractOneFromIP(rowData[4])}</code></td>
+                <td>${formatDateTime(rowData[5])}</td>
+                <td>${formatDateTime(rowData[6])}</td>
             `;
             
             // Add click event listener for navigation with transition overlay
             row.addEventListener('click', function() {
-                const id = rowData[5]; // ID is stored in the 6th position (index 5)
+                const id = rowData[7]; // ID is stored in the 8th position (index 7)
                 if (id) {
                     navigateWithOverlay(`/network-provisioning/details/${id}`);
                 }
