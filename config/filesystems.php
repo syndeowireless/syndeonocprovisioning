@@ -56,6 +56,22 @@ return [
             'throw' => false,
         ],
 
+        // Azure Blob Storage disk (optional)
+        'azure' => [
+            'driver' => 'azure',
+            'name' => env('AZURE_STORAGE_NAME'),
+            'key' => env('AZURE_STORAGE_KEY'),
+            'container' => env('AZURE_STORAGE_CONTAINER', 'profile-pictures'),
+            'url' => env('AZURE_STORAGE_URL'),
+            'prefix' => env('AZURE_STORAGE_PREFIX', ''),
+            'throw' => false,
+        ],
+
+        // Cloudinary disk (optional)
+        'cloudinary' => [
+            'driver' => 'cloudinary',
+        ],
+
     ],
 
     /*

@@ -37,9 +37,21 @@ class ProfileController extends Controller
         // Handle optional profile picture upload
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
-            // Store in public disk under profile-pictures/ and get public path
-            $path = $file->store('profile-pictures', 'public');
-            $user->profile_picture = $path; // e.g., profile-pictures/filename.jpg
+
+            // 1) Cloudinary (if configured via CLOUDINARY_URL)
+            if (!empty(env('CLOUDINARY_URL'))) {
+                // Using Cloudinary Laravel package
+                $uploaded = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($file->getRealPath(), [
+                    'folder' => 'profile-pictures',
+                    'resource_type' => 'image',
+                ]);
+                $user->profile_picture = $uploaded->getSecurePath(); // store absolute https URL
+            } else {
+                // 2) Azure Blob if configured, else fallback to public disk
+                $disk = config('filesystems.disks.azure.name') && config('filesystems.disks.azure.key') ? 'azure' : 'public';
+                $path = $file->store('profile-pictures', $disk);
+                $user->profile_picture = $path; // relative path for azure/public
+            }
         }
 
         $user->save();

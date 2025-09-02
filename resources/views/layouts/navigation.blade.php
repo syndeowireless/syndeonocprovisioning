@@ -25,9 +25,24 @@
             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 @php
                     $authUser = Auth::user();
-                    $avatarPath = $authUser && $authUser->profile_picture ? asset('storage/' . $authUser->profile_picture) : asset('assets/images/users/user-4.jpg');
+                    $defaultAvatar = asset('assets/images/users/user-4.jpg');
+                    $avatarUrl = $defaultAvatar;
+                    if ($authUser && $authUser->profile_picture) {
+                        try {
+                            // If already absolute (Cloudinary), use as-is
+                            if (str_starts_with($authUser->profile_picture, 'http://') || str_starts_with($authUser->profile_picture, 'https://')) {
+                                $avatarUrl = $authUser->profile_picture;
+                            } elseif (config('filesystems.disks.azure.name') && config('filesystems.disks.azure.key')) {
+                                $avatarUrl = \Illuminate\Support\Facades\Storage::disk('azure')->url($authUser->profile_picture);
+                            } else {
+                                $avatarUrl = asset('storage/' . $authUser->profile_picture);
+                            }
+                        } catch (\Throwable $e) {
+                            $avatarUrl = $defaultAvatar;
+                        }
+                    }
                 @endphp
-                <img class="rounded-circle header-profile-user" src="{{ $avatarPath }}" alt="Header Avatar">
+                <img class="rounded-circle header-profile-user" src="{{ $avatarUrl }}" alt="Header Avatar">
             </button>
 
             <div class="dropdown-menu dropdown-menu-end" style="background: white !important;">
