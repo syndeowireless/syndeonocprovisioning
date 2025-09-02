@@ -17,8 +17,23 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        
+        // Debug information
+        \Log::info('ProfileController@edit - User:', [
+            'user' => $user,
+            'authenticated' => Auth::check(),
+            'session_id' => $request->session()->getId(),
+            'user_id' => Auth::id(),
+        ]);
+        
+        if (!$user) {
+            \Log::error('ProfileController@edit - No authenticated user found');
+            abort(401, 'User not authenticated');
+        }
+        
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
