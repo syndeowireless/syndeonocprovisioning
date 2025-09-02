@@ -105,6 +105,18 @@
                                 <p class="mb-0 fs-4 text-warning">{{ $networkManagement->bda_quantity ?? '0' }}</p>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Created At</label>
+                                <p class="mb-0 fs-5">{{ $networkManagement->created_at ? $networkManagement->created_at->format('M d, Y H:i:s') : 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted">Last Updated</label>
+                                <p class="mb-0 fs-5">{{ $networkManagement->updated_at ? $networkManagement->updated_at->format('M d, Y H:i:s') : 'N/A' }}</p>
+                            </div>
+                        </div>
                     </div>
 
                     @php
