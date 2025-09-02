@@ -37,9 +37,9 @@
                 <!-- <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
                     {{ __('Log in') }}
                 </x-primary-button> -->
-                <x-primary-button class="btn btn-primary w-md waves-effect waves-light relative overflow-hidden transform transition-all duration-200 active:scale-95 hover:shadow-lg focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50">
+                <button class="btn btn-primary w-md waves-effect waves-light relative overflow-hidden transform transition-all duration-200 active:scale-95 hover:shadow-lg focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50">
                     {{ __('Log in') }}
-                </x-primary-button>
+                </button>
             </div>
         </div>
 
