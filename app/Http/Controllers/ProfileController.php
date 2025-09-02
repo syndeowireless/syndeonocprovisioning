@@ -53,25 +53,15 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
 
+            // Temporarily disable Cloudinary due to compatibility issues
+            // Use public disk storage instead
             try {
-                // 1) Cloudinary (if configured via CLOUDINARY_URL)
-                if (!empty(env('CLOUDINARY_URL'))) {
-                    // Using Cloudinary Laravel package
-                    $uploaded = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($file->getRealPath(), [
-                        'folder' => 'profile-pictures',
-                        'resource_type' => 'image',
-                    ]);
-                    $user->profile_picture = $uploaded->getSecurePath(); // store absolute https URL
-                } else {
-                    // 2) Fallback to public disk
-                    $path = $file->store('profile-pictures', 'public');
-                    $user->profile_picture = $path; // relative path for public
-                }
-            } catch (\Exception $e) {
-                // Log the error and fallback to public storage
-                \Log::error('Profile picture upload failed: ' . $e->getMessage());
                 $path = $file->store('profile-pictures', 'public');
-                $user->profile_picture = $path;
+                $user->profile_picture = $path; // relative path for public
+            } catch (\Exception $e) {
+                // Log the error
+                \Log::error('Profile picture upload failed: ' . $e->getMessage());
+                // Don't update profile_picture if upload fails
             }
         }
 

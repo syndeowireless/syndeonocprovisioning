@@ -27,6 +27,8 @@
                     $authUser = Auth::user();
                     $defaultAvatar = asset('assets/images/users/user-4.jpg');
                     $avatarUrl = $defaultAvatar;
+                    $showImage = true;
+                    
                     if ($authUser && $authUser->profile_picture) {
                         try {
                             // If already absolute (Cloudinary), use as-is
@@ -38,18 +40,26 @@
                                 $avatarUrl = asset('storage/' . $authUser->profile_picture);
                             }
                         } catch (\Throwable $e) {
-                            $avatarUrl = $defaultAvatar;
+                            $showImage = false;
                         }
+                    } else {
+                        $showImage = false;
                     }
                 @endphp
-                <img class="rounded-circle header-profile-user" src="{{ $avatarUrl }}" alt="Header Avatar">
+                
+                @if($showImage)
+                    <img class="rounded-circle header-profile-user" src="{{ $avatarUrl }}" alt="Header Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                    <i class="mdi mdi-account-circle font-size-24 text-muted" style="display: none; color: #6c757d !important;"></i>
+                @else
+                    <i class="mdi mdi-account-circle font-size-24 text-muted" style="color: #6c757d !important;"></i>
+                @endif
             </button>
 
             <div class="dropdown-menu dropdown-menu-end" style="background: white !important;">
                 <!-- Item normal -->
                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
                     <i class="mdi mdi-account-circle font-size-17 text-muted align-middle me-1"></i>
-                    {{ __('Settings') }}
+                    {{ __('Profile') }}
                 </a>
 
                 <!-- Formulário de Logout CORRIGIDO -->
