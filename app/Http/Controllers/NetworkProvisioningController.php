@@ -286,7 +286,9 @@ class NetworkProvisioningController extends Controller
                 'property_address',
                 'system_type',
                 'first_usable_ip',
-                'xml_config_file'
+                'xml_config_file',
+                'created_at',
+                'updated_at'
             ])->get();
 
             return response()->json([
