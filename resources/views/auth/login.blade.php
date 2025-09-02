@@ -34,13 +34,9 @@
                 </div>
             </div>
             <div class="col-6 text-end">
-                <!-- <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
+                <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
                     {{ __('Log in') }}
-                </x-primary-button> -->
-                <button class="btn btn-custom btn-lg w-md waves-effect waves-light relative overflow-hidden transform transition-all duration-300 active:scale-95 hover:shadow-xl focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 group">
-                    <span class="absolute inset-0 w-0 h-0 rounded-full transition-all duration-700 group-hover:w-full group-hover:h-full group-hover:opacity-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" style="background-color: #FBBF0F; opacity: 0;"></span>
-                    <span class="relative z-10">{{ __('Log in') }}</span>
-                </button>
+                </x-primary-button>
             </div>
         </div>
 
