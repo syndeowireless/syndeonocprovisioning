@@ -50,14 +50,14 @@
         <div>
             <x-input-label for="profile_picture" :value="__('Profile Picture')" />
             <div class="mt-1">
-                <div id="drop-zone" class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 hover:border-gray-400 focus:border-indigo-500 transition-colors">
+                <div id="drop-zone" class="relative border-2 border-gray-300 border-dashed rounded-lg p-4 hover:border-gray-400 focus:border-indigo-500 transition-colors">
                     <div class="text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                             <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        <div class="mt-4">
+                        <div class="mt-2">
                             <label for="profile_picture" class="cursor-pointer">
-                                <span class="mt-2 block text-sm font-medium text-gray-900">
+                                <span class="block text-sm font-medium text-gray-900">
                                     Drop image here or 
                                     <span class="text-indigo-600 hover:text-indigo-500">browse files</span>
                                 </span>
@@ -73,17 +73,17 @@
                             <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF, WebP up to 10MB</p>
                         </div>
                     </div>
-                    <div id="file-preview" class="hidden mt-4">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                    <div id="file-preview" class="hidden mt-3">
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-md">
                             <div class="flex items-center">
-                                <img id="preview-image" class="h-10 w-10 rounded-full object-cover" src="" alt="Preview">
-                                <div class="ml-3">
-                                    <p id="file-name" class="text-sm font-medium text-gray-900"></p>
-                                    <p id="file-size" class="text-sm text-gray-500"></p>
+                                <img id="preview-image" class="h-8 w-8 rounded-full object-cover" src="" alt="Preview">
+                                <div class="ml-2">
+                                    <p id="file-name" class="text-xs font-medium text-gray-900"></p>
+                                    <p id="file-size" class="text-xs text-gray-500"></p>
                                 </div>
                             </div>
                             <button type="button" onclick="clearFileSelection()" class="text-red-600 hover:text-red-500">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
                             </button>

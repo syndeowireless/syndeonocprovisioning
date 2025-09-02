@@ -23,7 +23,11 @@
             
         <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <img class="rounded-circle header-profile-user" src="assets/images/users/user-4.jpg" alt="Header Avatar">
+                @php
+                    $authUser = Auth::user();
+                    $avatarPath = $authUser && $authUser->profile_picture ? asset('storage/' . $authUser->profile_picture) : asset('assets/images/users/user-4.jpg');
+                @endphp
+                <img class="rounded-circle header-profile-user" src="{{ $avatarPath }}" alt="Header Avatar">
             </button>
 
             <div class="dropdown-menu dropdown-menu-end" style="background: white !important;">
