@@ -65,33 +65,38 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/pfsense', function () {
     return view('layouts.pfsense');
-})->name('pfsense');
+})->middleware(['auth'])->name('pfsense');
 
 
 
 Route::get('/network-provisioning/create', function () {
     return view('network-provisioning.create');
-});
+})->middleware(['auth']);
 
 
 Route::post('/network-provisioning/store', [NetworkProvisioningController::class, 'store'])
+    ->middleware(['auth'])
     ->name('network-provisioning.store');
 
 Route::get('/network-provisioning/create', function () {
     return view('network-provisioning.create');
-})->name('network-provisioning.create');
+})->middleware(['auth'])->name('network-provisioning.create');
 
 Route::get('/network-provisioning', function () {
     return view('network-provisioning.index');
-})->name('network-provisioning.index');
+})->middleware(['auth'])->name('network-provisioning.index');
 
 Route::get('/network-provisioning/pfsense', function () {
     return view('network-provisioning.pfsense');
-})->name('network-provisioning.pfsense');
+})->middleware(['auth'])->name('network-provisioning.pfsense');
 
 
-Route::get('/network-provisioning/download-xml/{fileName}', [NetworkProvisioningController::class, 'downloadXml'])->name('network-provisioning.downloadXml');
-Route::get('/network-provisioning/download-xml-db/{id}', [NetworkProvisioningController::class, 'downloadXmlFromDatabase'])->name('network-provisioning.downloadXmlFromDatabase');
+Route::get('/network-provisioning/download-xml/{fileName}', [NetworkProvisioningController::class, 'downloadXml'])
+    ->middleware(['auth'])
+    ->name('network-provisioning.downloadXml');
+Route::get('/network-provisioning/download-xml-db/{id}', [NetworkProvisioningController::class, 'downloadXmlFromDatabase'])
+    ->middleware(['auth'])
+    ->name('network-provisioning.downloadXmlFromDatabase');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/network-provisioning/search', function () {
@@ -102,4 +107,5 @@ Route::middleware(['auth'])->group(function () {
         ->name('network-provisioning.details');
 });
 
-Route::post('/provision/start', [App\Http\Controllers\ProvisionController::class, 'start']);
+Route::post('/provision/start', [App\Http\Controllers\ProvisionController::class, 'start'])
+    ->middleware(['auth']);
