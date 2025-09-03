@@ -33,11 +33,7 @@
                     <label class="form-check-label" for="remember_me">{{ __('Remember me') }}</label>
                 </div>
             </div>
-            <div class="col-6 text-end">
-                <!-- <x-primary-button class="btn btn-primary w-md waves-effect waves-light">
-                    {{ __('Log in') }}
-                </x-primary-button> -->
-
+            <div class="col-6 text-end">    
                 <x-primary-button>
                     {{ __('Log in') }}
                 </x-primary-button>
