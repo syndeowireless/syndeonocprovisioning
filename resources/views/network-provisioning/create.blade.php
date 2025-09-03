@@ -873,9 +873,9 @@ body.loading-active {
 
                 <!-- Submit Button -->
                 <div class="text-center">
-                <button type="submit" class="submit-button">
-    CREATE
-</button>
+                <x-primary-button type="submit">
+                    CREATE
+                </x-primary-button>
                 </div>
                 <script>
 function playLoadingAnimation(event) {
