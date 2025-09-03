@@ -15,9 +15,32 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
-            abort(403, 'Acesso negado. Apenas administradores podem acessar esta área.');
+        if (!auth()->check()) {
+            abort(401, 'Unauthorized. Please log in.');
         }
+
+        $user = auth()->user();
+        
+        if (!$user->isAdmin()) {
+            // Log unauthorized access attempts
+            \Log::warning('Unauthorized admin access attempt', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'path' => $request->path()
+            ]);
+            
+            abort(403, 'Access denied. Only administrators can access this area.');
+        }
+
+        // Log successful admin access for audit trail
+        \Log::info('Admin access granted', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'ip' => $request->ip(),
+            'path' => $request->path()
+        ]);
 
         return $next($request);
     }

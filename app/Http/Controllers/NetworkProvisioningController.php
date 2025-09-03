@@ -31,17 +31,17 @@ class NetworkProvisioningController extends Controller
         }
 
         $validated = $request->validate([
-            'property_name' => 'required|string|max:255',
-            'oem' => 'nullable|string|max:255',
-            'property_address' => 'nullable|string|max:255',
-            'remote_unit_quantity' => 'nullable|integer',
-            'master_unit_quantity' => 'nullable|integer|min:0',
-            'bda_quantity' => 'nullable|integer|min:0',
+            'property_name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-_\.]+$/',
+            'oem' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-_\.]+$/',
+            'property_address' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-_\.\,\#]+$/',
+            'remote_unit_quantity' => 'nullable|integer|min:0|max:1000',
+            'master_unit_quantity' => 'nullable|integer|min:0|max:1000',
+            'bda_quantity' => 'nullable|integer|min:0|max:1000',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'property_type' => 'nullable|string|max:255',
-            'average_density' => 'nullable|string|max:255',
-            'system_type' => 'nullable|string|max:255',
+            'property_type' => 'nullable|string|max:255|regex:/^[a-zA-Z\s]+$/',
+            'average_density' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-_\.]+$/',
+            'system_type' => 'nullable|string|max:255|regex:/^[a-zA-Z\s]+$/',
         ]);
         
         // Additional validation based on system type

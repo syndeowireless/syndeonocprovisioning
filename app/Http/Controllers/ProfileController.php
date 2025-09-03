@@ -53,15 +53,23 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
 
-            // Temporarily disable Cloudinary due to compatibility issues
-            // Use public disk storage instead
+            // Additional security checks
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!in_array($file->getMimeType(), $allowedMimes)) {
+                return Redirect::route('profile.edit')->withErrors(['profile_picture' => 'Invalid file type. Only JPEG, PNG, JPG, and GIF files are allowed.']);
+            }
+
+            // Check file size (5MB max)
+            if ($file->getSize() > 5 * 1024 * 1024) {
+                return Redirect::route('profile.edit')->withErrors(['profile_picture' => 'File size too large. Maximum size is 5MB.']);
+            }
+
             try {
                 $path = $file->store('profile-pictures', 'public');
-                $user->profile_picture = $path; // relative path for public
+                $user->profile_picture = $path;
             } catch (\Exception $e) {
-                // Log the error
                 \Log::error('Profile picture upload failed: ' . $e->getMessage());
-                // Don't update profile_picture if upload fails
+                return Redirect::route('profile.edit')->withErrors(['profile_picture' => 'Failed to upload image. Please try again.']);
             }
         }
 
