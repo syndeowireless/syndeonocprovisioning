@@ -6,15 +6,24 @@
                 <i class="fas fa-table me-2"></i>
                 Provisioning Data
             </h5>
-            <div class="table-controls d-flex align-items-center">
-                <label for="perPage" class="form-label me-2 mb-0 text-muted">Show:</label>
-                <select class="form-select form-select-sm" id="perPage" style="width: auto;">
-                    <option value="10">10</option>
-                    <option value="20" selected>20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                </select>
-                <span class="text-muted ms-2">entries</span>
+            <div class="table-controls d-flex align-items-center gap-3">
+                <div class="sort-controls d-flex align-items-center">
+                    <label for="sortOrder" class="form-label me-2 mb-0 text-muted">Sort:</label>
+                    <select class="form-select form-select-sm" id="sortOrder" style="width: auto;">
+                        <option value="desc">Newest First</option>
+                        <option value="asc">Oldest First</option>
+                    </select>
+                </div>
+                <div class="entries-controls d-flex align-items-center">
+                    <label for="perPage" class="form-label me-2 mb-0 text-muted">Show:</label>
+                    <select class="form-select form-select-sm" id="perPage" style="width: auto;">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                    </select>
+                    <span class="text-muted ms-2">entries</span>
+                </div>
             </div>
         </div>
     </div>
@@ -163,6 +172,10 @@ code {
     font-size: 0.9rem;
 }
 
+.table-controls .gap-3 {
+    gap: 1rem;
+}
+
 @media (max-width: 768px) {
     .table-responsive {
         font-size: 0.875rem;
@@ -185,6 +198,16 @@ code {
     .pagination {
         order: 1;
         justify-content: center;
+    }
+    
+    .table-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    
+    .sort-controls, .entries-controls {
+        justify-content: space-between;
     }
 }
 
@@ -265,6 +288,7 @@ function formatDateTime(dateString) {
 
 document.addEventListener('DOMContentLoaded', function() {
     const perPageSelect = document.getElementById('perPage');
+    const sortOrderSelect = document.getElementById('sortOrder');
     const tableBody = document.getElementById('tableBody');
     const showingStart = document.getElementById('showingStart');
     const showingEnd = document.getElementById('showingEnd');
@@ -273,6 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let currentPage = 1;
     let rowsPerPage = parseInt(perPageSelect.value) || 20;
+    let sortOrder = sortOrderSelect.value || 'desc'; // Default to newest first
     let allRowsData = [];
     let totalRows = 0;
     
@@ -405,6 +430,28 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTable();
     });
 
+    // Handle sort order change
+    sortOrderSelect.addEventListener('change', function() {
+        sortOrder = this.value;
+        currentPage = 1;
+        applySorting();
+        updateTable();
+    });
+
+    // Function to sort data by Last Updated column (index 6)
+    function applySorting() {
+        allRowsData.sort((a, b) => {
+            const dateA = new Date(a[6] || '1970-01-01');
+            const dateB = new Date(b[6] || '1970-01-01');
+            
+            if (sortOrder === 'desc') {
+                return dateB - dateA; // Newest first
+            } else {
+                return dateA - dateB; // Oldest first
+            }
+        });
+    }
+
     // Function to fetch data from API
     async function fetchNetworkManagementData() {
         try {
@@ -454,6 +501,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 ]);
                 allRowsData = [...originalData]; // Copy for current display
                 totalRows = allRowsData.length;
+                
+                // Apply initial sorting (newest first by default)
+                applySorting();
                 
                 // Update table with fetched data
                 updateTable();
@@ -509,6 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
         allRowsData = filteredData;
         totalRows = filteredData.length;
         currentPage = 1;
+        applySorting(); // Apply sorting to filtered data
         updateTable();
     };
 
@@ -517,6 +568,7 @@ document.addEventListener('DOMContentLoaded', function() {
         allRowsData = originalData;
         totalRows = originalData.length;
         currentPage = 1;
+        applySorting(); // Apply sorting to all data
         updateTable();
     };
     

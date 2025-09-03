@@ -49,9 +49,9 @@
                 
                 @if($showImage)
                     <img class="rounded-circle" src="{{ $avatarUrl }}" alt="User Avatar" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fbbf0f;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-                    <i class="mdi mdi-account-circle font-size-24 text-muted" style="display: none; color: #6c757d !important; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 50%; border: 2px solid #fbbf0f;"></i>
+                    <i class="mdi mdi-account-circle font-size-24 text-muted" style="display: none; color: #ffffff !important; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 50%; border: 2px solid #fbbf0f;"></i>
                 @else
-                    <i class="mdi mdi-account-circle font-size-24 text-muted" style="color: #6c757d !important; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 50%; border: 2px solid #fbbf0f;"></i>
+                    <i class="mdi mdi-account-circle font-size-24 text-muted" style="color: #ffffff !important; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 50%; border: 2px solid #fbbf0f;"></i>
                 @endif
                 
                 <div class="d-flex flex-column align-items-start" style="margin-left: 12px;">
@@ -64,7 +64,7 @@
 
             <div class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="background: white !important; min-width: 280px; padding: 0; border-radius: 16px; margin-top: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;">
                 <!-- User Info Header -->
-                <div class="dropdown-header p-3" style="background: linear-gradient(135deg, #13395d 0%, #1e5a8a 100%); color: white; border-radius: 16px 16px 0 0; margin: 0;">
+                <div class="dropdown-header p-3" style="background: #13395d; color: white; border-radius: 16px 16px 0 0;
                     <div class="d-flex align-items-center">
                         @if($showImage)
                             <img class="rounded-circle me-3" src="{{ $avatarUrl }}" alt="User Avatar" style="width: 48px; height: 48px; object-fit: cover; border: 3px solid rgba(255,255,255,0.3);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
