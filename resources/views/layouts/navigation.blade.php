@@ -64,7 +64,7 @@
 
             <div class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="background: white !important; min-width: 280px; padding: 0; border-radius: 16px; margin-top: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;">
                 <!-- User Info Header -->
-                <div class="dropdown-header p-3" style="background: linear-gradient(135deg, #13395d 0%, #1e5a8a 100%); color: white; border-radius: 16px 16px 0 0; margin: 0;">
+                <div class="dropdown-header p-3" style="background: #13395d; color: white; border-radius: 16px 16px 0 0; margin: 0;">
                     <div class="d-flex align-items-center">
                         @if($showImage)
                             <img class="rounded-circle me-3" src="{{ $avatarUrl }}" alt="User Avatar" style="width: 48px; height: 48px; object-fit: cover; border: 3px solid rgba(255,255,255,0.3);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
