@@ -22,5 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Network Management API Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/network-management', [NetworkProvisioningController::class, 'getNetworkManagementData']);
-    Route::get('/network-management/search', [NetworkProvisioningController::class, 'searchNetworkManagement']);
 });

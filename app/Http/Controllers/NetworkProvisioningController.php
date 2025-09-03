@@ -274,106 +274,26 @@ class NetworkProvisioningController extends Controller
     }
 
     /**
-     * Search network management data with optimized query
+     * Get all network management data for the provisioning table
      */
-    public function searchNetworkManagement(Request $request)
+    public function getNetworkManagementData()
     {
         try {
-            $search = $request->get('q', '');
-            $limit = min($request->get('limit', 50), 100); // Max 100 results
-            
-            if (empty($search) || strlen($search) < 2) {
-                return response()->json([
-                    'success' => true,
-                    'data' => [],
-                    'message' => 'Search query too short'
-                ]);
-            }
-            
-            $results = NetworkManagement::select([
-                'id',
-                'property_name',
-                'property_type',
-                'system_type'
-            ])
-            ->where('property_name', 'like', "%{$search}%")
-            ->orWhere('property_type', 'like', "%{$search}%")
-            ->orWhere('system_type', 'like', "%{$search}%")
-            ->limit($limit)
-            ->get();
-            
-            return response()->json([
-                'success' => true,
-                'data' => $results
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error searching network management: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Error searching data'
-            ], 500);
-        }
-    }
-
-    /**
-     * Get network management data with pagination and search optimization
-     */
-    public function getNetworkManagementData(Request $request)
-    {
-        try {
-            $perPage = $request->get('per_page', 20);
-            $page = $request->get('page', 1);
-            $search = $request->get('search', '');
-            $sortBy = $request->get('sort_by', 'updated_at');
-            $sortOrder = $request->get('sort_order', 'desc');
-            
-            // Validate pagination parameters
-            $perPage = min(max($perPage, 10), 100); // Limit between 10-100
-            $page = max($page, 1);
-            
-            // Build query with eager loading optimization
-            $query = NetworkManagement::select([
+            $data = NetworkManagement::select([
                 'id',
                 'property_name',
                 'property_type', 
                 'property_address',
                 'system_type',
                 'first_usable_ip',
+                'xml_config_file',
                 'created_at',
                 'updated_at'
-            ]); // Removed xml_config_file to reduce data transfer
-            
-            // Apply search filter if provided
-            if (!empty($search)) {
-                $query->where(function($q) use ($search) {
-                    $q->where('property_name', 'like', "%{$search}%")
-                      ->orWhere('property_type', 'like', "%{$search}%")
-                      ->orWhere('property_address', 'like', "%{$search}%")
-                      ->orWhere('system_type', 'like', "%{$search}%");
-                });
-            }
-            
-            // Apply sorting
-            $allowedSortFields = ['created_at', 'updated_at', 'property_name', 'system_type'];
-            if (in_array($sortBy, $allowedSortFields)) {
-                $query->orderBy($sortBy, $sortOrder);
-            }
-            
-            // Get paginated results
-            $data = $query->paginate($perPage, ['*'], 'page', $page);
-            
+            ])->get();
+
             return response()->json([
                 'success' => true,
-                'data' => $data->items(),
-                'pagination' => [
-                    'current_page' => $data->currentPage(),
-                    'last_page' => $data->lastPage(),
-                    'per_page' => $data->perPage(),
-                    'total' => $data->total(),
-                    'from' => $data->firstItem(),
-                    'to' => $data->lastItem(),
-                ]
+                'data' => $data
             ]);
         } catch (\Exception $e) {
             Log::error('Error fetching network management data: ' . $e->getMessage());
