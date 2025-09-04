@@ -19,20 +19,9 @@ class AdvancedRateLimit
     {
         $key = $this->resolveRequestSignature($request);
         
-        // Different rate limits for different types of requests
-        if ($request->is('api/*')) {
-            $maxAttempts = 60; // 60 requests per minute for API
-            $decayMinutes = 1;
-        } elseif ($request->is('auth/*')) {
-            $maxAttempts = 5; // 5 attempts per minute for auth
-            $decayMinutes = 1;
-        } elseif ($request->is('admin/*')) {
-            $maxAttempts = 30; // 30 requests per minute for admin
-            $decayMinutes = 1;
-        } else {
-            $maxAttempts = 120; // 120 requests per minute for general pages
-            $decayMinutes = 1;
-        }
+        // Simple rate limiting - 100 requests per minute for all routes
+        $maxAttempts = 100;
+        $decayMinutes = 1;
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
