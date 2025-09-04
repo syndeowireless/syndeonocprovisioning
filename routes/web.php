@@ -36,7 +36,9 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 
-
+Route::get('/profile/manage-users', function () {
+    return view('profile.manage-users');
+})->name('others.manage-users');
 
 // Rotas de Formulário
 Route::middleware(["auth"])->group(function () {
