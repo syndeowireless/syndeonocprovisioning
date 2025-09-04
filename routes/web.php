@@ -7,6 +7,7 @@ use App\Http\Controllers\NetworkProvisioningController;
 use App\Http\Controllers\ProvisionController;
 
 
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -109,5 +110,4 @@ Route::middleware(['auth'])->group(function () {
         ->name('network-provisioning.details');
 });
 
-Route::post('/provision/start', [App\Http\Controllers\ProvisionController::class, 'start'])
-    ->middleware(['auth']);
+Route::post('/provision/start', [ProvisionController::class, 'start'])->name('provision.start');
