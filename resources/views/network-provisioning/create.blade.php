@@ -802,9 +802,6 @@ body.loading-active {
                     </div>
                     <div id="errcs_equipment_container" class="form-group" style="display:none;">
                         <label class="form-label">ERRCS Equipment</label>
-                        <input type="number" name="errcs_equipment" id="errcs_equipment"
-                               class="form-input"
-                               placeholder="Type the quantity">
                         <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
                             <option value="errcs_test1" {{ old('errcs_equipment') == 'errcs_test1' ? 'selected' : '' }}>test1</option>
