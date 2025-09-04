@@ -9,24 +9,24 @@ class ProvisionController extends Controller
 {
     public function start(Request $request)
     {
-        ##// Step 1: Login Zabbix
-        ##$zabbixToken = $this->zabbixLogin();
-        ##if (!$zabbixToken) return response()->json(['success' => false, 'error' => 'Zabbix login failed']);
-##
-        ##// Step 2: Get Host Groups
-        ##$groups = $this->zabbixApiRequest('hostgroup.get', ['output' => 'extend'], $zabbixToken);
-        ##$firstGroup = $groups['result'][0] ?? null;
-        ##if (!$firstGroup) return response()->json(['success' => false, 'error' => 'No Zabbix host groups found']);
-##
-        ##// Step 3: Create Host
-        ##$hostParams = [
-        ##    'host' => 'MyNewHost', // Make dynamic if needed
-        ##    'interfaces' => [[
-        ##        'type' => 1, 'main' => 1, 'useip' => 1, 'ip' => '127.0.0.1', 'dns' => '', 'port' => '10050'
-        ##    ]],
-        ##    'groups' => [[ 'groupid' => $firstGroup['groupid'] ]],
-        ##];
-        ##$createResp = $this->zabbixApiRequest('host.create', $hostParams, $zabbixToken);
+        // Step 1: Login Zabbix
+        $zabbixToken = $this->zabbixLogin();
+        if (!$zabbixToken) return response()->json(['success' => false, 'error' => 'Zabbix login failed']);
+            
+        // Step 2: Get Host Groups
+        $groups = $this->zabbixApiRequest('hostgroup.get', ['output' => 'extend'], $zabbixToken);
+        $firstGroup = $groups['result'][0] ?? null;
+        if (!$firstGroup) return response()->json(['success' => false, 'error' => 'No Zabbix host groups found']);
+            
+        // Step 3: Create Host
+        $hostParams = [
+            'host' => 'MyNewHost', // Make dynamic if needed
+            'interfaces' => [[
+                'type' => 1, 'main' => 1, 'useip' => 1, 'ip' => '127.0.0.1', 'dns' => '', 'port' => '10050'
+            ]],
+            'groups' => [[ 'groupid' => $firstGroup['groupid'] ]],
+        ];
+        $createResp = $this->zabbixApiRequest('host.create', $hostParams, $zabbixToken);
 
         // Grafana: Add user
         $userResp = $this->grafanaApiRequest('post', '/admin/users', [
