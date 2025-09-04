@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
+use App\Models\NetworkManagement;
+
+
 class ProvisionController extends Controller
 {
     public function start(Request $request)
@@ -13,7 +16,7 @@ class ProvisionController extends Controller
     try{ 
         $provisionId = $request->input('provision_id');
         
-        $provision = Provision::find($provisionId);
+        $provision = NetworkManagement::find($provisionId);
         
         if (!$provision) {
             return response()->json(['success' => false, 'error' => 'Provision not found']);
