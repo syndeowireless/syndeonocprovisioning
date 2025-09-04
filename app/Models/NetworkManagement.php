@@ -38,7 +38,9 @@ class NetworkManagement extends Model
         'das_equipment',
         'errcs_equipment',
         'company_name',
-        'customer_email'
+        'customer_email',
+        'random_password',
+        'static_ip'
     ];
 
 }

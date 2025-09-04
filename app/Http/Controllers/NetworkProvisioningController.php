@@ -17,6 +17,8 @@ class NetworkProvisioningController extends Controller
 
     public function store(Request $request)
     {
+        $randomPassword = \Illuminate\Support\Str::random(12);
+
         // Check if this is a duplicate submission using session
         $submissionKey = 'network_provisioning_' . md5(serialize($request->all()));
         if (session()->has($submissionKey)) {
@@ -45,7 +47,9 @@ class NetworkProvisioningController extends Controller
             'das_equipment' => 'nullable|string|max:255',
             'errcs_equipment' => 'nullable|string|max:255',
             'company_name' => 'nullable|string|max:255',
-            'customer_email' => 'nullable|string|max:255'
+            'customer_email' => 'nullable|string|max:255',
+            'random_password' => 'nullable|string|max:255',
+            'static_ip'        => 'nullable|string|max:150'
         ]);
         
         
@@ -139,7 +143,7 @@ class NetworkProvisioningController extends Controller
         $templateString = $templateRow ? $templateRow->content : '<config>#propertyName#</config>';
 
         // Gerar senha aleatória
-        $randomPassword = \Illuminate\Support\Str::random(12);
+        
 
         // Substituição dos placeholders conforme regras
         $placeholders = [
@@ -227,7 +231,8 @@ class NetworkProvisioningController extends Controller
         // Update the NetworkManagement record with the generated data
         $networkManagement->update([
             'first_usable_ip' => $firstUsableIp,
-            'xml_config_file' => $templateString
+            'xml_config_file' => $templateString,
+            'random_password' => $randomPassword
         ]);
 
         // Store the data in session to prevent duplicate submissions
