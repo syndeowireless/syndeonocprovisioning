@@ -82,7 +82,7 @@
                 </div>
                 
                 <!-- Divider -->
-                <hr class="my-0" style="border-color: #e9ecef; margin: 0;">
+                <hr class="my-0" style="border-color: #fbbf0f; margin: 0; border-width: 2px;">
                 
                 <!-- Menu Items -->
                 <div class="p-2">
@@ -104,7 +104,7 @@
         </div>
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(90deg, #fbbf0f 0%, #f1c40f 50%, #fbbf0f 100%); width: 100%; box-shadow: 0 2px 4px rgba(251, 191, 15, 0.3);"></div>
+    
 </header>
 
 
