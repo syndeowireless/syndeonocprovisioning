@@ -789,6 +789,19 @@ body.loading-active {
                     </div>
                 </div>
 
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label class="form-label required">ERRCS equipment model</label>
+                        <input type="number" name="errcs_equipment" id="errcs_equipment" value="{{ old('errcs_equipment') }}" required
+                               class="form-input" placeholder="Type the quantity" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">DAS equipment model</label>
+                        <input type="number" name="das_equipment" id="das_equipment" value="{{ old('das_equipment') }}" required
+                               class="form-input" placeholder="Type the quantity" min="0">
+                    </div>
+                </div>
+
                 <!-- Linha 4: Latitude / Longitude -->
                 <div class="grid-container">
                     <div class="form-group">
@@ -827,7 +840,12 @@ body.loading-active {
 <!-- Conditional Customer Email field (hidden until toggle is yes) -->
 <div id="grafana-email-field" style="display: {{ old('grafana_toggle') ? 'block' : 'none' }};">
     <div class="grid-container">
-        <div class="form-group" style="grid-column: 1 / -1;">
+        <div class="form-group">
+            <label class="form-label" for="company_name">Company Name</label>
+            <input class="form-input" type="email" id="company_name" name="company_name"
+                   value="{{ old('company_name') }}" placeholder="Enter a valid email address">
+        </div>
+        <div class="form-group">
             <label class="form-label" for="customer_email">Customer Email ID</label>
             <input class="form-input" type="email" id="customer_email" name="customer_email"
                    value="{{ old('customer_email') }}" placeholder="Enter a valid email address">
