@@ -70,6 +70,7 @@ class NetworkProvisioningController extends Controller
         }
 
         $networkManagement = NetworkManagement::create($validated);
+        $provisionId = $networkManagement->id;
 
         $ipRow = Ip::where('in_use', false)->first();
         if (!$ipRow) {

@@ -276,29 +276,39 @@
         @endif
 
     </div>
-    <button id="start-provisioning" class="pfsense-main-btn">
-        Start Provisioning
-    </button>
+<button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provision->id }}">
+    Start Provisioning
+</button>
 </div>
 
 <script>
-document.getElementById('start-provisioning').addEventListener('click', function() {
-    fetch('/provision/start', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            // Add any data you want to send
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Provisioning started!'); // Or handle success feedback
-    })
-    .catch(error => {
-        alert('Provisioning failed!');
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('start-provisioning');
+    btn.addEventListener('click', async function() {
+        const provisionId = btn.getAttribute('data-provision-id');
+
+        // CSRF token for Laravel
+        const csrfToken = '{{ csrf_token() }}';
+
+        try {
+            const response = await fetch('{{ route("provision.start") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ provision_id: provisionId })
+            });
+
+            const data = await response.json();
+            if(data.success) {
+                alert('Provisioning successful!');
+            } else {
+                alert('Provisioning failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
     });
 });
 </script>
