@@ -5,14 +5,10 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                <div class="fancy-title-container mb-4">
-                    <h2 class="fancy-title mb-3">
-                        <i class="mdi mdi-account-supervisor-circle me-3"></i>
-                        <span class="title-text">User Management</span>
-                        <div class="title-underline"></div>
-                    </h2>
-                    <x-primary-button type="button" class="btn-lg create-user-btn">
-                        <i class="mdi mdi-plus-circle me-2"></i>Create New User
+                <div class="title-container mb-4">
+                    <h1 class="simple-title mb-3">User Management</h1>
+                    <x-primary-button type="button" class="btn-sm">
+                        <i class="mdi mdi-plus me-2"></i>Create New User
                     </x-primary-button>
                 </div>
             </div>
@@ -155,76 +151,19 @@
 </div>
 
 <style>
-/* Fancy Title Styles */
-.fancy-title-container {
+/* Simple Title Styles */
+.title-container {
     text-align: left;
 }
 
-.fancy-title {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
+.simple-title {
+    font-size: 2.5rem;
     font-weight: 700;
     color: #13395d;
-    text-shadow: 0 2px 4px rgba(19, 57, 93, 0.1);
     margin-bottom: 0;
 }
 
-.fancy-title i {
-    font-size: 2.5rem;
-    background: linear-gradient(135deg, #13395d, #1e5a8a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 2px 4px rgba(19, 57, 93, 0.2));
-}
 
-.title-text {
-    background: linear-gradient(135deg, #13395d, #1e5a8a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 2.2rem;
-    letter-spacing: -0.5px;
-}
-
-.title-underline {
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #13395d, #1e5a8a, transparent);
-    border-radius: 2px;
-    animation: slideIn 0.8s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        width: 0;
-        opacity: 0;
-    }
-    to {
-        width: 100%;
-        opacity: 1;
-    }
-}
-
-.create-user-btn {
-    background: linear-gradient(135deg, #13395d, #1e5a8a);
-    border: none;
-    padding: 12px 24px;
-    font-weight: 600;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(19, 57, 93, 0.3);
-    transition: all 0.3s ease;
-}
-
-.create-user-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(19, 57, 93, 0.4);
-    background: linear-gradient(135deg, #1e5a8a, #13395d);
-}
 
 /* Password Toggle Styles */
 .password-container {
@@ -311,16 +250,8 @@ code {
 }
 
 @media (max-width: 768px) {
-    .fancy-title {
-        font-size: 1.8rem;
-    }
-    
-    .fancy-title i {
+    .simple-title {
         font-size: 2rem;
-    }
-    
-    .title-text {
-        font-size: 1.6rem;
     }
     
     .table-responsive {
