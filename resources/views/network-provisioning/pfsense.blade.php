@@ -215,15 +215,12 @@
                 </div>
             </div>
             <div class="pfsense-btn-group">
-                <button class="pfsense-action-btn">
-                    <!-- Download Icon -->
+                @if(isset($xmlFile))
+                <a class="pfsense-action-btn" href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                     <i class="mdi mdi-download" style="color: white;"></i>
-                    @if(isset($xmlFile))
-                        <a href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" style="color: white; text-decoration: none;">
-                            Download XML
-                        </a>
-                    @endif
-                </button>
+                    Download XML
+                </a>
+                @endif
                 <a 
                     class="pfsense-action-btn"
                     style="text-decoration: none; display: flex; align-items: center; gap: 8px;"

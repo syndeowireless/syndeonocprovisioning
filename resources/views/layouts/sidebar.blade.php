@@ -18,13 +18,7 @@
                         <ul class="metismenu list-unstyled" id="side-menu" style="background-color: #13395d !important;">
                             <li class="menu-title" style="color: white; background-color: #13395d !important;">Main</li>
 
-                            <li style="background-color: #13395d !important;">
-                                <a href="#" class="waves-effect" style="color: white !important; background-color: #13395d !important; padding: 12px 20px; display: block;">
-                                    <i class="mdi mdi-home" style="color: white !important;"></i>
-                                    
-                                    <span>Home</span>
-                                </a>
-                            </li>
+                            
                             <!--<li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect" style="color: white;">
                                     <i class="mdi mdi-cash-multiple" style="color: white;"></i>
