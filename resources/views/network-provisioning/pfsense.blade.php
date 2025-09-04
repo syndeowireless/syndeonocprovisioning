@@ -276,7 +276,7 @@
         @endif
 
     </div>
-<button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provision->id }}">
+<button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
     Start Provisioning
 </button>
 </div>
