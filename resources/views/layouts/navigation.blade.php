@@ -82,7 +82,7 @@
                 </div>
                 
                 <!-- Divider -->
-                <hr class="my-0" style="border-color: #fbbf0f; margin: 0; border-width: 2px;">
+                <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
                 
                 <!-- Menu Items -->
                 <div class="p-2">
