@@ -259,8 +259,9 @@ class NetworkProvisioningController extends Controller
                 return redirect()->back()->with('error', 'No XML configuration file found for this record.');
             }
 
-            $fileName = $networkManagement->property_name . '_config.xml';
-            $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $fileName); // Sanitize filename
+            // Build a safe base filename and then append the extension so the dot isn't sanitized away
+            $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $networkManagement->property_name . '_config');
+            $fileName = $baseName . '.xml';
             
             return response($networkManagement->xml_config_file)
                 ->header('Content-Type', 'application/xml')
