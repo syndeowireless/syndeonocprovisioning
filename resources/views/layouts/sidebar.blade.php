@@ -59,7 +59,7 @@
                                     <span>Others</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="true" style="background-color: #13395d !important;">
-                                    <li style="background-color: #13395d !important;"><a href="#" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 40px; display: block;">Manage Users</a></li>
+                                    <li style="background-color: #13395d !important;"><a href="{{ route('others.manage-users') }}" style="color: white !important; background-color: #13395d !important; padding: 8px 20px 8px 40px; display: block;">Manage Users</a></li>
                                 </ul>
                             </li>
 
