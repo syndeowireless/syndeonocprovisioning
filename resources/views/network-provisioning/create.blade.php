@@ -851,7 +851,7 @@ body.loading-active {
     <div class="grid-container">
         <div class="form-group">
             <label class="form-label" for="company_name">Company Name</label>
-            <input class="form-input" type="email" id="company_name" name="company_name"
+            <input class="form-input" type="text" id="company_name" name="company_name"
                    value="{{ old('company_name') }}" placeholder="Enter the Company Name">
         </div>
         <div class="form-group">
