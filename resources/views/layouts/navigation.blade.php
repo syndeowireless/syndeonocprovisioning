@@ -1,6 +1,6 @@
 <header id="page-topbar">
     <!-- Yellow Line -->
-    <div style="height: 4px; background: linear-gradient(90deg, #fbbf0f 0%, #f1c40f 50%, #fbbf0f 100%); width: 100%; box-shadow: 0 2px 4px rgba(251, 191, 15, 0.3);"></div>
+    <!-- <div style="height: 4px; background: linear-gradient(90deg, #fbbf0f 0%, #f1c40f 50%, #fbbf0f 100%); width: 100%; box-shadow: 0 2px 4px rgba(251, 191, 15, 0.3);"></div> -->
     <div class="navbar-header">
         <div class="d-flex">
             <!-- LOGO -->
@@ -104,6 +104,7 @@
         </div>
         </div>
     </div>
+    <div style="height: 4px; background: linear-gradient(90deg, #fbbf0f 0%, #f1c40f 50%, #fbbf0f 100%); width: 100%; box-shadow: 0 2px 4px rgba(251, 191, 15, 0.3);"></div>
 </header>
 
 
