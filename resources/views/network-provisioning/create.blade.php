@@ -790,15 +790,17 @@ body.loading-active {
                 </div>
 
                 <div class="grid-container">
-                    <div class="form-group">
-                        <label class="form-label required">ERRCS equipment model</label>
-                        <input type="number" name="errcs_equipment" id="errcs_equipment" value="{{ old('errcs_equipment') }}" required
-                               class="form-input" placeholder="Type the quantity" min="0">
+                    <div id="das_equipment_container" class="form-group" style="display:none;">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">DAS Equipment</label>
+                        <input type="number" name="das_equipment" id="das_equipment"
+                               class="form-input"
+                               placeholder="Type the quantity">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label required">DAS equipment model</label>
-                        <input type="number" name="das_equipment" id="das_equipment" value="{{ old('das_equipment') }}" required
-                               class="form-input" placeholder="Type the quantity" min="0">
+                    <div id="errcs_equipment_container" class="form-group" style="display:none;">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">ERRCS Equipment</label>
+                        <input type="number" name="errcs_equipment" id="errcs_equipment"
+                               class="form-input"
+                               placeholder="Type the quantity">
                     </div>
                 </div>
 
@@ -843,7 +845,7 @@ body.loading-active {
         <div class="form-group">
             <label class="form-label" for="company_name">Company Name</label>
             <input class="form-input" type="email" id="company_name" name="company_name"
-                   value="{{ old('company_name') }}" placeholder="Enter a valid email address">
+                   value="{{ old('company_name') }}" placeholder="Enter the Company Name">
         </div>
         <div class="form-group">
             <label class="form-label" for="customer_email">Customer Email ID</label>
@@ -1758,7 +1760,7 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.required = false;
             bda.value = '';
             // Visual indication for disabled field
-            bda.style.backgroundColor = '#f9fafb';
+            bda.style.backgroundColor = '#3a3a3aff';
             bda.style.cursor = 'not-allowed';
             master.style.backgroundColor = '';
             master.style.cursor = '';
@@ -1769,7 +1771,7 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.disabled = false;
             bda.required = true;
             // Visual indication for disabled field
-            master.style.backgroundColor = '#f9fafb';
+            master.style.backgroundColor = '#3a3a3aff';
             master.style.cursor = 'not-allowed';
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
@@ -1801,6 +1803,51 @@ document.addEventListener('DOMContentLoaded', function () {
         systemTypeSelect.addEventListener('change', updateFields);
         updateFields(); // Initial call to handle default value
     }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function updateEquipmentFields() {
+        const type = document.getElementById('system_type').value;
+        const dasEqContainer = document.getElementById('das_equipment_container');
+        const errcsEqContainer = document.getElementById('errcs_equipment_container');
+        const dasEq = document.getElementById('das_equipment');
+        const errcsEq = document.getElementById('errcs_equipment');
+
+        if (type === 'DAS') {
+            dasEqContainer.style.display = '';
+            errcsEqContainer.style.display = 'none';
+            dasEq.required = true;
+            errcsEq.required = false;
+            errcsEq.value = '';
+        } else if (type === 'ERRCS') {
+            dasEqContainer.style.display = 'none';
+            errcsEqContainer.style.display = '';
+            dasEq.required = false;
+            errcsEq.required = true;
+            dasEq.value = '';
+        } else if (type === 'DAS & ERRCS') {
+            dasEqContainer.style.display = '';
+            errcsEqContainer.style.display = '';
+            dasEq.required = true;
+            errcsEq.required = true;
+        } else {
+            // Hide both if nothing is selected
+            dasEqContainer.style.display = 'none';
+            errcsEqContainer.style.display = 'none';
+            dasEq.required = false;
+            errcsEq.required = false;
+            dasEq.value = '';
+            errcsEq.value = '';
+        }
+    }
+
+    // Initial call
+    updateEquipmentFields();
+
+    // On change
+    document.getElementById('system_type').addEventListener('change', updateEquipmentFields);
 });
 </script>
 
