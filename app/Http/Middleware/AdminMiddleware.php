@@ -15,8 +15,14 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
-            abort(403, 'Acesso negado. Apenas administradores podem acessar esta área.');
+        if (!auth()->check()) {
+            abort(401, 'Unauthorized. Please log in.');
+        }
+
+        $user = auth()->user();
+        
+        if (!$user->isAdmin()) {
+            abort(403, 'Access denied. Only administrators can access this area.');
         }
 
         return $next($request);
