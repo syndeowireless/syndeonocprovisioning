@@ -10,7 +10,7 @@ class ProvisionController extends Controller
     public function start(Request $request)
     {
 
-        
+    try{ 
         $provisionId = $request->input('provision_id');
         
         $provision = Provision::find($provisionId);
@@ -20,6 +20,17 @@ class ProvisionController extends Controller
         }
         
         return response()->json(['success' => true]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            // 'trace' => $e->getTraceAsString(), // Uncomment for more debug info if needed
+        ], 500);
+    }
+
+
+
+        //return response()->json(['success' => true]);
 
 
         //// Step 1: Login Zabbix
