@@ -42,8 +42,14 @@ class NetworkProvisioningController extends Controller
             'property_type' => 'nullable|string|max:255',
             'average_density' => 'nullable|string|max:255',
             'system_type' => 'nullable|string|max:255',
+            'das_equipment' => 'nullable|integer',
+            'errcs_equipment' => 'nullable|integer',
+            'company_name' => 'nullable|string|max:255',
+            'customer_email' => 'nullable|string|max:255'
         ]);
         
+        
+
         // Additional validation based on system type
         $systemType = $validated['system_type'] ?? '';
         if (strtolower($systemType) === 'das') {

@@ -791,16 +791,26 @@ body.loading-active {
 
                 <div class="grid-container">
                     <div id="das_equipment_container" class="form-group" style="display:none;">
-                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">DAS Equipment</label>
-                        <input type="number" name="das_equipment" id="das_equipment"
-                               class="form-input"
-                               placeholder="Type the quantity">
+                        <label class="form-label">DAS Equipment</label>
+                        <select name="das_equipment" id="das_equipment" class="form-select" required>
+                            <option value="">Select the system type</option>
+                            <option value="das_test1" {{ old('das_equipment') == 'das_test1' ? 'selected' : '' }}>test1</option>
+                            <option value="das_test2" {{ old('das_equipment') == 'das_test2' ? 'selected' : '' }}>test2</option>
+                            <option value="das_test3" {{ old('das_equipment') == 'das_test3' ? 'selected' : '' }}>test3</option>
+                        </select>
+
                     </div>
                     <div id="errcs_equipment_container" class="form-group" style="display:none;">
-                        <label class="block text-gray-700 font-semibold mb-3 text-sm uppercase tracking-wide">ERRCS Equipment</label>
+                        <label class="form-label">ERRCS Equipment</label>
                         <input type="number" name="errcs_equipment" id="errcs_equipment"
                                class="form-input"
                                placeholder="Type the quantity">
+                        <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
+                            <option value="">Select the system type</option>
+                            <option value="errcs_test1" {{ old('errcs_equipment') == 'errcs_test1' ? 'selected' : '' }}>test1</option>
+                            <option value="errcs_test2" {{ old('errcs_equipment') == 'errcs_test2' ? 'selected' : '' }}>test2</option>
+                            <option value="errcs_test3" {{ old('errcs_equipment') == 'errcs_test3' ? 'selected' : '' }}>test3</option>
+                        </select>
                     </div>
                 </div>
 

@@ -34,7 +34,11 @@ class NetworkManagement extends Model
         'average_density',
         'system_type',
         'first_usable_ip',
-        'xml_config_file'
+        'xml_config_file',
+        'das_equipment',
+        'errcs_equipment',
+        'company_name',
+        'customer_email'
     ];
 
 }
