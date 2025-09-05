@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NetworkProvisioningController;
 use App\Http\Controllers\ProvisionController;
@@ -37,9 +38,9 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 
-Route::get('/profile/manage-users', function () {
-    return view('profile.manage-users');
-})->middleware(['auth', 'admin'])->name('others.manage-users');
+Route::get('/profile/manage-users', [UserController::class, 'manageUsers'])
+    ->middleware(['auth', 'admin'])
+    ->name('others.manage-users');
 
 // Rotas de Formulário
 Route::middleware(["auth"])->group(function () {
