@@ -18,16 +18,19 @@ class ProvisionController extends Controller
         
         $provision = NetworkManagement::find($provisionId);
 
-        $property_name      = $provision -> property_name;
-        $hostname           = $provision -> hostname;
-        $static_ip          = $provision -> static_ip;
-        $random_password    = $provision -> random_password;
-        $first_usable_ip    = $provision -> first_usable_ip;
-        $grafana_toggle     = $provision -> grafana_toggle; 
-        $company_name       = $provision -> company_name;
-        $customer_email     = $provision -> customer_email;
-        $system_type        = $provision -> system_type;
-        $oem                = $provision -> oem;
+        $property_name          = $provision -> property_name;
+        $hostname               = $provision -> hostname;
+        $static_ip              = $provision -> static_ip;
+        $random_password        = $provision -> random_password;
+        $first_usable_ip        = $provision -> first_usable_ip;
+        $grafana_toggle         = $provision -> grafana_toggle; 
+        $company_name           = $provision -> company_name;
+        $customer_email         = $provision -> customer_email;
+        $system_type            = $provision -> system_type;
+        $oem                    = $provision -> oem;
+        $master_unit_quantity   = $provision -> master_unit_quantity;
+        $bda_quantity           = $provision -> bda_quantity;
+
 
 
         
@@ -71,9 +74,30 @@ class ProvisionController extends Controller
             $hosts[] = 'ERRCS';
         }
     
-        $createdHosts = [];
-        foreach ($hosts as $hostType) {
-            $hostName = "{$company_name} {$hostType}";
+        //$createdHosts = [];
+        //foreach ($hosts as $hostType) {
+        //    $hostName = "{$company_name} {$hostType}";
+        //    $result = $this->zabbixApiRequest('host.create', [
+        //        'host' => $hostName,
+        //        'groups' => [['groupid' => $groupId]],
+        //        'templates' => [['templateid' => $templateId]],
+        //        'interfaces' => [[
+        //            'type' => 1,
+        //            'main' => 1,
+        //            'useip' => 1,
+        //            'ip' => '127.0.0.1',  
+        //            'dns' => '',
+        //            'port' => '10050'
+        //        ]],
+        //    ], $auth);
+        //
+        //    $createdHosts[] = $result['result'] ?? $result['error'] ?? null;
+        //}
+        
+
+        // Create hosts for master units
+        for ($i = 1; $i <= $master_unit_quantity; $i++) {
+            $hostName = "{$hostName} master unit {$i}";
             $result = $this->zabbixApiRequest('host.create', [
                 'host' => $hostName,
                 'groups' => [['groupid' => $groupId]],
@@ -82,16 +106,34 @@ class ProvisionController extends Controller
                     'type' => 1,
                     'main' => 1,
                     'useip' => 1,
-                    'ip' => '127.0.0.1', // ???? Perguntar pro tayroni 
+                    'ip' => $currentIp,
                     'dns' => '',
                     'port' => '10050'
                 ]],
             ], $auth);
-        
-            $createdHosts[] = $result['result'] ?? $result['error'] ?? null;
+            $createdHosts[] = $result;
+            $currentIp = ipIncrement($currentIp, 1);
         }
-        
 
+        // Create hosts for BDAs
+        for ($i = 1; $i <= $bda_quantity; $i++) {
+            $hostName = "{$hostName} bda {$i}";
+            $result = $this->zabbixApiRequest('host.create', [
+                'host' => $hostName,
+                'groups' => [['groupid' => $groupId]],
+                'templates' => [['templateid' => $templateId]],
+                'interfaces' => [[
+                    'type' => 1,
+                    'main' => 1,
+                    'useip' => 1,
+                    'ip' => $currentIp,
+                    'dns' => '',
+                    'port' => '10050'
+                ]],
+            ], $auth);
+            $createdHosts[] = $result;
+            $currentIp = ipIncrement($currentIp, 1);
+        }
 
 
         // Grafana
@@ -173,13 +215,14 @@ class ProvisionController extends Controller
                 'overwrite' => false,
             ]);
     
-    
+            $email_parts = explode('@', $customer_email);
+            $username_grafana = $email_parts[0];
             #####
             // 1. Create new user
             $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
-                'name' => $company_name,
+                'name' => $username_grafana,
                 'email' => $customer_email,
-                'login' => $company_name,
+                'login' => $username_grafana,
                 'password' => '$ynd30@noc',
             ]);
             $newUserId = $newUserResp['id'] ?? null;
