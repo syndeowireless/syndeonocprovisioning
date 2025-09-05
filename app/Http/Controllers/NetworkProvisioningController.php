@@ -41,7 +41,7 @@ class NetworkProvisioningController extends Controller
             'oem' => 'nullable|string|max:255',
             'property_address' => 'nullable|string|max:255',
             'remote_unit_quantity' => 'nullable|integer',
-            'master_unit_quantity' => 'nullable|integer|min:0',
+            'master_unit_quantity' => 'nullable|integer',
             'bda_quantity' => 'nullable|integer|min:0',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
@@ -54,7 +54,8 @@ class NetworkProvisioningController extends Controller
             'customer_email' => 'nullable|string|max:255',
             'random_password' => 'nullable|string|max:255',
             'static_ip'        => 'nullable|string|max:80',
-            'hostname'        =>  'nullable|string|max:150'
+            'hostname'        =>  'nullable|string|max:150',
+            'grafana_toggle' => 'nullable|integer'
         ]);
         
         
