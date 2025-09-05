@@ -28,7 +28,8 @@ class NetworkProvisioningController extends Controller
                 'propertyName' => $storedData['propertyName'],
                 'ipAssignments' => $storedData['ipAssignments'],
                 'xmlFile' => $storedData['xmlFile'],
-                'randomPassword' => $storedData['randomPassword']
+                'randomPassword' => $storedData['randomPassword'],
+                'provisionId'   => $storedData['provisionId']
             ]);
         }
 
