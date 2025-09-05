@@ -241,7 +241,8 @@ class NetworkProvisioningController extends Controller
             'propertyName' => $validated['property_name'],
             'ipAssignments' => $ipAssignments,
             'xmlFile' => $xmlFileName,
-            'randomPassword' => $randomPassword
+            'randomPassword' => $randomPassword,
+            'provisionId' => $provisionId
         ]]);
 
         // Return the view directly to keep user on /network-provisioning/store
