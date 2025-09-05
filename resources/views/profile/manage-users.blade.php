@@ -39,11 +39,12 @@
                                     <th scope="col">Reset Password</th>
                                     <th scope="col">Action</th>                  
                                 </tr>
-                            <!-- Divider -->
-                            <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
+                            
                             </thead>
                             
                             <tbody>
+                                <!-- Divider -->
+                                <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
                                 <tr class="clickable-row">
                                     <td>Affiliated Partners</td>
                                     <td>
