@@ -791,7 +791,7 @@ body.loading-active {
 
                 <div class="grid-container">
                     <div id="das_equipment_container" class="form-group" style="display:none;">
-                        <label class="form-label">DAS Equipment</label>
+                        <label class="form-label">Master Unit Equipment</label>
                         <select name="das_equipment" id="das_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
                             <option value="das_test1" {{ old('das_equipment') == 'das_test1' ? 'selected' : '' }}>test1</option>
@@ -801,7 +801,7 @@ body.loading-active {
 
                     </div>
                     <div id="errcs_equipment_container" class="form-group" style="display:none;">
-                        <label class="form-label">ERRCS Equipment</label>
+                        <label class="form-label">BDA Equipment</label>
                         <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
                             <option value="errcs_test1" {{ old('errcs_equipment') == 'errcs_test1' ? 'selected' : '' }}>test1</option>
