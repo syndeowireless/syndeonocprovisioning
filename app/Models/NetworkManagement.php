@@ -42,7 +42,8 @@ class NetworkManagement extends Model
         'random_password',
         'static_ip',
         'hostname',
-        'grafana_toggle'
+        'grafana_toggle',
+        'oem'
     ];
 
 }

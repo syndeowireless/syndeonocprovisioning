@@ -13,7 +13,7 @@ class ProvisionController extends Controller
     public function start(Request $request)
     {
 
-    try{ 
+    // try { 
         $provisionId = $request->input('provision_id');
         
         $provision = NetworkManagement::find($provisionId);
@@ -23,66 +23,194 @@ class ProvisionController extends Controller
         $static_ip          = $provision -> static_ip;
         $random_password    = $provision -> random_password;
         $first_usable_ip    = $provision -> first_usable_ip;
-        $grafana_toggle     = $provision -> grafana_toggle;
+        $grafana_toggle     = $provision -> grafana_toggle; 
+        $company_name       = $provision -> company_name;
+        $customer_email     = $provision -> customer_email;
+        $system_type        = $provision -> system_type;
+        $oem                = $provision -> oem;
 
 
         
         
-        if (!$provision) {
-            return response()->json(['success' => false, 'error' => 'Provision not found']);
-        }
+    //     if (!$provision) {
+    //         return response()->json(['success' => false, 'error' => 'Provision not found']);
+    //     }
         
-        return response()->json(['success' => true]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'success' => false,
-            'error' => $e->getMessage(),
-            // 'trace' => $e->getTraceAsString(), // Uncomment for more debug info if needed
-        ], 500);
-    }
+    //     return response()->json(['success' => true]);
+    // } catch (\Throwable $e) {
+    //     return response()->json([
+    //         'success' => false,
+    //         'error' => $e->getMessage(),
+    //         // 'trace' => $e->getTraceAsString(), // Uncomment for more debug info if needed
+    //     ], 500);
+    // }
 
 
 
         //return response()->json(['success' => true]);
 
 
-        //// Step 1: Login Zabbix
-        //$zabbixToken = $this->zabbixLogin();
-        //if (!$zabbixToken) return response()->json(['success' => false, 'error' => 'Zabbix login failed']);
-        //    
-        //// Step 2: Get Host Groups
-        //$groups = $this->zabbixApiRequest('hostgroup.get', ['output' => 'extend'], $zabbixToken);
-        //$firstGroup = $groups['result'][0] ?? null;
-        //if (!$firstGroup) return response()->json(['success' => false, 'error' => 'No Zabbix host groups found']);
-        //    
-        //// Step 3: Create Host
-        //$hostParams = [
-        //    'host' => 'MyNewHost', // Make dynamic if needed
-        //    'interfaces' => [[
-        //        'type' => 1, 'main' => 1, 'useip' => 1, 'ip' => '127.0.0.1', 'dns' => '', 'port' => '10050'
-        //    ]],
-        //    'groups' => [[ 'groupid' => $firstGroup['groupid'] ]],
-        //];
-        //$createResp = $this->zabbixApiRequest('host.create', $hostParams, $zabbixToken);
+        //Zabbix 
+        $auth = $this->zabbixLogin();
+        if (!$auth) {
+            throw new \Exception("Zabbix login failed");
+        }
+    
+        // 1. Ensure host group exists
+        $groupId = $this->getOrCreateHostGroup($company_name, $auth);
+    
+        // 2. Get template ID based on $oem
+        $templateId = $this->getTemplateIdByName($oem, $auth);
+    
+        // 3. Determine hosts to create
+        $hosts = [];
+        if ($system_type === 'DAS' || $system_type === 'ERRCS') {
+            $hosts[] = $system_type;
+        } elseif ($system_type === 'DAS & ERRCS') {
+            $hosts[] = 'DAS';
+            $hosts[] = 'ERRCS';
+        }
+    
+        $createdHosts = [];
+        foreach ($hosts as $hostType) {
+            $hostName = "{$company_name} {$hostType}";
+            $result = $this->zabbixApiRequest('host.create', [
+                'host' => $hostName,
+                'groups' => [['groupid' => $groupId]],
+                'templates' => [['templateid' => $templateId]],
+                'interfaces' => [[
+                    'type' => 1,
+                    'main' => 1,
+                    'useip' => 1,
+                    'ip' => '127.0.0.1', // ???? Perguntar pro tayroni 
+                    'dns' => '',
+                    'port' => '10050'
+                ]],
+            ], $auth);
         
-        // Grafana: Add user
-        $userResp = $this->grafanaApiRequest('post', '/admin/users', [
-            'name' => 'Test Grafana',
-            'email' => 'provisioned@example.com',
-            'login' => 'provisioned',
-            'password' => 'changeme123',
-        ]);
+            $createdHosts[] = $result['result'] ?? $result['error'] ?? null;
+        }
         
-        // Grafana: Add dashboard
-        $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-            'dashboard' => [
-                'id' => null,
-                'title' => 'Provisioned Dashboard',
-                'panels' => [],
-            ],
-            'overwrite' => false,
-        ]);
-        
+
+
+
+        // Grafana
+        if ($grafana_toggle === null) {
+            // Set your variables
+            $folderUid = 'bedmyrwbic7pce';
+            $templateUid1 = 'TEMPLATE_UID_A';
+            $templateUid2 = 'TEMPLATE_UID_B';
+
+            // Fetch the folder info to get its numeric ID
+            $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
+            $folderId = $folderResp['id'];
+
+            if ('oem' === 'ADRF') {
+                $templateUid1 = 'beiyn9fdbtvale';
+            } elseif ('oem' === 'COMBA ERRCS') {
+                $templateUid1 = 'beiyn9fdbt5hce';
+            }
+
+            if ('oem' === 'ADRF') {
+                $templateUid2 = 'feutv2m5zcs1se';
+            } elseif ('oem' === 'COMBA ERRCS') {
+                $templateUid2 = 'aebkeah3awdba';
+            }
+
+
+            // --------- Dashboard 1 ---------
+            $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
+            $templateDashboard1 = $templateResp1['dashboard'];
+
+            // Prepare the dashboard payload
+            unset($templateDashboard1['id'], $templateDashboard1['uid']);
+            $templateDashboard1['title'] = 'My First Dashboard';
+
+            // Create dashboard 1 in the folder
+            $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $templateDashboard1,
+                'folderId'  => $folderId,
+                'overwrite' => false,
+            ]);
+
+            // --------- Dashboard 2 ---------
+            $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
+            $templateDashboard2 = $templateResp2['dashboard'];
+
+            unset($templateDashboard2['id'], $templateDashboard2['uid']);
+            $templateDashboard2['title'] = 'My Second Dashboard';
+
+            // Create dashboard 2 in the folder
+            $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $templateDashboard2,
+                'folderId'  => $folderId,
+                'overwrite' => false,
+            ]);
+
+
+
+        } else {
+
+            // Grafana: Add dashboard
+            $folderResp = $this->grafanaApiRequest('post', '/folders', [
+                'title' => $company_name,
+            ]);
+            $folderId = $folderResp['id'] ?? null; 
+    
+            $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
+            $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
+            $modelDashboard = $modelDashboardResp['dashboard'];
+            $modelDashboardId = $modelDashboard['id'];
+    
+    
+            $newDashboard = $modelDashboard;
+            unset($newDashboard['id']);
+            unset($newDashboard['uid']);
+            $newDashboard['title'] = $company_name;
+    
+    
+            $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $newDashboard,
+                'folderId'  => $folderId, 
+                'overwrite' => false,
+            ]);
+    
+    
+            #####
+            // 1. Create new user
+            $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                'name' => $company_name,
+                'email' => $customer_email,
+                'login' => $company_name,
+                'password' => '$ynd30@noc',
+            ]);
+            $newUserId = $newUserResp['id'] ?? null;
+            
+            // 2. Get permissions for the model dashboard
+            $dashboardId = $modelDashboardId; 
+            $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
+            $permissions = $permissionsResp; 
+            
+            // 3. Find the model user's permission
+            $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
+            $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
+            
+            // 4. Assign the same permission to the new user
+            if ($modelUserPermission && $newUserId) {
+                $payload = [
+                    [
+                        'userId' => $newUserId,
+                        'permission' => $modelUserPermission['permission'],
+                    ]
+                ];
+                $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+            }
+            #####
+        }
+
+
+
+
 
         //PFSENSE
         if ($static_ip === null) {
@@ -117,6 +245,8 @@ class ProvisionController extends Controller
             ]
         ];
 
+        $phase1Payload_JSON = json_encode($phase1Payload);
+
         $pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
         $pfUser = 'nortongauss';
         $pfPass = 'ng321*';
@@ -124,7 +254,7 @@ class ProvisionController extends Controller
         // 1. Cria o Phase 1
         $phase1Resp = Http::withBasicAuth($pfUser, $pfPass)
             ->withoutVerifying()
-            ->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload);
+            ->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload_JSON);
 
         if (!$phase1Resp->successful()) {
             return response()->json(['success' => false, 'error' => $phase1Resp->body()], $phase1Resp->status());
@@ -162,9 +292,11 @@ class ProvisionController extends Controller
             "lifetime" => 3600
         ];
 
+        $phase2_1Payload_JSON = json_encode($phase2_1Payload);
+
         $phase2_1Resp = Http::withBasicAuth($pfUser, $pfPass)
             ->withoutVerifying()
-            ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload);
+            ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload_JSON);
 
         if (!$phase2_1Resp->successful()) {
             return response()->json(['success' => false, 'phase1' => $phase1Resp->json(), 'error' => $phase2_1Resp->body()], $phase2_1Resp->status());
@@ -193,9 +325,11 @@ class ProvisionController extends Controller
             "lifetime" => 3600
         ];
             
+        $phase2_2Payload_JSON = json_encode($phase2_2Payload);
+
         $phase2_2Resp = Http::withBasicAuth($pfUser, $pfPass)
             ->withoutVerifying()
-            ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload);
+            ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload_JSON);
 
 
         return response()->json([
@@ -234,8 +368,8 @@ class ProvisionController extends Controller
 
     private function zabbixLogin()
     {
-        $user = 'support';      // <---- CHANGE IF NEEDED
-        $password = 'syndeo@123'; // <---- CHANGE IF NEEDED
+        $user = 'support';     
+        $password = 'syndeo@123'; 
         $result = $this->zabbixApiRequest('user.login', [
             'user' => $user,
             'password' => $password,
@@ -266,6 +400,30 @@ function subtract_from_last_octet($ip, $subtract = 2) {
     return $ip; // return original if not a valid IPv4
 }
 
-
+// Helper: Get or create host group
+private function getOrCreateHostGroup($groupName, $auth)
+{
+    $result = $this->zabbixApiRequest('hostgroup.get', [
+        'filter' => ['name' => [$groupName]]
+    ], $auth);
+    if (!empty($result['result'])) {
+        return $result['result'][0]['groupid'];
+    }
+    $create = $this->zabbixApiRequest('hostgroup.create', [
+        'name' => $groupName
+    ], $auth);
+    return $create['result']['groupids'][0];
+}
+// Helper: Get template ID by name
+private function getTemplateIdByName($templateName, $auth)
+{
+    $result = $this->zabbixApiRequest('template.get', [
+        'filter' => ['host' => [$templateName]]
+    ], $auth);
+    if (!empty($result['result'])) {
+        return $result['result'][0]['templateid'];
+    }
+    throw new \Exception("Template {$templateName} not found.");
+}
 
 }
