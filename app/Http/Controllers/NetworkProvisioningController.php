@@ -148,8 +148,9 @@ class NetworkProvisioningController extends Controller
         $templateRow = \App\Models\xmlTemplate::find(1);
         $templateString = $templateRow ? $templateRow->content : '<config>#propertyName#</config>';
 
-        // Gerar senha aleatória
-        
+        $dhcp_ip_from = ip_add($ipRow->first_usable_ip,15);
+
+        $dhcp_ip_to = $ipRow-> last_usable_ip;
 
         // Substituição dos placeholders conforme regras
         $placeholders = [
@@ -157,6 +158,8 @@ class NetworkProvisioningController extends Controller
             '#ipsec.hostname#'    => $validated['property_name'],
             '#dyndns.hostname#'   => $dyndnsHostname,
             '#random.password#'   => $randomPassword,
+            '#dhcp_ip_from#'      => $dhcp_ip_from,
+            '#dhcp_ip_to#'        => $dhcp_ip_to
         ];
 
         if ($isStaticIp) {

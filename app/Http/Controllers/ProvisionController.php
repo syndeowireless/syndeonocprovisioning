@@ -98,8 +98,6 @@ class ProvisionController extends Controller
         if ($grafana_toggle === null) {
             // Set your variables
             $folderUid = 'bedmyrwbic7pce';
-            $templateUid1 = 'TEMPLATE_UID_A';
-            $templateUid2 = 'TEMPLATE_UID_B';
 
             // Fetch the folder info to get its numeric ID
             $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
