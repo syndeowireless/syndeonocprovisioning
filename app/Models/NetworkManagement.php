@@ -40,7 +40,8 @@ class NetworkManagement extends Model
         'company_name',
         'customer_email',
         'random_password',
-        'static_ip'
+        'static_ip',
+        'dyndns'
     ];
 
 }

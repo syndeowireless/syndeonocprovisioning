@@ -50,7 +50,8 @@ class NetworkProvisioningController extends Controller
             'company_name' => 'nullable|string|max:255',
             'customer_email' => 'nullable|string|max:255',
             'random_password' => 'nullable|string|max:255',
-            'static_ip'        => 'nullable|string|max:150'
+            'static_ip'        => 'nullable|string|max:80',
+            'dyndns'        =>  'nullable|string|max:150'
         ]);
         
         
