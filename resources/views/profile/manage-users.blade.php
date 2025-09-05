@@ -41,11 +41,11 @@
                                 </tr>
                             
                             </thead>
+                            <!-- Yellow line below table headers -->
+                            <tr><td colspan="6" style="padding: 0; border: none;"><div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div></td></tr>
                             
                             <tbody>
                                 <tr class="clickable-row">
-                                    <!-- Divider -->
-                                    <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
                                     <td>Affiliated Partners</td>
                                     <td>
                                         <div class="password-container d-flex align-items-center">
