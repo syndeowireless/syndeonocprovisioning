@@ -37,9 +37,11 @@
                                     <th scope="col">Email</th>
                                     <th scope="col">Role</th>
                                     <th scope="col">Reset Password</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Action</th>                  
                                 </tr>
                             </thead>
+                            <!-- Divider -->
+                            <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
                             <tbody>
                                 <tr class="clickable-row">
                                     <td>Affiliated Partners</td>
