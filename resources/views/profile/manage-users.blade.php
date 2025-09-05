@@ -43,9 +43,9 @@
                             </thead>
                             
                             <tbody>
-                                <!-- Divider -->
-                                <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
                                 <tr class="clickable-row">
+                                    <!-- Divider -->
+                                    <div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div>
                                     <td>Affiliated Partners</td>
                                     <td>
                                         <div class="password-container d-flex align-items-center">
