@@ -24,12 +24,15 @@ class NetworkProvisioningController extends Controller
         if (session()->has($submissionKey)) {
             // If this is a duplicate submission, get the stored data and return view without storing
             $storedData = session($submissionKey);
+
+            session()->forget($submissionKey);
+
             return view('network-provisioning.pfsense', [
                 'propertyName' => $storedData['propertyName'],
                 'ipAssignments' => $storedData['ipAssignments'],
                 'xmlFile' => $storedData['xmlFile'],
                 'randomPassword' => $storedData['randomPassword'],
-                'provisionId'   => $storedData['provisionId']
+                'provisionId'   => $storedData['provisionId'] ?? null
             ]);
         }
 
@@ -51,7 +54,7 @@ class NetworkProvisioningController extends Controller
             'customer_email' => 'nullable|string|max:255',
             'random_password' => 'nullable|string|max:255',
             'static_ip'        => 'nullable|string|max:80',
-            'dyndns'        =>  'nullable|string|max:150'
+            'hostname'        =>  'nullable|string|max:150'
         ]);
         
         
