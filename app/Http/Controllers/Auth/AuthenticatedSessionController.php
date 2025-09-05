@@ -29,6 +29,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Role-based redirect after login
+        $user = auth()->user();
+        if ($user->isUser()) {
+            return redirect()->route('network-provisioning.search');
+        }
+
         return redirect()->to(RouteServiceProvider::HOME);
     }
 

@@ -271,6 +271,7 @@
     @endif
 
     <!-- Start Provisioning Button -->
+    @if(auth()->user()->isAdmin())
     <div class="row mt-4">
         <div class="col-12 text-center">
             <button class="btn btn-custom btn-lg">
@@ -278,6 +279,7 @@
             </button>
         </div>
     </div>
+    @endif
 </div>
 
 <style>

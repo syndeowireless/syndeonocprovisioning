@@ -39,7 +39,7 @@ require __DIR__.'/auth.php';
 
 Route::get('/profile/manage-users', function () {
     return view('profile.manage-users');
-})->name('others.manage-users');
+})->middleware(['auth', 'admin'])->name('others.manage-users');
 
 // Rotas de Formulário
 Route::middleware(["auth"])->group(function () {
@@ -74,16 +74,12 @@ Route::get('/pfsense', function () {
 
 Route::get('/network-provisioning/create', function () {
     return view('network-provisioning.create');
-})->middleware(['auth']);
+})->middleware(['auth', 'admin'])->name('network-provisioning.create');
 
 
 Route::post('/network-provisioning/store', [NetworkProvisioningController::class, 'store'])
-    ->middleware(['auth'])
+    ->middleware(['auth', 'admin'])
     ->name('network-provisioning.store');
-
-Route::get('/network-provisioning/create', function () {
-    return view('network-provisioning.create');
-})->middleware(['auth'])->name('network-provisioning.create');
 
 Route::get('/network-provisioning', function () {
     return view('network-provisioning.index');
