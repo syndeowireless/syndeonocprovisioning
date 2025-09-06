@@ -80,7 +80,9 @@
                                     <td>
                                         @if($user->role !== 'admin')
                                         <div class="d-flex gap-2">
-                                            <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;">
+                                            <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
+                                                data-bs-toggle="modal" data-bs-target="#updateUserModal" 
+                                                onclick="populateUpdateModal('{{ $user->id }}', '{{ $user->name }}', '{{ $user->email }}')">
                                                 Update
                                             </x-primary-button>
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 
@@ -127,50 +129,27 @@
     </div>
 </div>
 
-<!-- Create User Modal -->
-<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);">
-            <div class="modal-header" style="background-color: #13395d; color: white; border-bottom: 3px solid #fbbf0f; border-radius: 12px 12px 0 0;">
-                <h5 class="modal-title" id="createUserModalLabel">
-                    <i class="mdi mdi-account-plus me-2"></i>Create New User
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="padding: 2rem;">
-                <form id="createUserForm">
-                    <div class="mb-3">
-                        <label for="userName" class="form-label" style="color: #13395d; font-weight: 600;">User Name</label>
-                        <input type="text" class="form-control" id="userName" name="userName" 
-                               style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';" 
-                               onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';" 
-                               placeholder="Enter user name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userEmail" class="form-label" style="color: #13395d; font-weight: 600;">Email</label>
-                        <input type="email" class="form-control" id="userEmail" name="userEmail" 
-                               style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';" 
-                               onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';" 
-                               placeholder="Enter email address" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer" style="border-top: 1px solid #e9ecef; padding: 1.5rem 2rem; background-color: #f8f9fa; border-radius: 0 0 12px 12px;">
-                <button type="button" class="btn" data-bs-dismiss="modal" 
-                        style="background-color: #6c757d; border: 2px solid #6c757d; color: white; padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;"
-                        onmouseover="this.style.backgroundColor='#5a6268'; this.style.borderColor='#5a6268';" 
-                        onmouseout="this.style.backgroundColor='#6c757d'; this.style.borderColor='#6c757d';">
-                    Cancel
-                </button>
-                <x-primary-button type="button" class="ms-2" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600;">
-                    <i class="mdi mdi-check me-2"></i>Create
-                </x-primary-button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Create New User Modal -->
+<x-user-modal 
+    modal-id="createUserModal"
+    title="Create New User"
+    icon="mdi mdi-account-plus"
+    button-text="Create"
+    form-id="createUserForm"
+    user-name-id="userName"
+    user-email-id="userEmail" />
+
+<!-- Update User Modal -->
+<x-user-modal 
+    modal-id="updateUserModal"
+    title="Update User"
+    icon="mdi mdi-account-edit"
+    button-text="Update"
+    form-id="updateUserForm"
+    :include-hidden-id="true"
+    hidden-input-id="updateUserId"
+    user-name-id="updateUserName"
+    user-email-id="updateUserEmail" />
 
 <style>
 /* Simple Title Styles */
@@ -330,6 +309,13 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = url.toString();
     });
 });
+
+// Function to populate update modal with user data
+function populateUpdateModal(userId, userName, userEmail) {
+    document.getElementById('updateUserId').value = userId;
+    document.getElementById('updateUserName').value = userName;
+    document.getElementById('updateUserEmail').value = userEmail;
+}
 </script>
 
 @endsection
