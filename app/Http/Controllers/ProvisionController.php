@@ -54,331 +54,353 @@ class ProvisionController extends Controller
 
 
         //Zabbix 
-        $auth = $this->zabbixLogin();
-        if (!$auth) {
-            throw new \Exception("Zabbix login failed");
-        }
-    
-        // 1. Ensure host group exists
-        $groupId = $this->getOrCreateHostGroup($company_name, $auth);
-    
-        // 2. Get template ID based on $oem
-        $templateId = $this->getTemplateIdByName($oem, $auth);
-    
-        // 3. Determine hosts to create
-        $hosts = [];
-        if ($system_type === 'DAS' || $system_type === 'ERRCS') {
-            $hosts[] = $system_type;
-        } elseif ($system_type === 'DAS & ERRCS') {
-            $hosts[] = 'DAS';
-            $hosts[] = 'ERRCS';
-        }
-    
-        //$createdHosts = [];
-        //foreach ($hosts as $hostType) {
-        //    $hostName = "{$company_name} {$hostType}";
-        //    $result = $this->zabbixApiRequest('host.create', [
-        //        'host' => $hostName,
-        //        'groups' => [['groupid' => $groupId]],
-        //        'templates' => [['templateid' => $templateId]],
-        //        'interfaces' => [[
-        //            'type' => 1,
-        //            'main' => 1,
-        //            'useip' => 1,
-        //            'ip' => '127.0.0.1',  
-        //            'dns' => '',
-        //            'port' => '10050'
-        //        ]],
-        //    ], $auth);
-        //
-        //    $createdHosts[] = $result['result'] ?? $result['error'] ?? null;
-        //}
+        try {
+            $auth = $this->zabbixLogin();
+            if (!$auth) {
+                throw new \Exception("Zabbix login failed");
+            }
         
+            // 1. Ensure host group exists
+            $groupId = $this->getOrCreateHostGroup($company_name, $auth);
+        
+            // 2. Get template ID based on $oem
+            $templateId = $this->getTemplateIdByName($oem, $auth);
+        
+            // 3. Determine hosts to create
+            $hosts = [];
+            if ($system_type === 'DAS' || $system_type === 'ERRCS') {
+                $hosts[] = $system_type;
+            } elseif ($system_type === 'DAS & ERRCS') {
+                $hosts[] = 'DAS';
+                $hosts[] = 'ERRCS';
+            }
+        
+            //$createdHosts = [];
+            //foreach ($hosts as $hostType) {
+            //    $hostName = "{$company_name} {$hostType}";
+            //    $result = $this->zabbixApiRequest('host.create', [
+            //        'host' => $hostName,
+            //        'groups' => [['groupid' => $groupId]],
+            //        'templates' => [['templateid' => $templateId]],
+            //        'interfaces' => [[
+            //            'type' => 1,
+            //            'main' => 1,
+            //            'useip' => 1,
+            //            'ip' => '127.0.0.1',  
+            //            'dns' => '',
+            //            'port' => '10050'
+            //        ]],
+            //    ], $auth);
+            //
+            //    $createdHosts[] = $result['result'] ?? $result['error'] ?? null;
+            //}
 
-        // Create hosts for master units
-        for ($i = 1; $i <= $master_unit_quantity; $i++) {
-            $hostName = "{$hostName} master unit {$i}";
-            $result = $this->zabbixApiRequest('host.create', [
-                'host' => $hostName,
-                'groups' => [['groupid' => $groupId]],
-                'templates' => [['templateid' => $templateId]],
-                'interfaces' => [[
-                    'type' => 1,
-                    'main' => 1,
-                    'useip' => 1,
-                    'ip' => $currentIp,
-                    'dns' => '',
-                    'port' => '10050'
-                ]],
-            ], $auth);
-            $createdHosts[] = $result;
-            $currentIp = ipIncrement($currentIp, 1);
+
+            // Create hosts for master units
+            for ($i = 1; $i <= $master_unit_quantity; $i++) {
+                $hostName = "{$hostName} master unit {$i}";
+                $result = $this->zabbixApiRequest('host.create', [
+                    'host' => $hostName,
+                    'groups' => [['groupid' => $groupId]],
+                    'templates' => [['templateid' => $templateId]],
+                    'interfaces' => [[
+                        'type' => 1,
+                        'main' => 1,
+                        'useip' => 1,
+                        'ip' => $currentIp,
+                        'dns' => '',
+                        'port' => '10050'
+                    ]],
+                ], $auth);
+                $createdHosts[] = $result;
+                $currentIp = ipIncrement($currentIp, 1);
+            }
+
+            // Create hosts for BDAs
+            for ($i = 1; $i <= $bda_quantity; $i++) {
+                $hostName = "{$hostName} bda {$i}";
+                $result = $this->zabbixApiRequest('host.create', [
+                    'host' => $hostName,
+                    'groups' => [['groupid' => $groupId]],
+                    'templates' => [['templateid' => $templateId]],
+                    'interfaces' => [[
+                        'type' => 1,
+                        'main' => 1,
+                        'useip' => 1,
+                        'ip' => $currentIp,
+                        'dns' => '',
+                        'port' => '10050'
+                    ]],
+                ], $auth);
+                $createdHosts[] = $result;
+                $currentIp = ipIncrement($currentIp, 1);
+            }
+            $results['zabbix'] = 'Success';
+        } catch (\Throwable $e) {
+            $errors['zabbix'] = $e->getMessage();
         }
-
-        // Create hosts for BDAs
-        for ($i = 1; $i <= $bda_quantity; $i++) {
-            $hostName = "{$hostName} bda {$i}";
-            $result = $this->zabbixApiRequest('host.create', [
-                'host' => $hostName,
-                'groups' => [['groupid' => $groupId]],
-                'templates' => [['templateid' => $templateId]],
-                'interfaces' => [[
-                    'type' => 1,
-                    'main' => 1,
-                    'useip' => 1,
-                    'ip' => $currentIp,
-                    'dns' => '',
-                    'port' => '10050'
-                ]],
-            ], $auth);
-            $createdHosts[] = $result;
-            $currentIp = ipIncrement($currentIp, 1);
-        }
-
 
         // Grafana
-        if ($grafana_toggle === null) {
-            // Set your variables
-            $folderUid = 'bedmyrwbic7pce';
+        try {
+            if ($grafana_toggle === null) {
+                // Set your variables
+                $folderUid = 'bedmyrwbic7pce';
 
-            // Fetch the folder info to get its numeric ID
-            $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
-            $folderId = $folderResp['id'];
+                // Fetch the folder info to get its numeric ID
+                $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
+                $folderId = $folderResp['id'];
 
-            if ('ADRF' === 'ADRF') {
-                $templateUid1 = 'beiyn9fdbtvale';
-            } elseif ('oem' === 'COMBA ERRCS') {
-                $templateUid1 = 'beiyn9fdbt5hce';
-            }
+                if ('ADRF' === 'ADRF') {
+                    $templateUid1 = 'beiyn9fdbtvale';
+                } elseif ('oem' === 'COMBA ERRCS') {
+                    $templateUid1 = 'beiyn9fdbt5hce';
+                }
 
-            if ('oem' === 'ADRF') {
-                $templateUid2 = 'feutv2m5zcs1se';
-            } elseif ('oem' === 'COMBA ERRCS') {
-                $templateUid2 = 'aebkeah3awdba';
-            }
-
-
-            // --------- Dashboard 1 ---------
-            $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
-            $templateDashboard1 = $templateResp1['dashboard'];
-
-            // Prepare the dashboard payload
-            unset($templateDashboard1['id'], $templateDashboard1['uid']);
-            $templateDashboard1['title'] = 'My First Dashboard';
-
-            // Create dashboard 1 in the folder
-            $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                'dashboard' => $templateDashboard1,
-                'folderId'  => $folderId,
-                'overwrite' => false,
-            ]);
-
-            // --------- Dashboard 2 ---------
-            $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
-            $templateDashboard2 = $templateResp2['dashboard'];
-
-            unset($templateDashboard2['id'], $templateDashboard2['uid']);
-            $templateDashboard2['title'] = 'My Second Dashboard';
-
-            // Create dashboard 2 in the folder
-            $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                'dashboard' => $templateDashboard2,
-                'folderId'  => $folderId,
-                'overwrite' => false,
-            ]);
+                if ('oem' === 'ADRF') {
+                    $templateUid2 = 'feutv2m5zcs1se';
+                } elseif ('oem' === 'COMBA ERRCS') {
+                    $templateUid2 = 'aebkeah3awdba';
+                }
 
 
+                // --------- Dashboard 1 ---------
+                $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
+                $templateDashboard1 = $templateResp1['dashboard'];
 
-        } else {
+                // Prepare the dashboard payload
+                unset($templateDashboard1['id'], $templateDashboard1['uid']);
+                $templateDashboard1['title'] = 'My First Dashboard';
 
-            // Grafana: Add dashboard
-            $folderResp = $this->grafanaApiRequest('post', '/folders', [
-                'title' => $company_name,
-            ]);
-            $folderId = $folderResp['id'] ?? null; 
-    
-            $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
-            $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
-            $modelDashboard = $modelDashboardResp['dashboard'];
-            $modelDashboardId = $modelDashboard['id'];
-    
-    
-            $newDashboard = $modelDashboard;
-            unset($newDashboard['id']);
-            unset($newDashboard['uid']);
-            $newDashboard['title'] = $company_name;
-    
-    
-            $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                'dashboard' => $newDashboard,
-                'folderId'  => $folderId, 
-                'overwrite' => false,
-            ]);
-    
-            $email_parts = explode('@', $customer_email);
-            $username_grafana = $email_parts[0];
-            #####
-            // 1. Create new user
-            $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
-                'name' => $username_grafana,
-                'email' => $customer_email,
-                'login' => $username_grafana,
-                'password' => '$ynd30@noc',
-            ]);
-            $newUserId = $newUserResp['id'] ?? null;
+                // Create dashboard 1 in the folder
+                $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                    'dashboard' => $templateDashboard1,
+                    'folderId'  => $folderId,
+                    'overwrite' => false,
+                ]);
+
+                // --------- Dashboard 2 ---------
+                $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
+                $templateDashboard2 = $templateResp2['dashboard'];
+
+                unset($templateDashboard2['id'], $templateDashboard2['uid']);
+                $templateDashboard2['title'] = 'My Second Dashboard';
+
+                // Create dashboard 2 in the folder
+                $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                    'dashboard' => $templateDashboard2,
+                    'folderId'  => $folderId,
+                    'overwrite' => false,
+                ]);
+
+
+
+            } else {
+
+                // Grafana: Add dashboard
+                $folderResp = $this->grafanaApiRequest('post', '/folders', [
+                    'title' => $company_name,
+                ]);
+                $folderId = $folderResp['id'] ?? null; 
             
-            // 2. Get permissions for the model dashboard
-            $dashboardId = $modelDashboardId; 
-            $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
-            $permissions = $permissionsResp; 
+                $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
+                $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
+                $modelDashboard = $modelDashboardResp['dashboard'];
+                $modelDashboardId = $modelDashboard['id'];
             
-            // 3. Find the model user's permission
-            $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
-            $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
             
-            // 4. Assign the same permission to the new user
-            if ($modelUserPermission && $newUserId) {
-                $payload = [
-                    [
-                        'userId' => $newUserId,
-                        'permission' => $modelUserPermission['permission'],
-                    ]
-                ];
-                $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+                $newDashboard = $modelDashboard;
+                unset($newDashboard['id']);
+                unset($newDashboard['uid']);
+                $newDashboard['title'] = $company_name;
+            
+            
+                $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                    'dashboard' => $newDashboard,
+                    'folderId'  => $folderId, 
+                    'overwrite' => false,
+                ]);
+            
+                $email_parts = explode('@', $customer_email);
+                $username_grafana = $email_parts[0];
+                #####
+                // 1. Create new user
+                $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                    'name' => $username_grafana,
+                    'email' => $customer_email,
+                    'login' => $username_grafana,
+                    'password' => '$ynd30@noc',
+                ]);
+                $newUserId = $newUserResp['id'] ?? null;
+
+                // 2. Get permissions for the model dashboard
+                $dashboardId = $modelDashboardId; 
+                $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
+                $permissions = $permissionsResp; 
+
+                // 3. Find the model user's permission
+                $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
+                $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
+
+                // 4. Assign the same permission to the new user
+                if ($modelUserPermission && $newUserId) {
+                    $payload = [
+                        [
+                            'userId' => $newUserId,
+                            'permission' => $modelUserPermission['permission'],
+                        ]
+                    ];
+                    $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+                }
+                #####
             }
-            #####
+            $results['grafana'] = 'Success';
+        } catch (\Throwable $e) {
+            $errors['grafana'] = $e->getMessage();
         }
-
 
 
 
 
         //PFSENSE
-        if ($static_ip === null) {
-            $remote_gateway = $hostname;
+        try {
+            if ($static_ip === null) {
+                $remote_gateway = $hostname;
 
-        }
-        else {
-            $remote_gateway = $static_ip;
-        }
+            }
+            else {
+                $remote_gateway = $static_ip;
+            }
 
-        $phase1Payload = [
-            "descr" => "$property_name", //property name
-            "iketype" => "ikev2",                   
-            "mode" => "main",                    
-            "protocol" => "inet",                
-            "interface" => "wan",                
-            "remote_gateway" => "$remote_gateway",   //IP static senão host(dyndns)
-            "authentication_method" => "pre_shared_key", 
-            "pre_shared_key" => "$random_password", // senha aleatória
-            "myid_type" => "myaddress",          
-            "peerid_type" => "peeraddress",      
-            "lifetime" => 28800,
-            "rekey_time" => 28700,
-            "reauth_time" => 0,
-            "encryption" => [
-              [
-                "encryption_algorithm_name"=> "aes",
-                "encryption_algorithm_keylen"=> 128,
-                "hash_algorithm"=> "sha256",
-                "dhgroup"=> 14
-              ]
-            ]
-        ];
+            $phase1Payload = [
+                "descr" => "$property_name", //property name
+                "iketype" => "ikev2",                   
+                "mode" => "main",                    
+                "protocol" => "inet",                
+                "interface" => "wan",                
+                "remote_gateway" => "$remote_gateway",   //IP static senão host(dyndns)
+                "authentication_method" => "pre_shared_key", 
+                "pre_shared_key" => "$random_password", // senha aleatória
+                "myid_type" => "myaddress",          
+                "peerid_type" => "peeraddress",      
+                "lifetime" => 28800,
+                "rekey_time" => 28700,
+                "reauth_time" => 0,
+                "encryption" => [
+                  [
+                    "encryption_algorithm_name"=> "aes",
+                    "encryption_algorithm_keylen"=> 128,
+                    "hash_algorithm"=> "sha256",
+                    "dhgroup"=> 14
+                  ]
+                ]
+            ];
 
-        $phase1Payload_JSON = json_encode($phase1Payload);
+            $phase1Payload_JSON = json_encode($phase1Payload);
 
-        $pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
-        $pfUser = 'nortongauss';
-        $pfPass = 'ng321*';
+            $pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
+            $pfUser = 'nortongauss';
+            $pfPass = 'ng321*';
 
-        // 1. Cria o Phase 1
-        $phase1Resp = Http::withBasicAuth($pfUser, $pfPass)
-            ->withoutVerifying()
-            ->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload_JSON);
+            // 1. Cria o Phase 1
+            $phase1Resp = Http::withBasicAuth($pfUser, $pfPass)
+                ->withoutVerifying()
+                ->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload_JSON);
 
-        if (!$phase1Resp->successful()) {
-            return response()->json(['success' => false, 'error' => $phase1Resp->body()], $phase1Resp->status());
-        }
+            if (!$phase1Resp->successful()) {
+                //return response()->json(['success' => false, 'error' => $phase1Resp->body()], $phase1Resp->status());
+                throw new \Exception('Phase 1 creation failed: ' . $phase1Resp->body());
+            }
 
-        $phase1Data = $phase1Resp->json();
-        $ikeid = $phase1Data['data']['ikeid'] ?? null; // Pega o ID do Phase 1 criado
+            $phase1Data = $phase1Resp->json();
+            $ikeid = $phase1Data['data']['ikeid'] ?? null; // Pega o ID do Phase 1 criado
 
-        if (!$ikeid) {
-            return response()->json(['success' => false, 'error' => 'Failed to get ikeid from Phase 1 creation']);
-        }
+            if (!$ikeid) {
+                //return response()->json(['success' => false, 'error' => 'Failed to get ikeid from Phase 1 creation']);
+                throw new \Exception('Failed to get ikeid from Phase 1 creation');
+            }
 
-        $Ip_Plan = subtract_from_last_octet($first_usable_ip, 2);
+            $Ip_Plan = subtract_from_last_octet($first_usable_ip, 2);
 
-        // 2. Cria o Phase 2.1
-        $phase2_1Payload = [
-            "ikeid" => $ikeid,                          
-            "descr" => "$property_name", // Property name
-            "mode" => "tunnel",                    
-            "localid_type" => "lan",               
-            "localid_address" => "", 
-            "localid_netbits" => 24,
-            "remoteid_type" => "network",          
-            "remoteid_address" => "$Ip_Plan", // IP-Plan (tabela de ips) NETWORK
-            "remoteid_netbits" => 24,
-            "protocol" => "esp",                   
-            "encryption_algorithm_option" => [
-              [
-                "name" => "aes",
-                "keylen" => 128
-              ]
-            ],
-            "hash_algorithm_option" => ["hmac_sha1"],
-            "pfsgroup" => 14,
-            "lifetime" => 3600
-        ];
+            // 2. Cria o Phase 2.1
+            $phase2_1Payload = [
+                "ikeid" => $ikeid,                          
+                "descr" => "$property_name", // Property name
+                "mode" => "tunnel",                    
+                "localid_type" => "lan",               
+                "localid_address" => "", 
+                "localid_netbits" => 24,
+                "remoteid_type" => "network",          
+                "remoteid_address" => "$Ip_Plan", // IP-Plan (tabela de ips) NETWORK
+                "remoteid_netbits" => 24,
+                "protocol" => "esp",                   
+                "encryption_algorithm_option" => [
+                  [
+                    "name" => "aes",
+                    "keylen" => 128
+                  ]
+                ],
+                "hash_algorithm_option" => ["hmac_sha1"],
+                "pfsgroup" => 14,
+                "lifetime" => 3600
+            ];
 
-        $phase2_1Payload_JSON = json_encode($phase2_1Payload);
+            $phase2_1Payload_JSON = json_encode($phase2_1Payload);
 
-        $phase2_1Resp = Http::withBasicAuth($pfUser, $pfPass)
-            ->withoutVerifying()
-            ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload_JSON);
+            $phase2_1Resp = Http::withBasicAuth($pfUser, $pfPass)
+                ->withoutVerifying()
+                ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload_JSON);
 
-        if (!$phase2_1Resp->successful()) {
-            return response()->json(['success' => false, 'phase1' => $phase1Resp->json(), 'error' => $phase2_1Resp->body()], $phase2_1Resp->status());
-        }
-        // 2. Cria o Phase 2.2
-            
-        $phase2_2Payload = [
-            "ikeid" => $ikeid,                           
-            "descr" => "OpenVPN", // OpenVPN
-            "mode" => "tunnel",                    
-            "localid_type" => "network",               
-            "localid_address" => "10.0.8.0/24", 
-            "localid_netbits" => 24,
-            "remoteid_type" => "network",          
-            "remoteid_address" => "$Ip_Plan", // IP-Plan (tabela de ips) NETWORK
-            "remoteid_netbits" => 24,
-            "protocol" => "esp",                   
-            "encryption_algorithm_option" => [
-              [
-                "name" => "aes",
-                "keylen" => 128
-              ]
-            ],
-            "hash_algorithm_option" => ["hmac_sha1"],
-            "pfsgroup" => 14,
-            "lifetime" => 3600
-        ];
-            
-        $phase2_2Payload_JSON = json_encode($phase2_2Payload);
+            if (!$phase2_1Resp->successful()) {
+                //return response()->json(['success' => false, 'phase1' => $phase1Resp->json(), 'error' => $phase2_1Resp->body()], $phase2_1Resp->status());
+                throw new \Exception('Phase 2.1 creation failed: ' . $phase2_1Resp->body());
+            }
+            // 2. Cria o Phase 2.2
 
-        $phase2_2Resp = Http::withBasicAuth($pfUser, $pfPass)
-            ->withoutVerifying()
-            ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload_JSON);
+            $phase2_2Payload = [
+                "ikeid" => $ikeid,                           
+                "descr" => "OpenVPN", // OpenVPN
+                "mode" => "tunnel",                    
+                "localid_type" => "network",               
+                "localid_address" => "10.0.8.0/24", 
+                "localid_netbits" => 24,
+                "remoteid_type" => "network",          
+                "remoteid_address" => "$Ip_Plan", // IP-Plan (tabela de ips) NETWORK
+                "remoteid_netbits" => 24,
+                "protocol" => "esp",                   
+                "encryption_algorithm_option" => [
+                  [
+                    "name" => "aes",
+                    "keylen" => 128
+                  ]
+                ],
+                "hash_algorithm_option" => ["hmac_sha1"],
+                "pfsgroup" => 14,
+                "lifetime" => 3600
+            ];
+
+            $phase2_2Payload_JSON = json_encode($phase2_2Payload);
+
+            $phase2_2Resp = Http::withBasicAuth($pfUser, $pfPass)
+                ->withoutVerifying()
+                ->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload_JSON);
 
 
-        return response()->json([
-            'success' => true,
-            'pfsense_phase1' => $phase1Resp->json(),
-            'pfsense_phase2_1' => $phase2_1Resp->json(),
-            'pfsense_phase2_2' => $phase2_2Resp->json(),
-        ]);
+            //return response()->json([
+            //    'success' => true,
+            //    'pfsense_phase1' => $phase1Resp->json(),
+            //    'pfsense_phase2_1' => $phase2_1Resp->json(),
+            //    'pfsense_phase2_2' => $phase2_2Resp->json(),
+            //]);
+            $results['pfsense'] = 'Success';
+        } catch (\Throwable $e) {
+            $errors['pfsense'] = $e->getMessage();
+        }          
+        
+        
+    return response()->json([
+        'results' => $results,
+        'errors'  => $errors,
+    ]);
 //
 //
 //
