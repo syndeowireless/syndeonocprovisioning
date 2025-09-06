@@ -12,11 +12,15 @@ class ProvisionController extends Controller
 {
     public function start(Request $request)
     {
-
+        $results = [];
+        $errors = [];
     // try { 
         $provisionId = $request->input('provision_id');
         
         $provision = NetworkManagement::find($provisionId);
+        if (!$provision) {
+            return response()->json(['success' => false, 'error' => 'Provision not found'], 404);
+        }
 
         $property_name          = $provision -> property_name;
         $hostname               = $provision -> hostname;
@@ -453,7 +457,7 @@ class ProvisionController extends Controller
         
         $response = Http::withBasicAuth($username, $password)
             ->$method($url, $data);
-            
+
         $contentType = $response->header('Content-Type');
         if (strpos($contentType, 'application/json') === false) {
             // Show raw response if not JSON
