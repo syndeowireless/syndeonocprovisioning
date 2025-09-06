@@ -145,7 +145,7 @@ class ProvisionController extends Controller
             $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
             $folderId = $folderResp['id'];
 
-            if ('oem' === 'ADRF') {
+            if ('ADRF' === 'ADRF') {
                 $templateUid1 = 'beiyn9fdbtvale';
             } elseif ('oem' === 'COMBA ERRCS') {
                 $templateUid1 = 'beiyn9fdbt5hce';
