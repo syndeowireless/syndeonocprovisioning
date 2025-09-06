@@ -430,8 +430,9 @@ class ProvisionController extends Controller
         if ($auth) $post['auth'] = $auth;
 
         $response = Http::post($url, $post);
+        
+        $contentType = $response->header('Content-Type') ?? '';
         if (strpos($contentType, 'application/json') === false) {
-            // Show raw response if not JSON
             throw new \Exception('Zabbix non-JSON response: ' . $response->body());
         }
 
@@ -458,9 +459,8 @@ class ProvisionController extends Controller
         $response = Http::withBasicAuth($username, $password)
             ->$method($url, $data);
 
-        $contentType = $response->header('Content-Type');
+        $contentType = $response->header('Content-Type') ?? '';
         if (strpos($contentType, 'application/json') === false) {
-            // Show raw response if not JSON
             throw new \Exception('Grafana non-JSON response: ' . $response->body());
         }
         return $response->json();
