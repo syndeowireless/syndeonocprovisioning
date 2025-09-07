@@ -109,22 +109,9 @@ class UserController extends Controller
     /**
      * Delete a user
      */
-    public function destroy(Request $request): JsonResponse
+    public function destroy(User $user): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'userId' => 'required|exists:users,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid user ID'
-            ], 422);
-        }
-
         try {
-            $user = User::findOrFail($request->userId);
-            
             // Prevent deletion of admin users
             if ($user->role === 'admin') {
                 return response()->json([

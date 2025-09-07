@@ -508,7 +508,7 @@ function createUser() {
         return;
     }
     
-    const submitBtn = document.querySelector('#createUserModal .btn-primary');
+    const submitBtn = document.querySelector('#createUserModal [type="submit"]');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Creating...';
     
@@ -568,42 +568,77 @@ function createUser() {
 // Function to add new user to table
 function addUserToTable(user) {
     const tbody = document.querySelector('#usersTable tbody');
-    const newRow = document.createElement('tr');
-    newRow.setAttribute('data-user-id', user.id);
-    newRow.className = 'clickable-row';
-    
-    newRow.innerHTML = `
-        <td>${user.name}</td>
-        <td>${user.email}</td>
-        <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
-        <td>${user.created_at}</td>
-        <td>${user.updated_at}</td>
-        <td>
-            <div class="d-flex gap-2 flex-wrap">
-                <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
-                    data-bs-toggle="modal" data-bs-target="#updateUserModal" 
-                    onclick="populateUpdateModal('${user.id}', '${user.name}', '${user.email}')">
-                    Update
-                </x-primary-button>
-                <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
-                    data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
-                    onclick="populateResetPasswordModal('${user.id}', '${user.name}')"
-                    onmouseover="this.style.backgroundColor='#218838'; this.style.borderColor='#1e7e34';" 
-                    onmouseout="this.style.backgroundColor='#28a745'; this.style.borderColor='#28a745';">
-                    Reset Password
-                </x-primary-button>
-                <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 
-                    onmouseover="this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130';" 
-                    onmouseout="this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545';"
-                    onclick="confirmDeleteUser('${user.id}', '${user.name}')">
-                    Delete
-                </x-primary-button>
-            </div>
-        </td>
-    `;
-    
-    // Insert at the beginning of the table
-    tbody.insertBefore(newRow, tbody.firstChild);
+    const row = document.createElement('tr');
+    row.className = 'clickable-row';
+    row.setAttribute('data-user-id', String(user.id));
+
+    const nameTd = document.createElement('td');
+    nameTd.textContent = user.name;
+
+    const emailTd = document.createElement('td');
+    emailTd.textContent = user.email;
+
+    const roleTd = document.createElement('td');
+    const prettyRole = user.role ? (user.role.charAt(0).toUpperCase() + user.role.slice(1)) : '';
+    roleTd.textContent = prettyRole;
+
+    const createdTd = document.createElement('td');
+    createdTd.textContent = user.created_at || '';
+
+    const updatedTd = document.createElement('td');
+    updatedTd.textContent = user.updated_at || '';
+
+    const actionTd = document.createElement('td');
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'd-flex gap-2 flex-wrap';
+
+    // Update button
+    const updateBtn = document.createElement('button');
+    updateBtn.type = 'button';
+    updateBtn.className = 'btn btn-primary btn-sm px-3 py-1';
+    updateBtn.style.fontSize = '0.75rem';
+    updateBtn.textContent = 'Update';
+    updateBtn.setAttribute('data-bs-toggle', 'modal');
+    updateBtn.setAttribute('data-bs-target', '#updateUserModal');
+    updateBtn.addEventListener('click', function() {
+        populateUpdateModal(user.id, user.name, user.email);
+    });
+
+    // Reset Password button
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button';
+    resetBtn.className = 'btn btn-success btn-sm px-3 py-1';
+    resetBtn.style.fontSize = '0.75rem';
+    resetBtn.textContent = 'Reset Password';
+    resetBtn.setAttribute('data-bs-toggle', 'modal');
+    resetBtn.setAttribute('data-bs-target', '#resetPasswordModal');
+    resetBtn.addEventListener('click', function() {
+        populateResetPasswordModal(user.id, user.name);
+    });
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'btn btn-danger btn-sm px-3 py-1';
+    deleteBtn.style.fontSize = '0.75rem';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', function() {
+        confirmDeleteUser(user.id, user.name);
+    });
+
+    actionsDiv.appendChild(updateBtn);
+    actionsDiv.appendChild(resetBtn);
+    actionsDiv.appendChild(deleteBtn);
+    actionTd.appendChild(actionsDiv);
+
+    row.appendChild(nameTd);
+    row.appendChild(emailTd);
+    row.appendChild(roleTd);
+    row.appendChild(createdTd);
+    row.appendChild(updatedTd);
+    row.appendChild(actionTd);
+
+    tbody.insertBefore(row, tbody.firstChild);
 }
 
 // Function to validate password match
