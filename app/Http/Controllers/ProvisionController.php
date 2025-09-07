@@ -162,7 +162,7 @@ class ProvisionController extends Controller
 
                 if ('oem' === 'ADRF') {
                     $templateUid2 = 'feutv2m5zcs1se';
-                } elseif ('oem' === 'COMBA ERRCS') {
+                } elseif ('COMBA ERRCS' === 'COMBA ERRCS') {
                     $templateUid2 = 'aebkeah3awdba';
                 }
 
