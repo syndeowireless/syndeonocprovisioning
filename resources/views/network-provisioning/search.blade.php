@@ -4,8 +4,10 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="page-title-box d-flex align-items-center justify-content-between">
-                <h4 class="mb-0">Search Provisioning</h4>
+            <div class="page-title-box">
+                <div class="title-container mb-4">
+                    <h1 class="simple-title mb-3">Search Provisioning</h1>
+                </div>
             </div>
         </div>
     </div>
@@ -40,6 +42,18 @@
 </div>
 
 <style>
+/* Simple Title Styles */
+.title-container {
+    text-align: left;
+}
+
+.simple-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #13395d;
+    margin-bottom: 0;
+}
+
 .search-input-wrapper {
     position: relative;
     max-width: 40%;

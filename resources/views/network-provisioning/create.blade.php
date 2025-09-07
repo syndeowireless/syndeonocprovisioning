@@ -11,6 +11,23 @@
 
 @section("content")
 <style>
+/* Simple Title Styles */
+.title-container {
+    text-align: left;
+}
+
+.simple-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #13395d;
+    margin-bottom: 0;
+}
+
+/* Bootstrap utility class for conditional display */
+.d-none {
+    display: none !important;
+}
+
     .switch {
   position: relative;
   display: inline-block;
@@ -705,10 +722,21 @@ body.loading-active {
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="title-container mb-4">
+                    <h1 class="simple-title mb-3">Create Network Provisioning</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="form-container flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
     <div class="max-w-4xl w-full px-4 py-8">
         <div class="form-wrapper">
-            <h1 class="form-title text-center">Create Network Provisioning</h1>
 
             <form method="POST" action="{{ route('network-provisioning.store') }}" class="space-y-6" id="networkProvisioningForm">
                 @csrf
@@ -847,7 +875,7 @@ body.loading-active {
 </div>
 
 <!-- Conditional Customer Email field (hidden until toggle is yes) -->
-<div id="grafana-email-field" style="display: {{ old('grafana_toggle') ? 'block' : 'none' }};">
+<div id="grafana-email-field" class="{{ old('grafana_toggle') ? '' : 'd-none' }}">
     <div class="grid-container">
         <div class="form-group">
             <label class="form-label" for="company_name">Company Name</label>
@@ -876,7 +904,7 @@ body.loading-active {
     </div>
 </div>
 
-<div id="static-ip-fields" style="display: {{ old('static_ip_check') ? 'block' : 'none' }};">
+<div id="static-ip-fields" class="{{ old('static_ip_check') ? '' : 'd-none' }}">
     <div class="grid-container">
         <div class="form-group">
             <label class="form-label" for="static_ip">IP Address</label>

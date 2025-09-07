@@ -22,7 +22,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-primary">
                             <i class="mdi mdi-account-group me-2"></i>
-                            Users Management
+                            System Users Data
                         </h5>
                         <div class="table-controls d-flex align-items-center gap-3">
                             <div class="sort-controls d-flex align-items-center">
