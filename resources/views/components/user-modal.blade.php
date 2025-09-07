@@ -23,7 +23,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="padding: 2rem;">
-                <form id="{{ $formId }}" data-ajax>
+                <form id="{{ $formId }}">
                     @if($includeHiddenId)
                         <input type="hidden" id="{{ $hiddenInputId }}" name="userId">
                     @endif
