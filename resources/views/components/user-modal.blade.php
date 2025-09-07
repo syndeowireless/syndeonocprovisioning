@@ -168,9 +168,15 @@
                          onmouseout="this.style.backgroundColor='#6c757d'; this.style.borderColor='#6c757d';">
                     Cancel
                 </button>
-                <x-primary-button type="button" class="ms-2" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600;">
-                    <i class="mdi mdi-check me-2"></i>{{ $buttonText }}
-                </x-primary-button>
+                @if($isCreateModal)
+                    <x-primary-button type="submit" form="{{ $formId }}" class="ms-2" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600;">
+                        <i class="mdi mdi-check me-2"></i>{{ $buttonText }}
+                    </x-primary-button>
+                @else
+                    <x-primary-button type="button" class="ms-2" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600;">
+                        <i class="mdi mdi-check me-2"></i>{{ $buttonText }}
+                    </x-primary-button>
+                @endif
             </div>
         </div>
     </div>

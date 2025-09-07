@@ -42,6 +42,14 @@ Route::get('/profile/manage-users', [UserController::class, 'manageUsers'])
     ->middleware(['auth', 'admin'])
     ->name('others.manage-users');
 
+Route::post('/profile/users', [UserController::class, 'store'])
+    ->middleware(['auth', 'admin'])
+    ->name('users.store');
+
+Route::delete('/profile/users/{user}', [UserController::class, 'destroy'])
+    ->middleware(['auth', 'admin'])
+    ->name('users.destroy');
+
 // Rotas de Formulário
 Route::middleware(["auth"])->group(function () {
     Route::get("/formularios/create", [FormularioController::class, "create"])->name("formularios.create");

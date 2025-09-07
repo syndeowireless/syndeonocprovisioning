@@ -65,7 +65,7 @@
                             
                             <tbody>
                                 @forelse($users as $user)
-                                <tr class="clickable-row">
+                                <tr class="clickable-row" data-user-id="{{ $user->id }}">
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ ucfirst($user->role) }}</td>
@@ -79,7 +79,7 @@
                                                 onclick="populateUpdateModal('{{ $user->id }}', '{{ $user->name }}', '{{ $user->email }}')">
                                                 Update
                                             </x-primary-button>
-                                            <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #28a745; border-color: #28a745;" 
+                                            <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
                                                 data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
                                                 onclick="populateResetPasswordModal('{{ $user->id }}', '{{ $user->name }}')"
                                                 onmouseover="this.style.backgroundColor='#218838'; this.style.borderColor='#1e7e34';" 
@@ -88,7 +88,8 @@
                                             </x-primary-button>
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 
                                                 onmouseover="this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130';" 
-                                                onmouseout="this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545';">
+                                                onmouseout="this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545';"
+                                                onclick="confirmDeleteUser('{{ $user->id }}', '{{ $user->name }}')">
                                                 Delete
                                             </x-primary-button>
                                         </div>
@@ -165,6 +166,47 @@
     hidden-input-id="resetUserId"
     user-name-id="resetUserName"
     :is-reset-password-modal="true" />
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);">
+            <div class="modal-header" style="background-color: #dc3545; color: white; border-bottom: 3px solid #c82333; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" id="deleteUserModalLabel">
+                    <i class="mdi mdi-delete-alert me-2"></i>Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <div class="text-center">
+                    <i class="mdi mdi-alert-circle" style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;"></i>
+                    <h4 style="color: #dc3545; margin-bottom: 1rem;">Are you sure?</h4>
+                    <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
+                        Are you sure about deleting this user record? This action cannot be undone.
+                    </p>
+                    <p style="color: #495057; font-weight: 600; margin-top: 1rem;">
+                        User: <span id="deleteUserName" style="color: #dc3545;"></span>
+                    </p>
+                </div>
+                <input type="hidden" id="deleteUserId" value="">
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e9ecef; padding: 1.5rem 2rem; background-color: #f8f9fa; border-radius: 0 0 12px 12px;">
+                <button type="button" class="btn" data-bs-dismiss="modal"
+                         style="background-color: #6c757d; border: 2px solid #6c757d; color: white; padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;"
+                        onmouseover="this.style.backgroundColor='#5a6268'; this.style.borderColor='#5a6268';"
+                         onmouseout="this.style.backgroundColor='#6c757d'; this.style.borderColor='#6c757d';">
+                    No, Cancel
+                </button>
+                <button type="button" class="btn" id="confirmDeleteBtn"
+                         style="background-color: #dc3545; border: 2px solid #dc3545; color: white; padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;"
+                        onmouseover="this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130';"
+                         onmouseout="this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545';">
+                    <i class="mdi mdi-delete me-2"></i>Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
 /* Simple Title Styles */
@@ -322,6 +364,39 @@ document.addEventListener('DOMContentLoaded', function() {
         url.searchParams.set('page', '1'); // Reset to first page
         window.location.href = url.toString();
     });
+
+    // Handle create user form submission
+    const createUserForm = document.getElementById('createUserForm');
+    if (createUserForm) {
+        createUserForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            createUser();
+        });
+    }
+
+    // Handle delete confirmation
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            deleteUser();
+        });
+    }
+
+    // Real-time password confirmation validation
+    const userPassword = document.getElementById('userPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    
+    if (confirmPassword) {
+        confirmPassword.addEventListener('input', function() {
+            validatePasswordMatch();
+        });
+    }
+    
+    if (userPassword) {
+        userPassword.addEventListener('input', function() {
+            validatePasswordMatch();
+        });
+    }
 });
 
 // Function to populate update modal with user data
@@ -339,6 +414,255 @@ function populateResetPasswordModal(userId, userName) {
     document.getElementById('resetCurrentPassword').value = '••••••••••••';
     document.getElementById('resetPassword').value = '';
     document.getElementById('resetConfirmPassword').value = '';
+}
+
+// Function to confirm delete user
+function confirmDeleteUser(userId, userName) {
+    document.getElementById('deleteUserId').value = userId;
+    document.getElementById('deleteUserName').textContent = userName;
+    
+    // Show the delete confirmation modal
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+    deleteModal.show();
+}
+
+// Function to delete user
+function deleteUser() {
+    const userId = document.getElementById('deleteUserId').value;
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Disable button and show loading
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Deleting...';
+    
+    fetch(`/profile/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Close modal
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+            deleteModal.hide();
+            
+            // Show success message
+            showAlert('success', data.message);
+            
+            // Remove the row from table
+            const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+            if (row) {
+                row.remove();
+            } else {
+                // If row not found, reload the page
+                window.location.reload();
+            }
+        } else {
+            showAlert('error', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'An error occurred while deleting the user.');
+    })
+    .finally(() => {
+        // Re-enable button
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="mdi mdi-delete me-2"></i>Yes, Delete';
+    });
+}
+
+// Function to create user
+function createUser() {
+    const form = document.getElementById('createUserForm');
+    const formData = new FormData(form);
+    
+    // Check if all required fields are filled
+    const requiredFields = ['userName', 'userEmail', 'userRole', 'userPassword', 'confirmPassword'];
+    let allFieldsFilled = true;
+    
+    requiredFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (!field || !field.value.trim()) {
+            allFieldsFilled = false;
+            field.style.borderColor = '#dc3545';
+        } else {
+            field.style.borderColor = '#e9ecef';
+        }
+    });
+    
+    if (!allFieldsFilled) {
+        showAlert('error', 'Please fill out all required fields.');
+        return;
+    }
+    
+    // Check password match
+    const password = document.getElementById('userPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (password !== confirmPassword) {
+        showAlert('error', 'Password and confirm password do not match.');
+        return;
+    }
+    
+    const submitBtn = document.querySelector('#createUserModal .btn-primary');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Creating...';
+    
+    fetch('/profile/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            userName: formData.get('userName'),
+            userEmail: formData.get('userEmail'),
+            userRole: formData.get('userRole'),
+            userPassword: formData.get('userPassword'),
+            confirmPassword: formData.get('confirmPassword')
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Close modal
+            const createModal = bootstrap.Modal.getInstance(document.getElementById('createUserModal'));
+            createModal.hide();
+            
+            // Show success message
+            showAlert('success', data.message);
+            
+            // Clear form
+            form.reset();
+            
+            // Add new user to table
+            addUserToTable(data.user);
+        } else {
+            if (data.errors) {
+                // Show validation errors
+                let errorMessage = 'Please fix the following errors:\n';
+                Object.values(data.errors).forEach(error => {
+                    errorMessage += `• ${error[0]}\n`;
+                });
+                showAlert('error', errorMessage);
+            } else {
+                showAlert('error', data.message);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'An error occurred while creating the user.');
+    })
+    .finally(() => {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="mdi mdi-check me-2"></i>Create';
+    });
+}
+
+// Function to add new user to table
+function addUserToTable(user) {
+    const tbody = document.querySelector('#usersTable tbody');
+    const newRow = document.createElement('tr');
+    newRow.setAttribute('data-user-id', user.id);
+    newRow.className = 'clickable-row';
+    
+    newRow.innerHTML = `
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
+        <td>${user.created_at}</td>
+        <td>${user.updated_at}</td>
+        <td>
+            <div class="d-flex gap-2 flex-wrap">
+                <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
+                    data-bs-toggle="modal" data-bs-target="#updateUserModal" 
+                    onclick="populateUpdateModal('${user.id}', '${user.name}', '${user.email}')">
+                    Update
+                </x-primary-button>
+                <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
+                    data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
+                    onclick="populateResetPasswordModal('${user.id}', '${user.name}')"
+                    onmouseover="this.style.backgroundColor='#218838'; this.style.borderColor='#1e7e34';" 
+                    onmouseout="this.style.backgroundColor='#28a745'; this.style.borderColor='#28a745';">
+                    Reset Password
+                </x-primary-button>
+                <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 
+                    onmouseover="this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130';" 
+                    onmouseout="this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545';"
+                    onclick="confirmDeleteUser('${user.id}', '${user.name}')">
+                    Delete
+                </x-primary-button>
+            </div>
+        </td>
+    `;
+    
+    // Insert at the beginning of the table
+    tbody.insertBefore(newRow, tbody.firstChild);
+}
+
+// Function to validate password match
+function validatePasswordMatch() {
+    const password = document.getElementById('userPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    
+    if (!password || !confirmPassword) return;
+    
+    // Remove existing error message
+    const existingError = document.getElementById('passwordMatchError');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    if (confirmPassword.value && password.value !== confirmPassword.value) {
+        // Add error message
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'passwordMatchError';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.fontSize = '0.875rem';
+        errorDiv.style.marginTop = '0.25rem';
+        errorDiv.textContent = 'Password and confirm password do not match';
+        
+        confirmPassword.parentNode.appendChild(errorDiv);
+        confirmPassword.style.borderColor = '#dc3545';
+    } else {
+        confirmPassword.style.borderColor = '#e9ecef';
+    }
+}
+
+// Function to show alert messages
+function showAlert(type, message) {
+    // Remove existing alerts
+    const existingAlerts = document.querySelectorAll('.alert');
+    existingAlerts.forEach(alert => alert.remove());
+    
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.style.minWidth = '300px';
+    
+    alertDiv.innerHTML = `
+        <i class="mdi mdi-${type === 'error' ? 'alert-circle' : 'check-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
 }
 </script>
 
