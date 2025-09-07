@@ -1728,16 +1728,36 @@ function handleFormSubmission(event) {
 }
 
 // Função para toggle dos campos de IP estático
+//function toggleStaticIpFields() {
+//    var checkbox = document.getElementById('static_ip_check');
+//    var fields = document.getElementById('static-ip-fields');
+//    fields.style.display = checkbox.checked ? 'block' : 'none';
+//}
+
 function toggleStaticIpFields() {
     var checkbox = document.getElementById('static_ip_check');
     var fields = document.getElementById('static-ip-fields');
-    fields.style.display = checkbox.checked ? 'block' : 'none';
+    if (checkbox.checked) {
+        fields.classList.remove('d-none');
+    } else {
+        fields.classList.add('d-none');
+    }
 }
+
+//function toggleGrafanaEmail() {
+//    const toggle = document.getElementById('grafana_toggle');
+//    const emailField = document.getElementById('grafana-email-field');
+//    emailField.style.display = toggle.checked ? 'block' : 'none';
+//}
 
 function toggleGrafanaEmail() {
     const toggle = document.getElementById('grafana_toggle');
     const emailField = document.getElementById('grafana-email-field');
-    emailField.style.display = toggle.checked ? 'block' : 'none';
+    if (toggle.checked) {
+        emailField.classList.remove('d-none');
+    } else {
+        emailField.classList.add('d-none');
+    }
 }
 
 // Inicializar o mapa quando a página estiver pronta
