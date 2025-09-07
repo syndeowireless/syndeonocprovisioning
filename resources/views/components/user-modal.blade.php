@@ -9,7 +9,8 @@
     'userEmailId' => 'userEmail',
     'hiddenInputId' => 'userId',
     'isCreateModal' => false,
-    'isUpdateModal' => false
+    'isUpdateModal' => false,
+    'isResetPasswordModal' => false
 ])
 
 <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
@@ -26,22 +27,70 @@
                     @if($includeHiddenId)
                         <input type="hidden" id="{{ $hiddenInputId }}" name="userId">
                     @endif
-                    <div class="mb-3">
-                        <label for="{{ $userNameId }}" class="form-label" style="color: #13395d; font-weight: 600;">User Name</label>
-                        <input type="text" class="form-control" id="{{ $userNameId }}" name="userName"
-                                style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
-                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
-                                placeholder="Enter user name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ $userEmailId }}" class="form-label" style="color: #13395d; font-weight: 600;">Email</label>
-                        <input type="email" class="form-control" id="{{ $userEmailId }}" name="userEmail"
-                                style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
-                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
-                                placeholder="Enter email address" required>
-                    </div>
+                    
+                    @if(!$isResetPasswordModal)
+                        <div class="mb-3">
+                            <label for="{{ $userNameId }}" class="form-label" style="color: #13395d; font-weight: 600;">User Name</label>
+                            <input type="text" class="form-control" id="{{ $userNameId }}" name="userName"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                    placeholder="Enter user name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ $userEmailId }}" class="form-label" style="color: #13395d; font-weight: 600;">Email</label>
+                            <input type="email" class="form-control" id="{{ $userEmailId }}" name="userEmail"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                    placeholder="Enter email address" required>
+                        </div>
+                    @endif
+
+                    @if($isResetPasswordModal)
+                        <div class="mb-3">
+                            <label for="resetUserName" class="form-label" style="color: #13395d; font-weight: 600;">User Name</label>
+                            <input type="text" class="form-control" id="resetUserName" name="userName"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; background-color: #f8f9fa;"
+                                    readonly placeholder="User name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resetCurrentPassword" class="form-label" style="color: #13395d; font-weight: 600;">Current Password</label>
+                            <input type="password" class="form-control" id="resetCurrentPassword" name="currentPassword"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; background-color: #f8f9fa;"
+                                   readonly placeholder="••••••••••••" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resetPassword" class="form-label" style="color: #13395d; font-weight: 600;">New Password</label>
+                            <div class="position-relative">
+                                <input type="password" class="form-control" id="resetPassword" name="newPassword"
+                                        style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem 3rem 0.75rem 0.75rem; transition: all 0.3s ease;"
+                                       onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                        onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                        placeholder="Enter new password" required>
+                                <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 p-0" 
+                                        style="border: none; background: none; color: #6c757d; z-index: 10;"
+                                        onclick="togglePasswordVisibility('resetPassword', this)">
+                                    <i class="mdi mdi-eye" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resetConfirmPassword" class="form-label" style="color: #13395d; font-weight: 600;">Confirm New Password</label>
+                            <div class="position-relative">
+                                <input type="password" class="form-control" id="resetConfirmPassword" name="confirmPassword"
+                                        style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem 3rem 0.75rem 0.75rem; transition: all 0.3s ease;"
+                                       onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                        onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                        placeholder="Confirm new password" required>
+                                <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 p-0" 
+                                        style="border: none; background: none; color: #6c757d; z-index: 10;"
+                                        onclick="togglePasswordVisibility('resetConfirmPassword', this)">
+                                    <i class="mdi mdi-eye" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
                     
                     @if($isCreateModal)
                         <div class="mb-3">

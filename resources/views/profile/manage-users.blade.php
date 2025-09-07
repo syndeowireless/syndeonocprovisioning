@@ -73,11 +73,18 @@
                                     <td>{{ $user->updated_at->format('M d, Y H:i') }}</td>
                                     <td>
                                         @if($user->role !== 'admin')
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2 flex-wrap">
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
                                                 data-bs-toggle="modal" data-bs-target="#updateUserModal" 
                                                 onclick="populateUpdateModal('{{ $user->id }}', '{{ $user->name }}', '{{ $user->email }}')">
                                                 Update
+                                            </x-primary-button>
+                                            <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #28a745; border-color: #28a745;" 
+                                                data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
+                                                onclick="populateResetPasswordModal('{{ $user->id }}', '{{ $user->name }}')"
+                                                onmouseover="this.style.backgroundColor='#218838'; this.style.borderColor='#1e7e34';" 
+                                                onmouseout="this.style.backgroundColor='#28a745'; this.style.borderColor='#28a745';">
+                                                Reset Password
                                             </x-primary-button>
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 
                                                 onmouseover="this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130';" 
@@ -146,6 +153,18 @@
     user-name-id="updateUserName"
     user-email-id="updateUserEmail"
     :is-update-modal="true" />
+
+<!-- Reset Password Modal -->
+<x-user-modal 
+    modal-id="resetPasswordModal"
+    title="Reset Password"
+    icon="mdi mdi-lock-reset"
+    button-text="Reset Password"
+    form-id="resetPasswordForm"
+    :include-hidden-id="true"
+    hidden-input-id="resetUserId"
+    user-name-id="resetUserName"
+    :is-reset-password-modal="true" />
 
 <style>
 /* Simple Title Styles */
@@ -270,6 +289,16 @@
     .sort-controls, .entries-controls {
         justify-content: space-between;
     }
+    
+    .d-flex.gap-2.flex-wrap {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
 }
 </style>
 
@@ -300,6 +329,16 @@ function populateUpdateModal(userId, userName, userEmail) {
     document.getElementById('updateUserId').value = userId;
     document.getElementById('updateUserName').value = userName;
     document.getElementById('updateUserEmail').value = userEmail;
+}
+
+// Function to populate reset password modal with user data
+function populateResetPasswordModal(userId, userName) {
+    document.getElementById('resetUserId').value = userId;
+    document.getElementById('resetUserName').value = userName;
+    // Clear password fields when modal opens
+    document.getElementById('resetCurrentPassword').value = '••••••••••••';
+    document.getElementById('resetPassword').value = '';
+    document.getElementById('resetConfirmPassword').value = '';
 }
 </script>
 
