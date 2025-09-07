@@ -173,7 +173,7 @@ class ProvisionController extends Controller
 
                 // Prepare the dashboard payload
                 unset($templateDashboard1['id'], $templateDashboard1['uid']);
-                $templateDashboard1['title'] = 'dashboard test 2';
+                $templateDashboard1['title'] = 'dashboard test 1';
 
                 // Create dashboard 1 in the folder
                 $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
