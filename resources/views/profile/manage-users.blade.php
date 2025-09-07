@@ -81,9 +81,7 @@
                                             </x-primary-button>
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
                                                 data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
-                                                onclick="populateResetPasswordModal('{{ $user->id }}', '{{ $user->name }}')"
-                                                onmouseover="this.style.backgroundColor='#218838'; this.style.borderColor='#1e7e34';" 
-                                                onmouseout="this.style.backgroundColor='#28a745'; this.style.borderColor='#28a745';">
+                                                onclick="populateResetPasswordModal('{{ $user->id }}', '{{ $user->name }}')" 
                                                 Reset Password
                                             </x-primary-button>
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 

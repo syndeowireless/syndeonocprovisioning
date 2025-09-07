@@ -187,6 +187,8 @@
             document.addEventListener('submit', function(e) {
                 var form = e.target;
                 if (!form || form.target === '_blank') return;
+                // Skip interception for forms marked as AJAX or no-transition
+                if (form.hasAttribute('data-ajax') || form.hasAttribute('data-no-transition')) return;
                 // Let the form submit after exit animation
                 e.preventDefault();
                 startExitTransition(function() { form.submit(); });
