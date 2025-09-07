@@ -60,8 +60,6 @@
                                 </tr>
                             
                             </thead>
-                            <!-- Yellow line below table headers -->
-                            <tr><td colspan="6" style="padding: 0; border: none;"><div style="height: 3px; background-color: #fbbf0f; margin: 0; width: 100%;"></div></td></tr>
                             
                             <tbody>
                                 @forelse($users as $user)
@@ -631,7 +629,7 @@ function addUserToTable(user) {
     // Delete button
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
-    deleteBtn.className = 'btn btn-danger btn-sm px-3 py-1';
+    deleteBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
     deleteBtn.style.fontSize = '0.75rem';
     deleteBtn.style.backgroundColor = '#dc3545';
     deleteBtn.style.border = '2px solid #dc3545';
