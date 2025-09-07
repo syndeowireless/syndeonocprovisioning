@@ -7,7 +7,9 @@
     'includeHiddenId' => false,
     'userNameId' => 'userName',
     'userEmailId' => 'userEmail',
-    'hiddenInputId' => 'userId'
+    'hiddenInputId' => 'userId',
+    'isCreateModal' => false,
+    'isUpdateModal' => false
 ])
 
 <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
@@ -26,27 +28,76 @@
                     @endif
                     <div class="mb-3">
                         <label for="{{ $userNameId }}" class="form-label" style="color: #13395d; font-weight: 600;">User Name</label>
-                        <input type="text" class="form-control" id="{{ $userNameId }}" name="userName" 
-                               style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';" 
-                               onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';" 
-                               placeholder="Enter user name" required>
+                        <input type="text" class="form-control" id="{{ $userNameId }}" name="userName"
+                                style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                placeholder="Enter user name" required>
                     </div>
                     <div class="mb-3">
                         <label for="{{ $userEmailId }}" class="form-label" style="color: #13395d; font-weight: 600;">Email</label>
-                        <input type="email" class="form-control" id="{{ $userEmailId }}" name="userEmail" 
-                               style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';" 
-                               onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';" 
-                               placeholder="Enter email address" required>
+                        <input type="email" class="form-control" id="{{ $userEmailId }}" name="userEmail"
+                                style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                               onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                placeholder="Enter email address" required>
                     </div>
+                    
+                    @if($isCreateModal)
+                        <div class="mb-3">
+                            <label for="userRole" class="form-label" style="color: #13395d; font-weight: 600;">User Role</label>
+                            <select class="form-select" id="userRole" name="userRole"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';" required>
+                                <option value="">Select Role</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userPassword" class="form-label" style="color: #13395d; font-weight: 600;">Password</label>
+                            <input type="password" class="form-control" id="userPassword" name="userPassword"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                    placeholder="Enter password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label" style="color: #13395d; font-weight: 600;">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                    placeholder="Confirm password" required>
+                        </div>
+                    @endif
+                    
+                    @if($isUpdateModal)
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label" style="color: #13395d; font-weight: 600;">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="currentPassword"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                    placeholder="Enter current password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label" style="color: #13395d; font-weight: 600;">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
+                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                    placeholder="Enter new password" required>
+                        </div>
+                    @endif
                 </form>
             </div>
             <div class="modal-footer" style="border-top: 1px solid #e9ecef; padding: 1.5rem 2rem; background-color: #f8f9fa; border-radius: 0 0 12px 12px;">
-                <button type="button" class="btn" data-bs-dismiss="modal" 
-                        style="background-color: #6c757d; border: 2px solid #6c757d; color: white; padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;"
-                        onmouseover="this.style.backgroundColor='#5a6268'; this.style.borderColor='#5a6268';" 
-                        onmouseout="this.style.backgroundColor='#6c757d'; this.style.borderColor='#6c757d';">
+                <button type="button" class="btn" data-bs-dismiss="modal"
+                         style="background-color: #6c757d; border: 2px solid #6c757d; color: white; padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;"
+                        onmouseover="this.style.backgroundColor='#5a6268'; this.style.borderColor='#5a6268';"
+                         onmouseout="this.style.backgroundColor='#6c757d'; this.style.borderColor='#6c757d';">
                     Cancel
                 </button>
                 <x-primary-button type="button" class="ms-2" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600;">

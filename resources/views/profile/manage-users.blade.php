@@ -137,7 +137,8 @@
     button-text="Create"
     form-id="createUserForm"
     user-name-id="userName"
-    user-email-id="userEmail" />
+    user-email-id="userEmail"
+    :is-create-modal="true" />
 
 <!-- Update User Modal -->
 <x-user-modal 
@@ -149,7 +150,8 @@
     :include-hidden-id="true"
     hidden-input-id="updateUserId"
     user-name-id="updateUserName"
-    user-email-id="updateUserEmail" />
+    user-email-id="updateUserEmail"
+    :is-update-modal="true" />
 
 <style>
 /* Simple Title Styles */
