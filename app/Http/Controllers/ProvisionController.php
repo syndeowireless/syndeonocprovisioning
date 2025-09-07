@@ -297,7 +297,7 @@ class ProvisionController extends Controller
                 ]
             ];
         
-            $phase1Payload_JSON = json_encode($phase1Payload);
+            //$phase1Payload_JSON = json_encode($phase1Payload);
         
             $pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
             $pfApiKey = '45029e5043a28667ecef6c198fb99b81'; // <-- Put your API key here
@@ -309,18 +309,25 @@ class ProvisionController extends Controller
             ])->withoutVerifying();
             
             // 1. Cria o Phase 1
-            $phase1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload_JSON);
+            //$phase1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload_JSON);
+            $phase1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload);
+
             
             if (!$phase1Resp->successful()) {
-                throw new \Exception('Phase 1 creation failed: ' . $phase1Resp->body());
+                throw new \Exception('Phase 1 creation failed: HTTP ' . $phase1Resp->status() . ' - ' . $phase1Resp->body());
             }
         
+            // Try to decode JSON; if it fails, throw with raw body
             $phase1Data = $phase1Resp->json();
+            if (!isset($phase1Data['data']['ikeid'])) {
+                throw new \Exception('Failed to get ikeid from Phase 1 creation. Raw response: ' . $phase1Resp->body());
+            }
+
             $ikeid = $phase1Data['data']['ikeid'] ?? null; // Pega o ID do Phase 1 criado
         
-            if (!$ikeid) {
-                throw new \Exception('Failed to get ikeid from Phase 1 creation');
-            }
+            //if (!$ikeid) {
+            //    throw new \Exception('Failed to get ikeid from Phase 1 creation');
+            //}
         
             $Ip_Plan = subtract_from_last_octet($first_usable_ip, 2);
         
@@ -347,12 +354,12 @@ class ProvisionController extends Controller
                 "lifetime" => 3600
             ];
         
-            $phase2_1Payload_JSON = json_encode($phase2_1Payload);
+            //$phase2_1Payload_JSON = json_encode($phase2_1Payload);
         
-            $phase2_1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload_JSON);
+            $phase2_1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload);
         
             if (!$phase2_1Resp->successful()) {
-                throw new \Exception('Phase 2.1 creation failed: ' . $phase2_1Resp->body());
+                throw new \Exception('Phase 2.1 creation failed: HTTP ' . $phase2_1Resp->status() . ' - ' . $phase2_1Resp->body());
             }
         
             // 3. Cria o Phase 2.2
@@ -378,10 +385,15 @@ class ProvisionController extends Controller
                 "lifetime" => 3600
             ];
         
-            $phase2_2Payload_JSON = json_encode($phase2_2Payload);
+            //$phase2_2Payload_JSON = json_encode($phase2_2Payload);
         
-            $phase2_2Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload_JSON);
-        
+            //$phase2_2Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload_JSON);
+            $phase2_2Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload);
+
+            if (!$phase2_2Resp->successful()) {
+                throw new \Exception('Phase 2.2 creation failed: HTTP ' . $phase2_2Resp->status() . ' - ' . $phase2_2Resp->body());
+            }           
+
             $results['pfsense'] = 'Success';
         } catch (\Throwable $e) {
             $errors['pfsense'] = $e->getMessage();
