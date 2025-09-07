@@ -57,19 +57,33 @@
                         </div>
                         <div class="mb-3">
                             <label for="userPassword" class="form-label" style="color: #13395d; font-weight: 600;">Password</label>
-                            <input type="password" class="form-control" id="userPassword" name="userPassword"
-                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
-                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
-                                    placeholder="Enter password" required>
+                            <div class="position-relative">
+                                <input type="password" class="form-control" id="userPassword" name="userPassword"
+                                        style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem 3rem 0.75rem 0.75rem; transition: all 0.3s ease;"
+                                       onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                        onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                        placeholder="Enter password" required>
+                                <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 p-0" 
+                                        style="border: none; background: none; color: #6c757d; z-index: 10;"
+                                        onclick="togglePasswordVisibility('userPassword', this)">
+                                    <i class="mdi mdi-eye" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label" style="color: #13395d; font-weight: 600;">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
-                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
-                                    placeholder="Confirm password" required>
+                            <div class="position-relative">
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                        style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem 3rem 0.75rem 0.75rem; transition: all 0.3s ease;"
+                                       onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                        onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                        placeholder="Confirm password" required>
+                                <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 p-0" 
+                                        style="border: none; background: none; color: #6c757d; z-index: 10;"
+                                        onclick="togglePasswordVisibility('confirmPassword', this)">
+                                    <i class="mdi mdi-eye" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
                         </div>
                     @endif
                     
@@ -77,18 +91,23 @@
                         <div class="mb-3">
                             <label for="currentPassword" class="form-label" style="color: #13395d; font-weight: 600;">Current Password</label>
                             <input type="password" class="form-control" id="currentPassword" name="currentPassword"
-                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
-                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
-                                    placeholder="Enter current password" required>
+                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease; background-color: #f8f9fa;"
+                                   readonly placeholder="••••••••••••" required>
                         </div>
                         <div class="mb-3">
                             <label for="newPassword" class="form-label" style="color: #13395d; font-weight: 600;">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="newPassword"
-                                    style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; transition: all 0.3s ease;"
-                                   onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
-                                    onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
-                                    placeholder="Enter new password" required>
+                            <div class="position-relative">
+                                <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                        style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem 3rem 0.75rem 0.75rem; transition: all 0.3s ease;"
+                                       onfocus="this.style.borderColor='#13395d'; this.style.boxShadow='0 0 0 0.2rem rgba(19, 57, 93, 0.25)';"
+                                        onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none';"
+                                        placeholder="Enter new password" required>
+                                <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 p-0" 
+                                        style="border: none; background: none; color: #6c757d; z-index: 10;"
+                                        onclick="togglePasswordVisibility('newPassword', this)">
+                                    <i class="mdi mdi-eye" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </div>
                         </div>
                     @endif
                 </form>
@@ -107,3 +126,20 @@
         </div>
     </div>
 </div>
+
+<script>
+function togglePasswordVisibility(inputId, toggleButton) {
+    const passwordInput = document.getElementById(inputId);
+    const icon = toggleButton.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('mdi-eye');
+        icon.classList.add('mdi-eye-off');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('mdi-eye-off');
+        icon.classList.add('mdi-eye');
+    }
+}
+</script>

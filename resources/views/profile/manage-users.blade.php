@@ -68,13 +68,7 @@
                                 <tr class="clickable-row">
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>
-                                        @if($user->role === 'admin')
-                                            <span class="badge bg-primary">Admin</span>
-                                        @else
-                                            <span class="badge bg-secondary">User</span>
-                                        @endif
-                                    </td>
+                                    <td>{{ ucfirst($user->role) }}</td>
                                     <td>{{ $user->created_at->format('M d, Y H:i') }}</td>
                                     <td>{{ $user->updated_at->format('M d, Y H:i') }}</td>
                                     <td>
@@ -92,7 +86,7 @@
                                             </x-primary-button>
                                         </div>
                                         @else
-                                        <span class="text-muted">No actions available</span>
+                                        <span class="text-muted"></span>
                                         @endif
                                     </td>
                                 </tr>
@@ -166,9 +160,6 @@
     margin-bottom: 0;
 }
 
-
-
-
 /* Existing Styles */
 .table-responsive {
     border-radius: 0;
@@ -194,19 +185,11 @@
     transition: background-color 0.2s ease;
 }
 
-.badge {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.65rem;
-    border-radius: 6px;
-    font-weight: 500;
-}
-
 .card {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
-
 
 .gap-2 {
     gap: 0.5rem;
