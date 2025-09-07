@@ -107,6 +107,118 @@ class UserController extends Controller
     }
 
     /**
+     * Update a user
+     */
+    public function update(Request $request, User $user): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'userName' => 'required|string|max:255',
+            'userEmail' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'newPassword' => 'nullable|string|min:8',
+        ], [
+            'userName.required' => 'User name is required.',
+            'userEmail.required' => 'Email is required.',
+            'userEmail.email' => 'Please enter a valid email address.',
+            'userEmail.unique' => 'This email is already registered.',
+            'newPassword.min' => 'Password must be at least 8 characters.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Update basic user information
+            $user->name = $request->userName;
+            $user->email = $request->userEmail;
+
+            // Check if a new password was provided and is different from current password
+            if ($request->filled('newPassword')) {
+                $newPassword = $request->newPassword;
+                
+                // Check if the new password is different from the current password
+                if (!Hash::check($newPassword, $user->password)) {
+                    $user->password = Hash::make($newPassword);
+                }
+            }
+
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User updated successfully',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'created_at' => $user->created_at->format('M d, Y H:i'),
+                    'updated_at' => $user->updated_at->format('M d, Y H:i')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Reset user password
+     */
+    public function resetPassword(Request $request, User $user): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'newPassword' => 'required|string|min:8',
+            'confirmPassword' => 'required|string|same:newPassword'
+        ], [
+            'newPassword.required' => 'New password is required.',
+            'newPassword.min' => 'Password must be at least 8 characters.',
+            'confirmPassword.required' => 'Password confirmation is required.',
+            'confirmPassword.same' => 'Password confirmation does not match.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $newPassword = $request->newPassword;
+            
+            // Check if the new password is different from the current password
+            if (Hash::check($newPassword, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'New password must be different from the current password.'
+                ], 422);
+            }
+
+            // Update the password
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reset password. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
      * Delete a user
      */
     public function destroy(User $user): JsonResponse

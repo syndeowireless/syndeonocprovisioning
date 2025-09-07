@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Real-time password confirmation validation
+    // Real-time password confirmation validation for create modal
     const userPassword = document.getElementById('userPassword');
     const confirmPassword = document.getElementById('confirmPassword');
     
@@ -393,6 +393,38 @@ document.addEventListener('DOMContentLoaded', function() {
             validatePasswordMatch();
         });
     }
+
+    // Real-time password confirmation validation for update modal
+    const newPassword = document.getElementById('newPassword');
+    const confirmNewPassword = document.getElementById('confirmNewPassword');
+    
+    if (confirmNewPassword) {
+        confirmNewPassword.addEventListener('input', function() {
+            validateUpdatePasswordMatch();
+        });
+    }
+    
+    if (newPassword) {
+        newPassword.addEventListener('input', function() {
+            validateUpdatePasswordMatch();
+        });
+    }
+
+    // Real-time password confirmation validation for reset password modal
+    const resetPassword = document.getElementById('resetPassword');
+    const resetConfirmPassword = document.getElementById('resetConfirmPassword');
+    
+    if (resetConfirmPassword) {
+        resetConfirmPassword.addEventListener('input', function() {
+            validateResetPasswordMatch();
+        });
+    }
+    
+    if (resetPassword) {
+        resetPassword.addEventListener('input', function() {
+            validateResetPasswordMatch();
+        });
+    }
 });
 
 // Function to populate update modal with user data
@@ -400,6 +432,16 @@ function populateUpdateModal(userId, userName, userEmail) {
     document.getElementById('updateUserId').value = userId;
     document.getElementById('updateUserName').value = userName;
     document.getElementById('updateUserEmail').value = userEmail;
+    // Clear password fields when modal opens
+    document.getElementById('currentPassword').value = '••••••••••••';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmNewPassword').value = '';
+    
+    // Remove any existing error messages
+    const existingError = document.getElementById('updatePasswordMatchError');
+    if (existingError) {
+        existingError.remove();
+    }
 }
 
 // Function to populate reset password modal with user data
@@ -410,6 +452,12 @@ function populateResetPasswordModal(userId, userName) {
     document.getElementById('resetCurrentPassword').value = '••••••••••••';
     document.getElementById('resetPassword').value = '';
     document.getElementById('resetConfirmPassword').value = '';
+    
+    // Remove any existing error messages
+    const existingError = document.getElementById('resetPasswordMatchError');
+    if (existingError) {
+        existingError.remove();
+    }
 }
 
 // Function to confirm delete user
@@ -682,6 +730,218 @@ function validatePasswordMatch() {
         confirmPassword.style.borderColor = '#dc3545';
     } else {
         confirmPassword.style.borderColor = '#e9ecef';
+    }
+}
+
+// Function to update user
+function updateUser() {
+    const userId = document.getElementById('updateUserId').value;
+    const userName = document.getElementById('updateUserName').value;
+    const userEmail = document.getElementById('updateUserEmail').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+    
+    // Check if all required fields are filled
+    if (!userName.trim() || !userEmail.trim()) {
+        showAlert('error', 'Please fill out all required fields.');
+        return;
+    }
+    
+    // Check password match if new password is provided
+    if (newPassword && newPassword !== confirmNewPassword) {
+        showAlert('error', 'New password and confirm password do not match.');
+        return;
+    }
+    
+    const submitBtn = document.querySelector('#updateUserModal [onclick="updateUser()"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Updating...';
+    
+    fetch(`/profile/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            userName: userName,
+            userEmail: userEmail,
+            newPassword: newPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Close modal
+            const updateModal = bootstrap.Modal.getInstance(document.getElementById('updateUserModal'));
+            updateModal.hide();
+            
+            // Show success message
+            showAlert('success', data.message);
+            
+            // Update the table row
+            updateUserInTable(data.user);
+        } else {
+            if (data.errors) {
+                // Show validation errors
+                let errorMessage = 'Please fix the following errors:\n';
+                Object.values(data.errors).forEach(error => {
+                    errorMessage += `• ${error[0]}\n`;
+                });
+                showAlert('error', errorMessage);
+            } else {
+                showAlert('error', data.message);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'An error occurred while updating the user.');
+    })
+    .finally(() => {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="mdi mdi-check me-2"></i>Update';
+    });
+}
+
+// Function to reset user password
+function resetUserPassword() {
+    const userId = document.getElementById('resetUserId').value;
+    const newPassword = document.getElementById('resetPassword').value;
+    const confirmPassword = document.getElementById('resetConfirmPassword').value;
+    
+    // Check if all required fields are filled
+    if (!newPassword.trim() || !confirmPassword.trim()) {
+        showAlert('error', 'Please fill out all required fields.');
+        return;
+    }
+    
+    // Check password match
+    if (newPassword !== confirmPassword) {
+        showAlert('error', 'New password and confirm password do not match.');
+        return;
+    }
+    
+    const submitBtn = document.querySelector('#resetPasswordModal [onclick="resetUserPassword()"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Resetting...';
+    
+    fetch(`/profile/users/${userId}/reset-password`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Close modal
+            const resetModal = bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal'));
+            resetModal.hide();
+            
+            // Show success message
+            showAlert('success', data.message);
+            
+            // Clear form
+            document.getElementById('resetPassword').value = '';
+            document.getElementById('resetConfirmPassword').value = '';
+        } else {
+            if (data.errors) {
+                // Show validation errors
+                let errorMessage = 'Please fix the following errors:\n';
+                Object.values(data.errors).forEach(error => {
+                    errorMessage += `• ${error[0]}\n`;
+                });
+                showAlert('error', errorMessage);
+            } else {
+                showAlert('error', data.message);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'An error occurred while resetting the password.');
+    })
+    .finally(() => {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="mdi mdi-check me-2"></i>Reset Password';
+    });
+}
+
+// Function to update user in table
+function updateUserInTable(user) {
+    const row = document.querySelector(`tr[data-user-id="${user.id}"]`);
+    if (row) {
+        const cells = row.querySelectorAll('td');
+        cells[0].textContent = user.name;
+        cells[1].textContent = user.email;
+        cells[3].textContent = user.created_at;
+        cells[4].textContent = user.updated_at;
+    }
+}
+
+// Function to validate password match for update modal
+function validateUpdatePasswordMatch() {
+    const newPassword = document.getElementById('newPassword');
+    const confirmNewPassword = document.getElementById('confirmNewPassword');
+    
+    if (!newPassword || !confirmNewPassword) return;
+    
+    // Remove existing error message
+    const existingError = document.getElementById('updatePasswordMatchError');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    if (confirmNewPassword.value && newPassword.value !== confirmNewPassword.value) {
+        // Add error message
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'updatePasswordMatchError';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.fontSize = '0.875rem';
+        errorDiv.style.marginTop = '0.25rem';
+        errorDiv.textContent = 'New password and confirm password do not match';
+        
+        confirmNewPassword.parentNode.appendChild(errorDiv);
+        confirmNewPassword.style.borderColor = '#dc3545';
+    } else {
+        confirmNewPassword.style.borderColor = '#e9ecef';
+    }
+}
+
+// Function to validate password match for reset password modal
+function validateResetPasswordMatch() {
+    const resetPassword = document.getElementById('resetPassword');
+    const resetConfirmPassword = document.getElementById('resetConfirmPassword');
+    
+    if (!resetPassword || !resetConfirmPassword) return;
+    
+    // Remove existing error message
+    const existingError = document.getElementById('resetPasswordMatchError');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    if (resetConfirmPassword.value && resetPassword.value !== resetConfirmPassword.value) {
+        // Add error message
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'resetPasswordMatchError';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.fontSize = '0.875rem';
+        errorDiv.style.marginTop = '0.25rem';
+        errorDiv.textContent = 'New password and confirm password do not match';
+        
+        resetConfirmPassword.parentNode.appendChild(errorDiv);
+        resetConfirmPassword.style.borderColor = '#dc3545';
+    } else {
+        resetConfirmPassword.style.borderColor = '#e9ecef';
     }
 }
 

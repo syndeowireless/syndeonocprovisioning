@@ -46,6 +46,14 @@ Route::post('/profile/users', [UserController::class, 'store'])
     ->middleware(['auth', 'admin'])
     ->name('users.store');
 
+Route::put('/profile/users/{user}', [UserController::class, 'update'])
+    ->middleware(['auth', 'admin'])
+    ->name('users.update');
+
+Route::put('/profile/users/{user}/reset-password', [UserController::class, 'resetPassword'])
+    ->middleware(['auth', 'admin'])
+    ->name('users.reset-password');
+
 Route::delete('/profile/users/{user}', [UserController::class, 'destroy'])
     ->middleware(['auth', 'admin'])
     ->name('users.destroy');
