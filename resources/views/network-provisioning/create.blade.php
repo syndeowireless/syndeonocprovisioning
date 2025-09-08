@@ -799,8 +799,11 @@ body.loading-active {
                     </div>
                     <div class="form-group">
                         <label class="form-label required">OEM</label>
-                        <input type="text" name="oem" id="oem" value="{{ old('oem') }}" required
-                               class="form-input" placeholder="Type the OEM">
+                        <select name="oem" id="oem" class="form-select" required>
+                            <option value="">Select the OEM</option>
+                            <option value="ADRF" {{ old('oem') == 'ADRF' ? 'selected' : '' }}>ADRF</option>
+                            <option value="COMBA ERRCS" {{ old('oem') == 'COMBA ERRCS' ? 'selected' : '' }}>COMBA ERRCS</option>
+                        </select>                        
                     </div>
                 </div>
                 <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
@@ -822,9 +825,7 @@ body.loading-active {
                         <label class="form-label">Master Unit Equipment</label>
                         <select name="das_equipment" id="das_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
-                            <option value="das_test1" {{ old('das_equipment') == 'das_test1' ? 'selected' : '' }}>test1</option>
-                            <option value="das_test2" {{ old('das_equipment') == 'das_test2' ? 'selected' : '' }}>test2</option>
-                            <option value="das_test3" {{ old('das_equipment') == 'das_test3' ? 'selected' : '' }}>test3</option>
+                            <option value="Syndeo V1.0 ADRF 202505 DAS" {{ old('das_equipment') == 'Syndeo V1.0 ADRF 202505 DAS' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 DAS</option>
                         </select>
 
                     </div>
@@ -832,9 +833,7 @@ body.loading-active {
                         <label class="form-label">BDA Equipment</label>
                         <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
-                            <option value="errcs_test1" {{ old('errcs_equipment') == 'errcs_test1' ? 'selected' : '' }}>test1</option>
-                            <option value="errcs_test2" {{ old('errcs_equipment') == 'errcs_test2' ? 'selected' : '' }}>test2</option>
-                            <option value="errcs_test3" {{ old('errcs_equipment') == 'errcs_test3' ? 'selected' : '' }}>test3</option>
+                            <option value="Syndeo V1.0 ADRF 202505 SDR" {{ old('errcs_equipment') == 'Syndeo V1.0 ADRF 202505 SDR' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 SDR</option>
                         </select>
                     </div>
                 </div>
@@ -1937,5 +1936,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
 
 @endsection
