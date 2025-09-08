@@ -87,7 +87,27 @@ class ProvisionController extends Controller
                 'X-API-Key' => $pfApiKey,
                 'Accept' => 'application/json'
             ])->withoutVerifying();
-            
+
+            // ----------- CHECAGEM DUPLICIDADE PHASE 1 -----------
+            $existingPhase1Resp = $httpClient->get($pfBaseUrl . "/vpn/ipsec/phase1");
+            if ($existingPhase1Resp->successful()) {
+                $phase1DataList = $existingPhase1Resp->json();
+                if (isset($phase1DataList['data']) && is_array($phase1DataList['data'])) {
+                    foreach ($phase1DataList['data'] as $phase1) {
+                        if ($phase1['remote_gateway'] === $phase1Payload['remote_gateway']) {
+                            Log::error("ProvisionController: Phase 1 já existe para esse remote_gateway.", [
+                                'remote_gateway' => $phase1Payload['remote_gateway']
+                            ]);
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Phase 1 já existe com esse remote_gateway.'
+                            ], 400);
+                        }
+                    }
+                }
+            }
+            // ----------- FIM CHECAGEM DUPLICIDADE PHASE 1 -----------
+
             // Log do payload antes de enviar
             Log::info("ProvisionController: Enviando Phase 1 Payload para pfSense API.", $phase1Payload);
 
@@ -103,6 +123,12 @@ class ProvisionController extends Controller
                 return response($phase1Resp->body(), $phase1Resp->status())
                     ->header('Content-Type', $phase1Resp->header('Content-Type', 'text/html'));
             }
+            // Log de sucesso Phase 1
+            Log::info("ProvisionController: Phase 1 criado com sucesso no pfSense!", [
+                'status' => $phase1Resp->status(),
+                'body' => $phase1Resp->body(),
+                'payload_enviado' => $phase1Payload
+            ]);
         
             $phase1Data = $phase1Resp->json();
             if (!isset($phase1Data['data']['ikeid'])) {
@@ -156,6 +182,12 @@ class ProvisionController extends Controller
                 return response($phase2_1Resp->body(), $phase2_1Resp->status())
                     ->header('Content-Type', $phase2_1Resp->header('Content-Type', 'text/html'));
             }
+            // Log de sucesso Phase 2.1
+            Log::info("ProvisionController: Phase 2.1 criado com sucesso no pfSense!", [
+                'status' => $phase2_1Resp->status(),
+                'body' => $phase2_1Resp->body(),
+                'payload_enviado' => $phase2_1Payload
+            ]);
         
             // 3. Cria o Phase 2.2
             $phase2_2Payload = [
@@ -163,7 +195,7 @@ class ProvisionController extends Controller
                "descr" => "OpenVPN",
                "mode" => "tunnel",
                "localid_type" => "network",
-               "localid_address" => "10.0.9.1",// FALAR SOBRE COM O TAYRONI
+               "localid_address" => "10.0.9.1",
                "localid_netbits" => 24,
                "remoteid_type" => "network",
                "remoteid_address" => $Ip_Plan,
@@ -180,6 +212,38 @@ class ProvisionController extends Controller
                "lifetime" => 3600
             ];
 
+            // ----------- CHECAGEM DUPLICIDADE PHASE 2.2 -----------
+            $existingPhase2Resp = $httpClient->get($pfBaseUrl . "/vpn/ipsec/phase2?ikeid={$ikeid}");
+            if ($existingPhase2Resp->successful()) {
+                $existingPhase2Data = $existingPhase2Resp->json();
+                if (isset($existingPhase2Data['data']) && is_array($existingPhase2Data['data'])) {
+                    foreach ($existingPhase2Data['data'] as $phase2) {
+                        if (
+                            $phase2['localid_address'] === $phase2_2Payload['localid_address'] &&
+                            (int)$phase2['localid_netbits'] === (int)$phase2_2Payload['localid_netbits'] &&
+                            $phase2['remoteid_address'] === $phase2_2Payload['remoteid_address'] &&
+                            (int)$phase2['remoteid_netbits'] === (int)$phase2_2Payload['remoteid_netbits']
+                        ) {
+                            Log::error("ProvisionController: Phase 2.2 já existente para esse Phase 1.", [
+                                'ikeid' => $ikeid,
+                                'payload' => $phase2_2Payload
+                            ]);
+                            return response()->json([
+                                'success' => false,
+                                'error' => 'Phase 2.2 já existe para esse Phase 1 com esta combinação de redes.'
+                            ], 400);
+                        }
+                    }
+                }
+            } else {
+                Log::warning("ProvisionController: Não foi possível checar duplicidade de Phase 2.2.", [
+                    'ikeid' => $ikeid,
+                    'response' => $existingPhase2Resp->body()
+                ]);
+                // Você pode decidir se quer abortar aqui ou tentar criar mesmo assim.
+            }
+            // ----------- FIM CHECAGEM DUPLICIDADE PHASE 2.2 -----------
+            
             Log::info("ProvisionController: Enviando Phase 2.2 Payload para pfSense API.", $phase2_2Payload);
         
             $phase2_2Resp = $httpClient->post($pfBaseUrl . '/vpn/ipsec/phase2', $phase2_2Payload);
@@ -193,6 +257,12 @@ class ProvisionController extends Controller
                return response($phase2_2Resp->body(), $phase2_2Resp->status())
                    ->header('Content-Type', $phase2_2Resp->header('Content-Type', 'text/html'));
             }
+            // Log de sucesso Phase 2.2
+            Log::info("ProvisionController: Phase 2.2 criado com sucesso no pfSense!", [
+                'status' => $phase2_2Resp->status(),
+                'body' => $phase2_2Resp->body(),
+                'payload_enviado' => $phase2_2Payload
+            ]);
         
             // If all went well, return JSON
             return response()->json(['success' => true, 'pfsense' => 'Success']);
