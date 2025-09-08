@@ -286,8 +286,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const btn = document.getElementById('start-provisioning');
     btn.addEventListener('click', async function() {
         const provisionId = btn.getAttribute('data-provision-id');
-
-        // CSRF token for Laravel
         const csrfToken = '{{ csrf_token() }}';
 
         try {
@@ -300,8 +298,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ provision_id: provisionId })
             });
 
-            const data = await response.json();
-            if(data.success) {
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                // Not JSON, probably HTML or plain text error
+                alert('Server returned non-JSON response:\n\n' + text);
+                return;
+            }
+
+            if (data.success) {
                 alert('Provisioning successful!');
             } else {
                 alert('Provisioning failed: ' + (data.error || 'Unknown error'));

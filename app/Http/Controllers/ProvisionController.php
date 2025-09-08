@@ -274,14 +274,14 @@ class ProvisionController extends Controller
             }
         
             $phase1Payload = [
-                "descr" => "$property_name", // property name
+                "descr" => "$property_name",
                 "iketype" => "ikev2",
                 "mode" => "main",
                 "protocol" => "inet",
                 "interface" => "wan",
-                "remote_gateway" => "$remote_gateway", // IP static senão host(dyndns)
+                "remote_gateway" => "$remote_gateway",
                 "authentication_method" => "pre_shared_key",
-                "pre_shared_key" => "$random_password", // senha aleatória
+                "pre_shared_key" => "$random_password",
                 "myid_type" => "myaddress",
                 "peerid_type" => "peeraddress",
                 "lifetime" => 28800,
@@ -297,37 +297,31 @@ class ProvisionController extends Controller
                 ]
             ];
         
-            //$phase1Payload_JSON = json_encode($phase1Payload);
-        
             $pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
-            $pfApiKey = '45029e5043a28667ecef6c198fb99b81'; // <-- Put your API key here
+            $pfApiKey = '45029e5043a28667ecef6c198fb99b81';
         
-            // Create a reusable HTTP client for pfSense API calls
             $httpClient = Http::withHeaders([
                 'Authorization' => "Bearer $pfApiKey",
-                'Accept' => 'application/json'
+                'Accept'        => 'application/json'
             ])->withoutVerifying();
             
             // 1. Cria o Phase 1
-            //$phase1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload_JSON);
             $phase1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase1", $phase1Payload);
-
             
             if (!$phase1Resp->successful()) {
-                throw new \Exception('Phase 1 creation failed: HTTP ' . $phase1Resp->status() . ' - ' . $phase1Resp->body());
+                // Return raw response (could be HTML error page or JSON error)
+                return response($phase1Resp->body(), $phase1Resp->status())
+                    ->header('Content-Type', $phase1Resp->header('Content-Type', 'text/html'));
             }
         
-            // Try to decode JSON; if it fails, throw with raw body
+            // Try to decode JSON; if it fails, return raw
             $phase1Data = $phase1Resp->json();
             if (!isset($phase1Data['data']['ikeid'])) {
-                throw new \Exception('Failed to get ikeid from Phase 1 creation. Raw response: ' . $phase1Resp->body());
+                return response($phase1Resp->body(), 500)
+                    ->header('Content-Type', $phase1Resp->header('Content-Type', 'text/html'));
             }
-
-            $ikeid = $phase1Data['data']['ikeid'] ?? null; // Pega o ID do Phase 1 criado
         
-            //if (!$ikeid) {
-            //    throw new \Exception('Failed to get ikeid from Phase 1 creation');
-            //}
+            $ikeid = $phase1Data['data']['ikeid'];
         
             $Ip_Plan = subtract_from_last_octet($first_usable_ip, 2);
         
@@ -340,7 +334,7 @@ class ProvisionController extends Controller
                 "localid_address" => "",
                 "localid_netbits" => 24,
                 "remoteid_type" => "network",
-                "remoteid_address" => "$Ip_Plan", // IP-Plan (tabela de ips) NETWORK
+                "remoteid_address" => "$Ip_Plan",
                 "remoteid_netbits" => 24,
                 "protocol" => "esp",
                 "encryption_algorithm_option" => [
@@ -354,24 +348,23 @@ class ProvisionController extends Controller
                 "lifetime" => 3600
             ];
         
-            //$phase2_1Payload_JSON = json_encode($phase2_1Payload);
-        
             $phase2_1Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_1Payload);
         
             if (!$phase2_1Resp->successful()) {
-                throw new \Exception('Phase 2.1 creation failed: HTTP ' . $phase2_1Resp->status() . ' - ' . $phase2_1Resp->body());
+                return response($phase2_1Resp->body(), $phase2_1Resp->status())
+                    ->header('Content-Type', $phase2_1Resp->header('Content-Type', 'text/html'));
             }
         
             // 3. Cria o Phase 2.2
             $phase2_2Payload = [
                 "ikeid" => $ikeid,
-                "descr" => "OpenVPN", // OpenVPN
+                "descr" => "OpenVPN",
                 "mode" => "tunnel",
                 "localid_type" => "network",
                 "localid_address" => "10.0.8.0/24",
                 "localid_netbits" => 24,
                 "remoteid_type" => "network",
-                "remoteid_address" => "$Ip_Plan", // IP-Plan (tabela de ips) NETWORK
+                "remoteid_address" => "$Ip_Plan",
                 "remoteid_netbits" => 24,
                 "protocol" => "esp",
                 "encryption_algorithm_option" => [
@@ -385,18 +378,20 @@ class ProvisionController extends Controller
                 "lifetime" => 3600
             ];
         
-            //$phase2_2Payload_JSON = json_encode($phase2_2Payload);
-        
-            //$phase2_2Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload_JSON);
             $phase2_2Resp = $httpClient->post("$pfBaseUrl/vpn/ipsec/phase2", $phase2_2Payload);
-
+        
             if (!$phase2_2Resp->successful()) {
-                throw new \Exception('Phase 2.2 creation failed: HTTP ' . $phase2_2Resp->status() . ' - ' . $phase2_2Resp->body());
-            }           
-
-            $results['pfsense'] = 'Success';
+                return response($phase2_2Resp->body(), $phase2_2Resp->status())
+                    ->header('Content-Type', $phase2_2Resp->header('Content-Type', 'text/html'));
+            }
+        
+            // If all went well, return JSON
+            return response()->json(['success' => true, 'pfsense' => 'Success']);
+        
         } catch (\Throwable $e) {
-            $errors['pfsense'] = $e->getMessage();
+            // Return PHP error as plain text
+            return response($e->getMessage(), 500)
+                ->header('Content-Type', 'text/plain');
         }
 //
 //
