@@ -68,15 +68,15 @@ class ProvisionController extends Controller
                $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
                $folderId = $folderResp['id'];
 
-               if ('ADRF' === 'ADRF') {
+               if ($oem === 'ADRF') {
                    $templateUid1 = 'beiyn9fdbtvale';
-               } elseif ('oem' === 'COMBA ERRCS') {
+               } elseif ($oem === 'COMBA ERRCS') {
                    $templateUid1 = 'beiyn9fdbt5hce';
                }
 
-               if ('oem' === 'ADRF') {
+               if ($oem === 'ADRF') {
                    $templateUid2 = 'feutv2m5zcs1se';
-               } elseif ('COMBA ERRCS' === 'COMBA ERRCS') {
+               } elseif ($oem === 'COMBA ERRCS') {
                    $templateUid2 = 'aebkeah3awdba';
                }
 
