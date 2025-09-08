@@ -399,4 +399,78 @@ class ProvisionController extends Controller
         $parts[count($parts) - 1] = $last_octet - $subtract_value;
         return implode('.', $parts);
     }
+    private function zabbixApiRequest($method, $params, $auth = null)
+    {
+        $url = 'http://10.200.1.4/zabbix/api_jsonrpc.php'; // <---- CHANGE THIS
+        $post = [
+            'jsonrpc' => '2.0',
+            'method' => $method,
+            'params' => $params,
+            'id' => 1,
+        ];
+        if ($auth) $post['auth'] = $auth;
+
+        $response = Http::post($url, $post);
+        
+        $contentType = $response->header('Content-Type') ?? '';
+        if (strpos($contentType, 'application/json') === false) {
+            throw new \Exception('Zabbix non-JSON response: ' . $response->body());
+        }
+
+        return $response->json();
+    }
+
+    private function zabbixLogin()
+    {
+        $user = 'support';     
+        $password = 'syndeo@123'; 
+        $result = $this->zabbixApiRequest('user.login', [
+            'user' => $user,
+            'password' => $password,
+        ]);
+        return $result['result'] ?? null;
+    }
+
+    private function grafanaApiRequest($method, $endpoint, $data = [])
+    {
+        $url = 'https://dashboard.syndeonoc.com/api' . $endpoint; // Ensure /api prefix
+        $username = 'support';
+        $password = 'syndeo@123';
+        
+        $response = Http::withBasicAuth($username, $password)
+            ->$method($url, $data);
+
+        $contentType = $response->header('Content-Type') ?? '';
+        if (strpos($contentType, 'application/json') === false) {
+            throw new \Exception('Grafana non-JSON response: ' . $response->body());
+        }
+        return $response->json();
+    }
+
+
+// Helper: Get or create host group
+private function getOrCreateHostGroup($groupName, $auth)
+{
+    $result = $this->zabbixApiRequest('hostgroup.get', [
+        'filter' => ['name' => [$groupName]]
+    ], $auth);
+    if (!empty($result['result'])) {
+        return $result['result'][0]['groupid'];
+    }
+    $create = $this->zabbixApiRequest('hostgroup.create', [
+        'name' => $groupName
+    ], $auth);
+    return $create['result']['groupids'][0];
+}
+// Helper: Get template ID by name
+private function getTemplateIdByName($templateName, $auth)
+{
+    $result = $this->zabbixApiRequest('template.get', [
+        'filter' => ['host' => [$templateName]]
+    ], $auth);
+    if (!empty($result['result'])) {
+        return $result['result'][0]['templateid'];
+    }
+    throw new \Exception("Template {$templateName} not found.");
+}
 }
