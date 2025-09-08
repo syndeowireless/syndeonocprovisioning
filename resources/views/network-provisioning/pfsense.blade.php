@@ -295,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
+                credentials: 'same-origin'
                 body: JSON.stringify({ provision_id: provisionId })
             });
 
