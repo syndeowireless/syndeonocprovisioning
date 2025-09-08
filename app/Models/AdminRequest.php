@@ -11,6 +11,8 @@ class AdminRequest extends Model
 
     protected $table = 'admin_requests';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'email',
@@ -18,6 +20,10 @@ class AdminRequest extends Model
         'status',
         'accepted_by',
         'accepted_at',
+    ];
+
+    protected $casts = [
+        'accepted_at' => 'date',
     ];
 }
 
