@@ -298,7 +298,7 @@ class ProvisionController extends Controller
             ];
         
             //$pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
-            $pfBaseUrl = 'https://40.78.20.4/api/v2';
+            $pfBaseUrl = 'https://40.78.20.4:8443/api/v2';
             $pfApiKey = '45029e5043a28667ecef6c198fb99b81';
         
             $httpClient = Http::withHeaders([
