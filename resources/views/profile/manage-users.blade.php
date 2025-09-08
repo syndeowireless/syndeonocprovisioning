@@ -633,66 +633,75 @@ function addUserToTable(user) {
     updatedTd.textContent = user.updated_at || '';
 
     const actionTd = document.createElement('td');
-    const actionsDiv = document.createElement('div');
-    actionsDiv.className = 'd-flex gap-2 flex-wrap';
+    const isAdmin = (user.role === 'admin');
 
-    // Update button
-    const updateBtn = document.createElement('button');
-    updateBtn.type = 'button';
-    updateBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
-    updateBtn.style.fontSize = '0.75rem';
-    updateBtn.style.backgroundColor = '#13395d';
-    updateBtn.style.border = '2px solid #fbbf0f';
-    updateBtn.style.color = 'white';
-    updateBtn.textContent = 'Update';
-    updateBtn.onmouseover = function(e){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; createRipple(e, this); };
-    updateBtn.onmouseout = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
-    updateBtn.onfocus = function(){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; };
-    updateBtn.onblur = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
-    updateBtn.setAttribute('data-bs-toggle', 'modal');
-    updateBtn.setAttribute('data-bs-target', '#updateUserModal');
-    updateBtn.addEventListener('click', function() {
-        populateUpdateModal(user.id, user.name, user.email);
-    });
+    if (!isAdmin) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'd-flex gap-2 flex-wrap';
 
-    // Reset Password button
-    const resetBtn = document.createElement('button');
-    resetBtn.type = 'button';
-    resetBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
-    resetBtn.style.fontSize = '0.75rem';
-    resetBtn.style.backgroundColor = '#13395d';
-    resetBtn.style.border = '2px solid #fbbf0f';
-    resetBtn.style.color = 'white';
-    resetBtn.textContent = 'Reset Password';
-    resetBtn.onmouseover = function(e){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; createRipple(e, this); };
-    resetBtn.onmouseout = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
-    resetBtn.onfocus = function(){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; };
-    resetBtn.onblur = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
-    resetBtn.setAttribute('data-bs-toggle', 'modal');
-    resetBtn.setAttribute('data-bs-target', '#resetPasswordModal');
-    resetBtn.addEventListener('click', function() {
-        populateResetPasswordModal(user.id, user.name);
-    });
+        // Update button
+        const updateBtn = document.createElement('button');
+        updateBtn.type = 'button';
+        updateBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
+        updateBtn.style.fontSize = '0.75rem';
+        updateBtn.style.backgroundColor = '#13395d';
+        updateBtn.style.border = '2px solid #fbbf0f';
+        updateBtn.style.color = 'white';
+        updateBtn.textContent = 'Update';
+        updateBtn.onmouseover = function(e){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; createRipple(e, this); };
+        updateBtn.onmouseout = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
+        updateBtn.onfocus = function(){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; };
+        updateBtn.onblur = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
+        updateBtn.setAttribute('data-bs-toggle', 'modal');
+        updateBtn.setAttribute('data-bs-target', '#updateUserModal');
+        updateBtn.addEventListener('click', function() {
+            populateUpdateModal(user.id, user.name, user.email);
+        });
 
-    // Delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.type = 'button';
-    deleteBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
-    deleteBtn.style.fontSize = '0.75rem';
-    deleteBtn.style.backgroundColor = '#dc3545';
-    deleteBtn.style.border = '2px solid #dc3545';
-    deleteBtn.style.color = 'white';
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.onmouseover = function(){ this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130'; };
-    deleteBtn.onmouseout = function(){ this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545'; };
-    deleteBtn.addEventListener('click', function() {
-        confirmDeleteUser(user.id, user.name);
-    });
+        // Reset Password button
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
+        resetBtn.style.fontSize = '0.75rem';
+        resetBtn.style.backgroundColor = '#13395d';
+        resetBtn.style.border = '2px solid #fbbf0f';
+        resetBtn.style.color = 'white';
+        resetBtn.textContent = 'Reset Password';
+        resetBtn.onmouseover = function(e){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; createRipple(e, this); };
+        resetBtn.onmouseout = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
+        resetBtn.onfocus = function(){ this.style.backgroundColor='#fbbf0f'; this.style.border='2px solid #13395d'; this.style.color='black'; };
+        resetBtn.onblur = function(){ this.style.backgroundColor='#13395d'; this.style.border='2px solid #fbbf0f'; this.style.color='white'; };
+        resetBtn.setAttribute('data-bs-toggle', 'modal');
+        resetBtn.setAttribute('data-bs-target', '#resetPasswordModal');
+        resetBtn.addEventListener('click', function() {
+            populateResetPasswordModal(user.id, user.name);
+        });
 
-    actionsDiv.appendChild(updateBtn);
-    actionsDiv.appendChild(resetBtn);
-    actionsDiv.appendChild(deleteBtn);
-    actionTd.appendChild(actionsDiv);
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'ripple-button inline-flex items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-lg active:scale-95 transform btn-sm px-3 py-1';
+        deleteBtn.style.fontSize = '0.75rem';
+        deleteBtn.style.backgroundColor = '#dc3545';
+        deleteBtn.style.border = '2px solid '#dc3545';
+        deleteBtn.style.color = 'white';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onmouseover = function(){ this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130'; };
+        deleteBtn.onmouseout = function(){ this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545'; };
+        deleteBtn.addEventListener('click', function() {
+            confirmDeleteUser(user.id, user.name);
+        });
+
+        actionsDiv.appendChild(updateBtn);
+        actionsDiv.appendChild(resetBtn);
+        actionsDiv.appendChild(deleteBtn);
+        actionTd.appendChild(actionsDiv);
+    } else {
+        // Match server-rendered behavior for admin rows
+        const placeholder = document.createElement('span');
+        placeholder.className = 'text-muted';
+        actionTd.appendChild(placeholder);
+    }
 
     row.appendChild(nameTd);
     row.appendChild(emailTd);

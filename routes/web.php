@@ -42,6 +42,10 @@ Route::get('/profile/manage-users', [UserController::class, 'manageUsers'])
     ->middleware(['auth', 'admin'])
     ->name('others.manage-users');
 
+Route::get('/profile/admin-requests', function () {
+    return view('profile.admin-requests');
+})->middleware(['auth', 'admin'])->name('others.admin-requests');
+
 Route::post('/profile/users', [UserController::class, 'store'])
     ->middleware(['auth', 'admin'])
     ->name('users.store');
