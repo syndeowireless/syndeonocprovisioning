@@ -54,6 +54,135 @@ class ProvisionController extends Controller
              return response()->json(['success' => false, 'error' => 'Gateway remoto não pode ser determinado.'], 400);
         }
 
+
+
+
+
+        // Grafana FUNCIONANDO E TESTADO
+        try {
+           if ($grafana_toggle === null) {
+               // Set your variables
+               $folderUid = 'bedmyrwbic7pce';
+
+               // Fetch the folder info to get its numeric ID
+               $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
+               $folderId = $folderResp['id'];
+
+               if ('ADRF' === 'ADRF') {
+                   $templateUid1 = 'beiyn9fdbtvale';
+               } elseif ('oem' === 'COMBA ERRCS') {
+                   $templateUid1 = 'beiyn9fdbt5hce';
+               }
+
+               if ('oem' === 'ADRF') {
+                   $templateUid2 = 'feutv2m5zcs1se';
+               } elseif ('COMBA ERRCS' === 'COMBA ERRCS') {
+                   $templateUid2 = 'aebkeah3awdba';
+               }
+
+
+               // --------- Dashboard 1 ---------
+               $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
+               $templateDashboard1 = $templateResp1['dashboard'];
+
+               // Prepare the dashboard payload
+               unset($templateDashboard1['id'], $templateDashboard1['uid']);
+               $templateDashboard1['title'] = 'dashboard test 1';
+
+               // Create dashboard 1 in the folder
+               $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                   'dashboard' => $templateDashboard1,
+                   'folderId'  => $folderId,
+                   'overwrite' => false,
+               ]);
+
+               // --------- Dashboard 2 ---------
+               $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
+               $templateDashboard2 = $templateResp2['dashboard'];
+
+               unset($templateDashboard2['id'], $templateDashboard2['uid']);
+               $templateDashboard2['title'] = 'Dashboard test 2';
+
+               // Create dashboard 2 in the folder
+               $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                   'dashboard' => $templateDashboard2,
+                   'folderId'  => $folderId,
+                   'overwrite' => false,
+               ]);
+
+
+
+           } else {
+
+               // Grafana: Add dashboard
+               $folderResp = $this->grafanaApiRequest('post', '/folders', [
+                   'title' => $company_name,
+               ]);
+               $folderId = $folderResp['id'] ?? null; 
+           
+               $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
+               $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
+               $modelDashboard = $modelDashboardResp['dashboard'];
+               $modelDashboardId = $modelDashboard['id'];
+           
+           
+               $newDashboard = $modelDashboard;
+               unset($newDashboard['id']);
+               unset($newDashboard['uid']);
+               $newDashboard['title'] = $company_name;
+           
+           
+               $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                   'dashboard' => $newDashboard,
+                   'folderId'  => $folderId, 
+                   'overwrite' => false,
+               ]);
+           
+               $email_parts = explode('@', $customer_email);
+               $username_grafana = $email_parts[0];
+               #####
+               // 1. Create new user
+               $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                   'name' => $username_grafana,
+                   'email' => $customer_email,
+                   'login' => $username_grafana,
+                   'password' => '$ynd30@noc',
+               ]);
+               $newUserId = $newUserResp['id'] ?? null;
+
+               // 2. Get permissions for the model dashboard
+               $dashboardId = $modelDashboardId; 
+               $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
+               $permissions = $permissionsResp; 
+
+               // 3. Find the model user's permission
+               $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
+               $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
+
+               // 4. Assign the same permission to the new user
+               if ($modelUserPermission && $newUserId) {
+                   $payload = [
+                       [
+                           'userId' => $newUserId,
+                           'permission' => $modelUserPermission['permission'],
+                       ]
+                   ];
+                   $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+               }
+               #####
+           }
+           $results['grafana'] = 'Success';
+        } catch (\Throwable $e) {
+           $errors['grafana'] = $e->getMessage();
+        }
+
+
+
+
+
+
+
+
         // Início da chamada à API do pfSense
         try {
             $phase1Payload = [
