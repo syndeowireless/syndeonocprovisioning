@@ -274,7 +274,7 @@
     @if(auth()->user()->isAdmin())
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <button class="btn btn-custom btn-lg">
+            <button id="start-provisioning" data-provision-id="{{ $networkManagement->id }}" class="btn btn-custom btn-lg">
                 Start Provisioning
             </button>
         </div>
@@ -472,6 +472,47 @@ code {
     border: 1px solid #e9ecef;
 }
 </style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('start-provisioning');
+    btn.addEventListener('click', async function() {
+        const provisionId = btn.getAttribute('data-provision-id');
+        const csrfToken = '{{ csrf_token() }}';
+
+        try {
+            const response = await fetch('{{ route("provision.start") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ provision_id: provisionId })
+            });
+
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                // Not JSON, probably HTML or plain text error
+                alert('Server returned non-JSON response:\n\n' + text);
+                return;
+            }
+
+            if (data.success) {
+                alert('Provisioning successful!');
+            } else {
+                alert('Provisioning failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    });
+});
+</script>
 
 <script>
 function toggleXmlPreview() {
