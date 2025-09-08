@@ -47,7 +47,7 @@
             @endif
         </div>
 
-        <div>
+        <!-- <div>
             <x-input-label for="profile_picture" :value="__('Profile Picture')" />
             <div class="mt-1">
                 <div id="drop-zone" class="relative border-2 border-gray-300 border-dashed rounded-lg p-4 hover:border-gray-400 focus:border-indigo-500 transition-colors">
@@ -92,7 +92,7 @@
                 </div>
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
-        </div>
+        </div> -->
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
