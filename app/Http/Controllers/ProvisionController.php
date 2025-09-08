@@ -163,7 +163,7 @@ class ProvisionController extends Controller
                "descr" => "OpenVPN",
                "mode" => "tunnel",
                "localid_type" => "network",
-               "localid_address" => "10.0.9.0",
+               "localid_address" => "10.0.9.1",
                "localid_netbits" => 24,
                "remoteid_type" => "network",
                "remoteid_address" => $Ip_Plan,
