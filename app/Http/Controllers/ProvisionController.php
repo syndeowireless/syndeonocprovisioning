@@ -226,8 +226,8 @@ class ProvisionController extends Controller
                 "remote_gateway" => $remote_gateway,
                 "authentication_method" => "pre_shared_key",
                 "pre_shared_key" => $random_password,
-                "myid_type" => "myaddress",
-                "peerid_type" => "peeraddress",
+                "myid_type" => "keyid tag",
+                "peerid_type" => "keyid tag",
                 "lifetime" => 28800,
                 "rekey_time" => 28700,
                 "reauth_time" => 0,
@@ -305,7 +305,7 @@ class ProvisionController extends Controller
                         "keylen" => 128
                     ]
                 ],
-                "hash_algorithm_option" => ["hmac_sha1"],
+                "hash_algorithm_option" => ["hmac_sha256"],
                 "pfsgroup" => 14,
                 "lifetime" => 3600
             ];
@@ -336,7 +336,7 @@ class ProvisionController extends Controller
                "descr" => "OpenVPN",
                "mode" => "tunnel",
                "localid_type" => "network",
-               "localid_address" => "10.0.2.1",
+               "localid_address" => "10.0.8.0",
                "localid_netbits" => 24,
                "remoteid_type" => "network",
                "remoteid_address" => $Ip_Plan,
@@ -348,7 +348,7 @@ class ProvisionController extends Controller
                        "keylen" => 128
                    ]
                ],
-               "hash_algorithm_option" => ["hmac_sha1"],
+               "hash_algorithm_option" => ["hmac_sha256"],
                "pfsgroup" => 14,
                "lifetime" => 3600
             ];
