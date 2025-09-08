@@ -297,12 +297,11 @@ class ProvisionController extends Controller
                 ]
             ];
         
-            //$pfBaseUrl = 'https://10.200.1.10:8443/api/v2';
             $pfBaseUrl = 'https://40.78.20.4:8443/api/v2';
-            $pfApiKey = '45029e5043a28667ecef6c198fb99b81';
+            $pfApiKey = '45029e5043a28667ecef6c198fb99b81'; // Certifique-se de que esta é uma chave de API válida
         
             $httpClient = Http::withHeaders([
-                'Authorization' => "Bearer $pfApiKey",
+                'X-API-Key' => $pfApiKey, // Alterado de 'Authorization' para 'X-API-Key'
                 'Accept'        => 'application/json'
             ])->withoutVerifying();
             
@@ -324,7 +323,7 @@ class ProvisionController extends Controller
         
             $ikeid = $phase1Data['data']['ikeid'];
         
-            $Ip_Plan = subtract_from_last_octet($first_usable_ip, 2);
+            $Ip_Plan = $this->subtract_from_last_octet($first_usable_ip, 2);
         
             // 2. Cria o Phase 2.1
             $phase2_1Payload = [
@@ -394,7 +393,6 @@ class ProvisionController extends Controller
             return response($e->getMessage(), 500)
                 ->header('Content-Type', 'text/plain');
         }
-//
 //
 //
         //return response()->json([
