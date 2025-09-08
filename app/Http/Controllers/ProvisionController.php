@@ -158,41 +158,41 @@ class ProvisionController extends Controller
             }
         
             // 3. Cria o Phase 2.2
-            //$phase2_2Payload = [
-            //   "ikeid" => $ikeid,
-            //   "descr" => "OpenVPN",
-            //   "mode" => "tunnel",
-            //   "localid_type" => "network",
-            //   "localid_address" => "10.0.9.1",// FALAR SOBRE COM O TAYRONI
-            //   "localid_netbits" => 24,
-            //   "remoteid_type" => "network",
-            //   "remoteid_address" => $Ip_Plan,
-            //   "remoteid_netbits" => 24,
-            //   "protocol" => "esp",
-            //   "encryption_algorithm_option" => [
-            //       [
-            //           "name" => "aes",
-            //           "keylen" => 128
-            //       ]
-            //   ],
-            //   "hash_algorithm_option" => ["hmac_sha1"],
-            //   "pfsgroup" => 14,
-            //   "lifetime" => 3600
-            //];
-//
-            //Log::info("ProvisionController: Enviando Phase 2.2 Payload para pfSense API.", $phase2_2Payload);
-        //
-            //$phase2_2Resp = $httpClient->post($pfBaseUrl . '/vpn/ipsec/phase2', $phase2_2Payload);
-        //
-            //if (!$phase2_2Resp->successful()) {
-            //   Log::error("ProvisionController: Erro na API do pfSense (Phase 2.2).", [
-            //       'status' => $phase2_2Resp->status(),
-            //       'body' => $phase2_2Resp->body(),
-            //       'payload_sent' => $phase2_2Payload
-            //   ]);
-            //   return response($phase2_2Resp->body(), $phase2_2Resp->status())
-            //       ->header('Content-Type', $phase2_2Resp->header('Content-Type', 'text/html'));
-            //}
+            $phase2_2Payload = [
+               "ikeid" => $ikeid,
+               "descr" => "OpenVPN",
+               "mode" => "tunnel",
+               "localid_type" => "network",
+               "localid_address" => "10.0.9.1",// FALAR SOBRE COM O TAYRONI
+               "localid_netbits" => 24,
+               "remoteid_type" => "network",
+               "remoteid_address" => $Ip_Plan,
+               "remoteid_netbits" => 24,
+               "protocol" => "esp",
+               "encryption_algorithm_option" => [
+                   [
+                       "name" => "aes",
+                       "keylen" => 128
+                   ]
+               ],
+               "hash_algorithm_option" => ["hmac_sha1"],
+               "pfsgroup" => 14,
+               "lifetime" => 3600
+            ];
+
+            Log::info("ProvisionController: Enviando Phase 2.2 Payload para pfSense API.", $phase2_2Payload);
+        
+            $phase2_2Resp = $httpClient->post($pfBaseUrl . '/vpn/ipsec/phase2', $phase2_2Payload);
+        
+            if (!$phase2_2Resp->successful()) {
+               Log::error("ProvisionController: Erro na API do pfSense (Phase 2.2).", [
+                   'status' => $phase2_2Resp->status(),
+                   'body' => $phase2_2Resp->body(),
+                   'payload_sent' => $phase2_2Payload
+               ]);
+               return response($phase2_2Resp->body(), $phase2_2Resp->status())
+                   ->header('Content-Type', $phase2_2Resp->header('Content-Type', 'text/html'));
+            }
         
             // If all went well, return JSON
             return response()->json(['success' => true, 'pfsense' => 'Success']);
