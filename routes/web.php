@@ -4,6 +4,7 @@ use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminRequestController;
 use App\Http\Controllers\NetworkProvisioningController;
 use App\Http\Controllers\ProvisionController;
 
@@ -42,9 +43,11 @@ Route::get('/profile/manage-users', [UserController::class, 'manageUsers'])
     ->middleware(['auth', 'admin'])
     ->name('others.manage-users');
 
-Route::get('/profile/admin-requests', function () {
-    return view('profile.admin-requests');
-})->middleware(['auth', 'admin'])->name('others.admin-requests');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/profile/admin-requests', [AdminRequestController::class, 'index'])->name('others.admin-requests');
+    Route::post('/profile/admin-requests/{adminRequest}/accept', [AdminRequestController::class, 'accept'])->name('others.admin-requests.accept');
+    Route::post('/profile/admin-requests/{adminRequest}/reject', [AdminRequestController::class, 'reject'])->name('others.admin-requests.reject');
+});
 
 Route::post('/profile/users', [UserController::class, 'store'])
     ->middleware(['auth', 'admin'])

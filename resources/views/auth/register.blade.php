@@ -1,4 +1,5 @@
 @extends('layouts.guest')
+
 @section('content')
     <form class="form-horizontal mt-4" method="POST" action="{{ route('register') }}">
         @csrf
@@ -15,6 +16,17 @@
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="{{ __('Enter email') }}" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <!-- Role -->
+        <div class="mb-3">
+            <x-input-label for="role" :value="__('Role')" />
+            <select id="role" name="role" class="form-control" required>
+                <option value="">{{ __('Select Role') }}</option>
+                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>{{ __('Admin') }}</option>
+                <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>{{ __('User') }}</option>
+            </select>
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
         <!-- Password -->
@@ -50,8 +62,7 @@
         </div>
         <div class="mb-0 row">
             <div class="col-12 mt-4">
-
-                <p class="text-muted mb-0 font-size-14 mt-2" style="text-align:center;">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a>
+                 <p class="text-muted mb-0 font-size-14 mt-2" style="text-align:center;">{{ __('By registering you agree to the') }} {{ config('app.name', 'Laravel') }} <a href="#" class="text-primary">{{ __('Terms of Use') }}</a>
             </div>
         </div>
         <div class="mt-4 text-center">
