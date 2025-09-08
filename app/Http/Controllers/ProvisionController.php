@@ -60,120 +60,152 @@ class ProvisionController extends Controller
 
         // Grafana FUNCIONANDO E TESTADO
         try {
-           if ($grafana_toggle === null) {
-               // Set your variables
-               $folderUid = 'bedmyrwbic7pce';
-
-               // Fetch the folder info to get its numeric ID
-               $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
-               $folderId = $folderResp['id'];
-
-               if ($oem === 'ADRF') {
-                   $templateUid1 = 'beiyn9fdbtvale';
-               } elseif ($oem === 'COMBA ERRCS') {
-                   $templateUid1 = 'beiyn9fdbt5hce';
-               }
-
-               if ($oem === 'ADRF') {
-                   $templateUid2 = 'feutv2m5zcs1se';
-               } elseif ($oem === 'COMBA ERRCS') {
-                   $templateUid2 = 'aebkeah3awdba';
-               }
-
-
-               // --------- Dashboard 1 ---------
-               $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
-               $templateDashboard1 = $templateResp1['dashboard'];
-
-               // Prepare the dashboard payload
-               unset($templateDashboard1['id'], $templateDashboard1['uid']);
-               $templateDashboard1['title'] = 'dashboard test 1';
-
-               // Create dashboard 1 in the folder
-               $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                   'dashboard' => $templateDashboard1,
-                   'folderId'  => $folderId,
-                   'overwrite' => false,
-               ]);
-
-               // --------- Dashboard 2 ---------
-               $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
-               $templateDashboard2 = $templateResp2['dashboard'];
-
-               unset($templateDashboard2['id'], $templateDashboard2['uid']);
-               $templateDashboard2['title'] = 'Dashboard test 2';
-
-               // Create dashboard 2 in the folder
-               $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                   'dashboard' => $templateDashboard2,
-                   'folderId'  => $folderId,
-                   'overwrite' => false,
-               ]);
-
-
-
-           } else {
-
-               // Grafana: Add dashboard
-               $folderResp = $this->grafanaApiRequest('post', '/folders', [
-                   'title' => $company_name,
-               ]);
-               $folderId = $folderResp['id'] ?? null; 
-           
-               $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
-               $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
-               $modelDashboard = $modelDashboardResp['dashboard'];
-               $modelDashboardId = $modelDashboard['id'];
-           
-           
-               $newDashboard = $modelDashboard;
-               unset($newDashboard['id']);
-               unset($newDashboard['uid']);
-               $newDashboard['title'] = $company_name;
-           
-           
-               $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                   'dashboard' => $newDashboard,
-                   'folderId'  => $folderId, 
-                   'overwrite' => false,
-               ]);
-           
-               $email_parts = explode('@', $customer_email);
-               $username_grafana = $email_parts[0];
-               #####
-               // 1. Create new user
-               $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
-                   'name' => $username_grafana,
-                   'email' => $customer_email,
-                   'login' => $username_grafana,
-                   'password' => '$ynd30@noc',
-               ]);
-               $newUserId = $newUserResp['id'] ?? null;
-
-               // 2. Get permissions for the model dashboard
-               $dashboardId = $modelDashboardId; 
-               $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
-               $permissions = $permissionsResp; 
-
-               // 3. Find the model user's permission
-               $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
-               $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
-
-               // 4. Assign the same permission to the new user
-               if ($modelUserPermission && $newUserId) {
-                   $payload = [
-                       [
-                           'userId' => $newUserId,
-                           'permission' => $modelUserPermission['permission'],
-                       ]
-                   ];
-                   $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
-               }
-               #####
-           }
-           $results['grafana'] = 'Success';
+            if ($grafana_toggle === null) {
+                // Set your variables
+                $folderUid = 'bedmyrwbic7pce';
+            
+                Log::info("Grafana: Buscando informações da pasta", ['folderUid' => $folderUid]);
+                $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
+                Log::info("Grafana: Resposta da pasta recebida", ['folderResp' => $folderResp]);
+                $folderId = $folderResp['id'];
+            
+                // Seleção de templates
+                if ($oem === 'ADRF') {
+                    $templateUid1 = 'beiyn9fdbtvale';
+                } elseif ($oem === 'COMBA ERRCS') {
+                    $templateUid1 = 'beiyn9fdbt5hce';
+                }
+            
+                if ($oem === 'ADRF') {
+                    $templateUid2 = 'feutv2m5zcs1se';
+                } elseif ($oem === 'COMBA ERRCS') {
+                    $templateUid2 = 'aebkeah3awdba';
+                }
+            
+                $property_name_1 = $property_name . '_1';
+                $property_name_2 = $property_name . '_2';
+            
+                // --------- Dashboard 1 ---------
+                Log::info("Grafana: Buscando template para Dashboard 1", ['templateUid1' => $templateUid1]);
+                $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
+                $templateDashboard1 = $templateResp1['dashboard'];
+            
+                unset($templateDashboard1['id'], $templateDashboard1['uid']);
+                $templateDashboard1['title'] = $property_name_1;
+            
+                Log::info("Grafana: Criando Dashboard 1", [
+                    'dashboard' => $templateDashboard1,
+                    'folderId'  => $folderId,
+                ]);
+                $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                    'dashboard' => $templateDashboard1,
+                    'folderId'  => $folderId,
+                    'overwrite' => false,
+                ]);
+                Log::info("Grafana: Dashboard 1 criado", ['response' => $newDashboardResp1]);
+            
+                // --------- Dashboard 2 ---------
+                Log::info("Grafana: Buscando template para Dashboard 2", ['templateUid2' => $templateUid2]);
+                $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
+                $templateDashboard2 = $templateResp2['dashboard'];
+            
+                unset($templateDashboard2['id'], $templateDashboard2['uid']);
+                $templateDashboard2['title'] = $property_name_2;
+            
+                Log::info("Grafana: Criando Dashboard 2", [
+                    'dashboard' => $templateDashboard2,
+                    'folderId'  => $folderId,
+                ]);
+                $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                    'dashboard' => $templateDashboard2,
+                    'folderId'  => $folderId,
+                    'overwrite' => false,
+                ]);
+                Log::info("Grafana: Dashboard 2 criado", ['response' => $newDashboardResp2]);
+            
+            } else {
+            
+                Log::info("Grafana: Criando nova pasta", ['title' => $company_name]);
+                $folderResp = $this->grafanaApiRequest('post', '/folders', [
+                    'title' => $company_name,
+                ]);
+                Log::info("Grafana: Pasta criada", ['folderResp' => $folderResp]);
+                $folderId = $folderResp['id'] ?? null; 
+            
+                $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
+                Log::info("Grafana: Buscando dashboard modelo", ['modelUid' => $modelUid]);
+                $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
+                $modelDashboard = $modelDashboardResp['dashboard'];
+                $modelDashboardId = $modelDashboard['id'];
+            
+                $newDashboard = $modelDashboard;
+                unset($newDashboard['id']);
+                unset($newDashboard['uid']);
+                $newDashboard['title'] = $company_name;
+            
+                Log::info("Grafana: Criando dashboard baseado no modelo", [
+                    'dashboard' => $newDashboard,
+                    'folderId'  => $folderId, 
+                ]);
+                $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                    'dashboard' => $newDashboard,
+                    'folderId'  => $folderId, 
+                    'overwrite' => false,
+                ]);
+                Log::info("Grafana: Dashboard criado", ['response' => $dashboardResp]);
+            
+                $email_parts = explode('@', $customer_email);
+                $username_grafana = $email_parts[0];
+            
+                // 1. Create new user
+                Log::info("Grafana: Criando novo usuário", [
+                    'name' => $username_grafana,
+                    'email' => $customer_email,
+                ]);
+                $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                    'name' => $username_grafana,
+                    'email' => $customer_email,
+                    'login' => $username_grafana,
+                    'password' => '$ynd30@noc',
+                ]);
+                Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
+                $newUserId = $newUserResp['id'] ?? null;
+            
+                // 2. Get permissions for the model dashboard
+                $dashboardId = $modelDashboardId; 
+                Log::info("Grafana: Buscando permissões do dashboard modelo", ['dashboardId' => $dashboardId]);
+                $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
+                Log::info("Grafana: Permissões recebidas", ['permissionsResp' => $permissionsResp]);
+                $permissions = $permissionsResp; 
+            
+                // 3. Find the model user's permission
+                $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
+                $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
+            
+                // 4. Assign the same permission to the new user
+                if ($modelUserPermission && $newUserId) {
+                    $payload = [
+                        [
+                            'userId' => $newUserId,
+                            'permission' => $modelUserPermission['permission'],
+                        ]
+                    ];
+                    Log::info("Grafana: Definindo permissão para novo usuário", [
+                        'dashboardId' => $dashboardId,
+                        'payload' => $payload,
+                    ]);
+                    $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+                    Log::info("Grafana: Permissão definida resposta", ['setPermissionResp' => $setPermissionResp]);
+                }
+            }
+            $results['grafana'] = 'Success';
+            Log::info("Grafana: Provisionamento finalizado com sucesso", ['results' => $results]);
         } catch (\Throwable $e) {
-           $errors['grafana'] = $e->getMessage();
+            $errors['grafana'] = $e->getMessage();
+            Log::error("Erro no provisionamento Grafana", [
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
 
 
@@ -216,26 +248,6 @@ class ProvisionController extends Controller
                 'X-API-Key' => $pfApiKey,
                 'Accept' => 'application/json'
             ])->withoutVerifying();
-
-            // ----------- CHECAGEM DUPLICIDADE PHASE 1 -----------
-            $existingPhase1Resp = $httpClient->get($pfBaseUrl . "/vpn/ipsec/phase1");
-            if ($existingPhase1Resp->successful()) {
-                $phase1DataList = $existingPhase1Resp->json();
-                if (isset($phase1DataList['data']) && is_array($phase1DataList['data'])) {
-                    foreach ($phase1DataList['data'] as $phase1) {
-                        if ($phase1['remote_gateway'] === $phase1Payload['remote_gateway']) {
-                            Log::error("ProvisionController: Phase 1 já existe para esse remote_gateway.", [
-                                'remote_gateway' => $phase1Payload['remote_gateway']
-                            ]);
-                            return response()->json([
-                                'success' => false,
-                                'error' => 'Phase 1 já existe com esse remote_gateway.'
-                            ], 400);
-                        }
-                    }
-                }
-            }
-            // ----------- FIM CHECAGEM DUPLICIDADE PHASE 1 -----------
 
             // Log do payload antes de enviar
             Log::info("ProvisionController: Enviando Phase 1 Payload para pfSense API.", $phase1Payload);
@@ -340,38 +352,6 @@ class ProvisionController extends Controller
                "pfsgroup" => 14,
                "lifetime" => 3600
             ];
-
-            // ----------- CHECAGEM DUPLICIDADE PHASE 2.2 -----------
-            $existingPhase2Resp = $httpClient->get($pfBaseUrl . "/vpn/ipsec/phase2?ikeid={$ikeid}");
-            if ($existingPhase2Resp->successful()) {
-                $existingPhase2Data = $existingPhase2Resp->json();
-                if (isset($existingPhase2Data['data']) && is_array($existingPhase2Data['data'])) {
-                    foreach ($existingPhase2Data['data'] as $phase2) {
-                        if (
-                            $phase2['localid_address'] === $phase2_2Payload['localid_address'] &&
-                            (int)$phase2['localid_netbits'] === (int)$phase2_2Payload['localid_netbits'] &&
-                            $phase2['remoteid_address'] === $phase2_2Payload['remoteid_address'] &&
-                            (int)$phase2['remoteid_netbits'] === (int)$phase2_2Payload['remoteid_netbits']
-                        ) {
-                            Log::error("ProvisionController: Phase 2.2 já existente para esse Phase 1.", [
-                                'ikeid' => $ikeid,
-                                'payload' => $phase2_2Payload
-                            ]);
-                            return response()->json([
-                                'success' => false,
-                                'error' => 'Phase 2.2 já existe para esse Phase 1 com esta combinação de redes.'
-                            ], 400);
-                        }
-                    }
-                }
-            } else {
-                Log::warning("ProvisionController: Não foi possível checar duplicidade de Phase 2.2.", [
-                    'ikeid' => $ikeid,
-                    'response' => $existingPhase2Resp->body()
-                ]);
-                // Você pode decidir se quer abortar aqui ou tentar criar mesmo assim.
-            }
-            // ----------- FIM CHECAGEM DUPLICIDADE PHASE 2.2 -----------
             
             Log::info("ProvisionController: Enviando Phase 2.2 Payload para pfSense API.", $phase2_2Payload);
         
