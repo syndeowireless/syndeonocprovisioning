@@ -2,7 +2,17 @@
 
 @section('content')
 
-
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <h4 class="mb-0">Provisioning Output</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @php
     use Illuminate\Support\Str;
 
@@ -186,12 +196,20 @@
         width: 120px;
     }
 </style>
-<div class="bg-white rounded-3xl border border-slate-200 p-5 p-md-5 w-100 mx-auto shadow-lg" style="margin-top: 10%; max-width: 1600px;">
-    <h1 style="font-size:2rem;font-weight:700;color:#64748b;margin-bottom:2.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
-    <div class="pfsense-row">
-        <!-- PFsense Config File Segment (always visible) -->
-        <div class="pfsense-segment">
-            <h2>PFsense Config File</h2>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-code me-2"></i>
+                        PFsense Config File
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h1 style="font-size:1.5rem;font-weight:700;color:#64748b;margin-bottom:1.5rem;letter-spacing:1px;">{{ $propertyName ?? 'PROPERTY NAME' }}</h1>
+                    <div class="pfsense-row">
+                        <div class="pfsense-segment" style="padding:0; border:none;">
             <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
                 <div style="flex-shrink:0;">
                     <!-- Ícone MDI grande -->
@@ -231,54 +249,82 @@
                     Share
                 </a>
             </div>
-        </div>
-
-        @if($hasMaster)
-        <!-- DAS Master Unit IPs (Dynamic) -->
-        <div class="pfsense-segment">
-            <h2>DAS Master Unit IPs</h2>
-            <div class="pfsense-table-grid pfsense-table-grid-header">
-                <span></span>
-                <span>IP</span>
-                <span>Mask</span>
-            </div>
-            @foreach($ipAssignments as $assignment)
-                @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
-                    <div class="pfsense-table-grid">
-                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
-                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['ip'] ?? 'N/A' }}</span>
-                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['mask'] ?? 'N/A' }}</span>
+                        </div>
                     </div>
-                @endif
-            @endforeach
-        </div>
-        @endif
-
-        @if($hasBda)
-        <!-- ERRCS BDA IPs (Dynamic) -->
-        <div class="pfsense-segment">
-            <h2>ERRCS BDA IPs</h2>
-            <div class="pfsense-table-grid pfsense-table-grid-header">
-                <span></span>
-                <span>IP</span>
-                <span>Mask</span>
+                </div>
             </div>
-            @foreach($ipAssignments as $assignment)
-                @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
-                    <div class="pfsense-table-grid">
-                        <span class="pfsense-label">{{ $assignment['label'] }}</span>
-                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['ip'] ?? 'N/A' }}</span>
-                        <span class="pfsense-value" style="text-align:center;">{{ $assignment['mask'] ?? 'N/A' }}</span>
-                    </div>
-                @endif
-            @endforeach
         </div>
-        @endif
-
     </div>
-<button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
-    Start Provisioning
-</button>
+
+    @if($hasMaster)
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-sitemap me-2"></i>
+                        DAS Master Unit IPs
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="pfsense-table-grid pfsense-table-grid-header">
+                        <span></span>
+                        <span>IP</span>
+                        <span>Mask</span>
+                    </div>
+                    @foreach($ipAssignments as $assignment)
+                        @if(Str::startsWith($assignment['label'], 'Master Unit Sector'))
+                            <div class="pfsense-table-grid">
+                                <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                                <span class="pfsense-value" style="text-align:center;">{{ $assignment['ip'] ?? 'N/A' }}</span>
+                                <span class="pfsense-value" style="text-align:center;">{{ $assignment['mask'] ?? 'N/A' }}</span>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($hasBda)
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header text-white" style="background-color: #13395d; border-bottom: 4px solid #fbbf0f;">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-broadcast-tower me-2"></i>
+                        ERRCS BDA IPs
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="pfsense-table-grid pfsense-table-grid-header">
+                        <span></span>
+                        <span>IP</span>
+                        <span>Mask</span>
+                    </div>
+                    @foreach($ipAssignments as $assignment)
+                        @if(Str::startsWith($assignment['label'], 'ERRCS BDA'))
+                            <div class="pfsense-table-grid">
+                                <span class="pfsense-label">{{ $assignment['label'] }}</span>
+                                <span class="pfsense-value" style="text-align:center;">{{ $assignment['ip'] ?? 'N/A' }}</span>
+                                <span class="pfsense-value" style="text-align:center;">{{ $assignment['mask'] ?? 'N/A' }}</span>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <button id="start-provisioning" class="btn btn-custom btn-lg" data-provision-id="{{ $provisionId }}">
+                Start Provisioning
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>

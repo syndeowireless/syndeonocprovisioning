@@ -1,15 +1,13 @@
+@extends('layouts.app')
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+@section("content")
 @if(session("success"))
     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
         {{ session("success") }}
     </div>
 @endif
-
-@extends("layouts.app")
-
-@vite(['resources/css/app.css', 'resources/js/app.js'])
-
-@section("content")
 <style>
 /* Simple Title Styles */
 .title-container {
