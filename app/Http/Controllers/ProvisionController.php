@@ -71,9 +71,9 @@ class ProvisionController extends Controller
            $groupId = $this->getOrCreateHostGroup($company_name, $auth);
         
            // 2. Get template ID based on Equipment
-           $templateId_Master_Unit_Equipment = $this->getTemplateIdByName($oem, $auth);
+           $templateId_Master_Unit_Equipment = $this->getTemplateIdByName($das_equipment, $auth);
 
-           $templateId_BDA_Equipment = $this->getTemplateIdByName($oem, $auth);
+           $templateId_BDA_Equipment = $this->getTemplateIdByName($errcs_equipment, $auth);
 
            $templateId = $this->getTemplateIdByName($oem, $auth);
         
@@ -113,7 +113,7 @@ class ProvisionController extends Controller
                $result = $this->zabbixApiRequest('host.create', [
                    'host' => $hostName,
                    'groups' => [['groupid' => $groupId]],
-                   'templates' => [['templateid' => $templateId]],
+                   'templates' => [['templateid' => $templateId_Master_Unit_Equipment]],
                    'interfaces' => [[
                        'type' => 1,
                        'main' => 1,
@@ -133,7 +133,7 @@ class ProvisionController extends Controller
                $result = $this->zabbixApiRequest('host.create', [
                    'host' => $hostName,
                    'groups' => [['groupid' => $groupId]],
-                   'templates' => [['templateid' => $templateId]],
+                   'templates' => [['templateid' => $templateId_BDA_Equipment]],
                    'interfaces' => [[
                        'type' => 1,
                        'main' => 1,
