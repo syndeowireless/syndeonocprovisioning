@@ -242,7 +242,8 @@ class ProvisionController extends Controller
                     ]
                 ]
             ];
-        
+
+            
             $pfBaseUrl = env('PFSENSE_API_BASE_URL', 'https://40.78.20.4:8443/api/v2'); // Usar variável de ambiente
             $pfApiKey = env('PFSENSE_API_KEY', '45029e5043a28667ecef6c198fb99b81'); // Usar variável de ambiente
         
