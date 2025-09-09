@@ -7,7 +7,6 @@
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <h4 class="mb-0">Provisioning Output</h4>
                 </div>
             </div>
         </div>
@@ -320,7 +319,7 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <button id="start-provisioning" class="btn btn-custom btn-lg" data-provision-id="{{ $provisionId }}">
+            <button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
                 Start Provisioning
             </button>
         </div>

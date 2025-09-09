@@ -21,8 +21,8 @@
     margin-bottom: 0;
 }
 
-/* Bootstrap utility class for conditional display */
-.d-none {
+/* Scoped utility to avoid clashing with Bootstrap's responsive .d-none/.d-lg-* */
+.is-hidden {
     display: none !important;
 }
 
@@ -872,7 +872,7 @@ body.loading-active {
 </div>
 
 <!-- Conditional Customer Email field (hidden until toggle is yes) -->
-<div id="grafana-email-field" class="{{ old('grafana_toggle') ? '' : 'd-none' }}">
+<div id="grafana-email-field" class="{{ old('grafana_toggle') ? '' : 'is-hidden' }}">
     <div class="grid-container">
         <div class="form-group">
             <label class="form-label" for="company_name">Company Name</label>
@@ -901,7 +901,7 @@ body.loading-active {
     </div>
 </div>
 
-<div id="static-ip-fields" class="{{ old('static_ip_check') ? '' : 'd-none' }}">
+<div id="static-ip-fields" class="{{ old('static_ip_check') ? '' : 'is-hidden' }}">
     <div class="grid-container">
         <div class="form-group">
             <label class="form-label" for="static_ip">IP Address</label>
@@ -1735,9 +1735,9 @@ function toggleStaticIpFields() {
     var checkbox = document.getElementById('static_ip_check');
     var fields = document.getElementById('static-ip-fields');
     if (checkbox.checked) {
-        fields.classList.remove('d-none');
+        fields.classList.remove('is-hidden');
     } else {
-        fields.classList.add('d-none');
+        fields.classList.add('is-hidden');
     }
 }
 
@@ -1751,9 +1751,9 @@ function toggleGrafanaEmail() {
     const toggle = document.getElementById('grafana_toggle');
     const emailField = document.getElementById('grafana-email-field');
     if (toggle.checked) {
-        emailField.classList.remove('d-none');
+        emailField.classList.remove('is-hidden');
     } else {
-        emailField.classList.add('d-none');
+        emailField.classList.add('is-hidden');
     }
 }
 
