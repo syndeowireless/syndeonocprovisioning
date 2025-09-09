@@ -27,13 +27,6 @@
         </p>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
-        <a href="{{ url()->previous() }}" class="btn btn-outline-primary px-4 py-2" style="border-radius: 8px; font-weight: 500;">
-            <i class="mdi mdi-arrow-left me-2"></i>Go Back
-        </a>
-    </div>
-
     <!-- Additional Help -->
     <div class="mt-5 pt-4" style="border-top: 1px solid #e9ecef;">
         <p class="text-muted small mb-2">

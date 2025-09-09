@@ -132,7 +132,4 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/provision/start', [ProvisionController::class, 'start'])->name('provision.start');
 
-// Test route to demonstrate the enhanced 403 error page
-Route::get('/admin/test', function () {
-    return view('dashboard'); // Simple view for testing
-})->middleware(['auth', 'admin'])->name('admin.test');
+
