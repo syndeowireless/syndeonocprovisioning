@@ -56,9 +56,15 @@
                     <i class="mdi mdi-account-circle font-size-24 text-muted" style="color: #6c757d !important; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 50%; border: 2px solid #fbbf0f;"></i>
                 @endif
                 
-                <div class="d-flex flex-column align-items-start" style="margin-left: 12px;">
+                <!-- User info - hidden on mobile, visible on desktop -->
+                <div class="d-none d-lg-flex flex-column align-items-start" style="margin-left: 12px;">
                     <span class="fw-semibold text-dark" style="font-size: 14px; line-height: 1.2; margin-bottom: 2px;">{{ $authUser->name ?? 'User' }}</span>
                     <span class="text-muted" style="font-size: 12px; line-height: 1.2;">{{ $authUser->email ?? 'user@example.com' }}</span>
+                </div>
+                
+                <!-- Company logo - visible only on mobile -->
+                <div class="d-lg-none d-flex align-items-center" style="margin-left: 12px;">
+                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Company Logo" style="width: 32px; height: 32px; object-fit: contain;">
                 </div>
                 
                 <i class="mdi mdi-chevron-down text-muted" style="margin-left: 8px; font-size: 16px; transition: transform 0.3s ease;"></i>
@@ -74,9 +80,16 @@
                         @else
                             <i class="mdi mdi-account-circle font-size-32 text-white me-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%; border: 3px solid rgba(255,255,255,0.3);"></i>
                         @endif
-                        <div class="flex-grow-1">
+                        
+                        <!-- User info - hidden on mobile, visible on desktop -->
+                        <div class="d-none d-lg-block flex-grow-1">
                             <h6 class="mb-1 fw-bold" style="font-size: 16px; margin: 0;">{{ $authUser->name ?? 'User' }}</h6>
                             <p class="mb-0 opacity-75" style="font-size: 13px; margin: 0;">{{ $authUser->email ?? 'user@example.com' }}</p>
+                        </div>
+                        
+                        <!-- Company logo - visible only on mobile -->
+                        <div class="d-lg-none d-flex align-items-center flex-grow-1 justify-content-center">
+                            <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Company Logo" style="width: 40px; height: 40px; object-fit: contain; filter: brightness(0) invert(1);">
                         </div>
                     </div>
                 </div>
