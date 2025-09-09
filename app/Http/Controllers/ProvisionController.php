@@ -64,18 +64,28 @@ class ProvisionController extends Controller
         try {
            $auth = $this->zabbixLogin();
            if (!$auth) {
-               throw new \Exception("Zabbix login failed");
+                Log::error("ZabbixController: Falha no login do Zabbix.");
+                throw new \Exception("Zabbix login failed");
            }
-        
+            Log::info("ZabbixController: Login realizado com sucesso no Zabbix.");
+
            // 1. Ensure host group exists
            $groupId = $this->getOrCreateHostGroup($company_name, $auth);
-        
+            Log::info("ZabbixController: Grupo de hosts obtido/criado.", ['group_id' => $groupId]);
+
            // 2. Get template ID based on Equipment
            $templateId_Master_Unit_Equipment = $this->getTemplateIdByName($das_equipment, $auth);
+            Log::info("ZabbixController: Template Master Unit encontrado.", [
+                'das_equipment' => $das_equipment,
+                'template_id' => $templateId_Master_Unit_Equipment
+            ]);           
 
            $templateId_BDA_Equipment = $this->getTemplateIdByName($errcs_equipment, $auth);
+            Log::info("ZabbixController: Template BDA encontrado.", [
+                'errcs_equipment' => $errcs_equipment,
+                'template_id' => $templateId_BDA_Equipment
+            ]);
 
-           $templateId = $this->getTemplateIdByName($oem, $auth);
         
            // 3. Determine hosts to create
            $hosts = [];
@@ -85,31 +95,17 @@ class ProvisionController extends Controller
                $hosts[] = 'DAS';
                $hosts[] = 'ERRCS';
            }
-        
-           //$createdHosts = [];
-           //foreach ($hosts as $hostType) {
-           //    $hostName = "{$company_name} {$hostType}";
-           //    $result = $this->zabbixApiRequest('host.create', [
-           //        'host' => $hostName,
-           //        'groups' => [['groupid' => $groupId]],
-           //        'templates' => [['templateid' => $templateId]],
-           //        'interfaces' => [[
-           //            'type' => 1,
-           //            'main' => 1,
-           //            'useip' => 1,
-           //            'ip' => '127.0.0.1',  
-           //            'dns' => '',
-           //            'port' => '10050'
-           //        ]],
-           //    ], $auth);
-           //
-           //    $createdHosts[] = $result['result'] ?? $result['error'] ?? null;
-           //}
+    
 
 
            // Create hosts for master units
            for ($i = 1; $i <= $master_unit_quantity; $i++) {
                $hostName = "{$hostName} master unit {$i}";
+                Log::info("ZabbixController: Criando host master unit.", [
+                    'host' => $hostNameUnit,
+                    'ip' => $currentIp,
+                    'template_id' => $templateId_Master_Unit_Equipment
+                ]);
                $result = $this->zabbixApiRequest('host.create', [
                    'host' => $hostName,
                    'groups' => [['groupid' => $groupId]],
@@ -123,6 +119,10 @@ class ProvisionController extends Controller
                        'port' => '10050'
                    ]],
                ], $auth);
+                Log::info("ZabbixController: Host master unit criado.", [
+                    'host' => $hostNameUnit,
+                    'result' => $result
+                ]);
                $createdHosts[] = $result;
                $currentIp = ipIncrement($currentIp, 1);
            }
@@ -130,6 +130,11 @@ class ProvisionController extends Controller
            // Create hosts for BDAs
            for ($i = 1; $i <= $bda_quantity; $i++) {
                $hostName = "{$hostName} bda {$i}";
+                Log::info("ZabbixController: Criando host BDA.", [
+                    'host' => $hostNameBda,
+                    'ip' => $currentIp,
+                    'template_id' => $templateId_BDA_Equipment
+                ]);
                $result = $this->zabbixApiRequest('host.create', [
                    'host' => $hostName,
                    'groups' => [['groupid' => $groupId]],
@@ -143,11 +148,19 @@ class ProvisionController extends Controller
                        'port' => '10050'
                    ]],
                ], $auth);
+                Log::info("ZabbixController: Host BDA criado.", [
+                    'host' => $hostNameBda,
+                    'result' => $result
+                ]);
                $createdHosts[] = $result;
                $currentIp = ipIncrement($currentIp, 1);
            }
            $results['zabbix'] = 'Success';
         } catch (\Throwable $e) {
+            Log::error("ZabbixController: Exceção durante a chamada à API do Zabbix.", [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
            $errors['zabbix'] = $e->getMessage();
         }
 
