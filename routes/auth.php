@@ -4,8 +4,11 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -22,17 +25,40 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    // New OTP-based forgot password flow
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])
                 ->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-                ->name('password.email');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])
+                ->name('password.send-otp');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    Route::get('verify-otp', [OtpVerificationController::class, 'showOtpForm'])
+                ->name('password.verify-otp');
+
+    Route::post('verify-otp', [OtpVerificationController::class, 'verifyOtp'])
+                ->name('password.verify-otp');
+
+    Route::post('resend-otp', [OtpVerificationController::class, 'resendOtp'])
+                ->name('password.resend-otp');
+
+    Route::get('reset-password', [PasswordResetController::class, 'showResetForm'])
+                ->name('password.reset-form');
+
+    Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])
                 ->name('password.reset');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.store');
+    // Keep original Laravel password reset routes as backup (commented out)
+    // Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    //             ->name('password.request');
+
+    // Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+    //             ->name('password.email');
+
+    // Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    //             ->name('password.reset');
+
+    // Route::post('reset-password', [NewPasswordController::class, 'store'])
+    //             ->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
