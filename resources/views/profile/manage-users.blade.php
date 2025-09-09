@@ -77,11 +77,6 @@
                                                 onclick="populateUpdateModal('{{ $user->id }}', '{{ $user->name }}', '{{ $user->email }}')">
                                                 Update
                                             </x-primary-button>
-                                            <!-- <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem;" 
-                                                data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
-                                                onclick="populateResetPasswordModal('{{ $user->id }}', '{{ $user->name }}')">
-                                                Reset Password
-                                            </x-primary-button> -->
                                             <x-primary-button type="button" class="btn-sm px-3 py-1" style="font-size: 0.75rem; background-color: #dc3545; border-color: #dc3545;" 
                                                 onmouseover="this.style.backgroundColor='#c82333'; this.style.borderColor='#bd2130';" 
                                                 onmouseout="this.style.backgroundColor='#dc3545'; this.style.borderColor='#dc3545';"
