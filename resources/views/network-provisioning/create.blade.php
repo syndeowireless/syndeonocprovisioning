@@ -823,7 +823,11 @@ body.loading-active {
                         <label class="form-label">Master Unit Equipment</label>
                         <select name="das_equipment" id="das_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
+                            <option value="Syndeo V1.0 202505 JMA WIRELESS TEKO OMT DAS" {{ old('das_equipment') == 'Syndeo V1.0 202505 JMA WIRELESS TEKO OMT DAS' ? 'selected' : '' }}>Syndeo V1.0 202505 JMA WIRELESS TEKO OMT DAS</option>
                             <option value="Syndeo V1.0 ADRF 202505 DAS" {{ old('das_equipment') == 'Syndeo V1.0 ADRF 202505 DAS' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 DAS</option>
+                            <option value="Syndeo V1.0 COMBA 202505 DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 COMBA 202505 DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 DAS LLD</option>
+                            <option value="Syndeo V1.0 COMMSCOPE DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 COMMSCOPE DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 COMMSCOPE DAS LLD</option>
+                            <option value="Syndeo V1.0 SOLID DMS1200 DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 SOLID DMS1200 DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 SOLID DMS1200 DAS LLD</option>
                         </select>
 
                     </div>
