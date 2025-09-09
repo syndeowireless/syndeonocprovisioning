@@ -105,10 +105,3 @@
 </style>
 @endsection
 
-<!-- @section('footer-links')
-<div class="mt-4 text-center">
-    <p class="text-muted small">
-        &copy; {{ date('Y') }} Syndeo. All rights reserved.
-    </p>
-</div>
-@endsection -->
