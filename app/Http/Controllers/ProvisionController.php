@@ -574,8 +574,7 @@ class ProvisionController extends Controller
         // Zabbix espera string em filter.name, NÃO array!
         $result = $this->zabbixApiRequest('hostgroup.get', [
         'filter' => [
-            'host' => $templateName,
-            'name' => $templateName
+            'name' => $groupName
         ]
         ], $auth);
         if (!empty($result)) {
@@ -591,7 +590,10 @@ class ProvisionController extends Controller
     {
         // Zabbix espera string em filter.host, NÃO array!
         $result = $this->zabbixApiRequest('template.get', [
-            'filter' => ['host' => $templateName]
+            'filter' => [
+                'host' => $templateName,
+                'name' => $templateName
+            ]
         ], $auth);
         if (!empty($result)) {
             return $result[0]['templateid'];
