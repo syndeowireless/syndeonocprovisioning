@@ -516,7 +516,7 @@ class ProvisionController extends Controller
     }
     private function zabbixApiRequest($method, $params, $auth = null)
     {
-        $url = 'http://40.78.20.4:8080/zabbix/api_jsonrpc.php'; // <---- CHANGE THIS
+        $url = 'http://40.78.20.4:8080/zabbix/api_jsonrpc.php';
         $post = [
             'jsonrpc' => '2.0',
             'method' => $method,
@@ -524,14 +524,16 @@ class ProvisionController extends Controller
             'id' => 1,
         ];
         if ($auth) $post['auth'] = $auth;
-
-        $response = Http::post($url, $post);
+    
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json'
+        ])->post($url, $post);
         
         $contentType = $response->header('Content-Type') ?? '';
         if (strpos($contentType, 'application/json') === false) {
             throw new \Exception('Zabbix non-JSON response: ' . $response->body());
         }
-
+    
         return $response->json();
     }
 
