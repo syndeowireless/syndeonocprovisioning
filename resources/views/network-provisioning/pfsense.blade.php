@@ -233,12 +233,12 @@
             </div>
             <div class="pfsense-btn-group">
                 @if(isset($xmlFile))
-                <a class="pfsense-action-btn" href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                <x-primary-button type="button" class="pfsense-action-btn" href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                     <i class="mdi mdi-download" style="color: white;"></i>
                     Download XML
-                </a>
+                </x-primary-button>
                 @endif
-                <a 
+                <x-primary-button type="button"
                     class="pfsense-action-btn"
                     style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
                     href="mailto:?subject={{ $mailtoSubject }}&body={{ $mailtoBody }}"
@@ -246,7 +246,7 @@
                 >
                     <i class="mdi mdi-share-variant" style="color: white;"></i>
                     Share
-                </a>
+                </x-primary-button>
             </div>
                         </div>
                     </div>
@@ -319,9 +319,9 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
+            <x-primary-button type="button" id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
                 Start Provisioning
-            </button>
+            </x-primary-button>
         </div>
     </div>
 </div>
