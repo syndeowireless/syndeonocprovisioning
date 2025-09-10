@@ -256,13 +256,13 @@
             @enderror
         </div>
 
-        <div class="otp-buttons">
-            <x-primary-button class="waves-effect waves-light" type="submit">
+        <div class="otp-buttons" style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
+            <x-primary-button class="waves-effect waves-light" type="submit" style="flex: 1;">
                 <i class="mdi mdi-check-circle me-2"></i> Verify Code
             </x-primary-button>
             <x-primary-button type="button" 
                     class="waves-effect waves-light" 
-                    onclick="resendOtp()">
+                    onclick="resendOtp()" style="flex: 1;">
                 <i class="mdi mdi-refresh me-2"></i> Resend Code
             </x-primary-button>
         </div>
