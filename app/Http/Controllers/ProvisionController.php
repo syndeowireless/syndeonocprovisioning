@@ -549,7 +549,7 @@ class ProvisionController extends Controller
             'password' => $password,
         ]);
         \Log::error('Zabbix login response', ['result' => $result]);
-        return $result['result'] ?? null;
+        return $result;
     }
 
     private function grafanaApiRequest($method, $endpoint, $data = [])
