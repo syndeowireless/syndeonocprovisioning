@@ -184,6 +184,27 @@
         animation: pulse 2s infinite;
     }
     
+    /* Hide scrollbars */
+    body {
+        overflow-x: hidden;
+    }
+    
+    /* Hide scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+    
+    /* Hide scrollbar for Firefox */
+    html {
+        scrollbar-width: none;
+    }
+    
+    /* Hide scrollbar for IE and Edge */
+    body {
+        -ms-overflow-style: none;
+    }
+    
     @media (max-width: 576px) {
         .otp-container {
             padding: 1.5rem;
@@ -236,11 +257,11 @@
         </div>
 
         <div class="otp-buttons">
-            <x-primary-button class="otp-btn otp-btn-primary waves-effect waves-light" type="submit">
+            <x-primary-button class="waves-effect waves-light" type="submit">
                 <i class="mdi mdi-check-circle me-2"></i> Verify Code
             </x-primary-button>
             <x-primary-button type="button" 
-                    class="otp-btn otp-btn-secondary waves-effect waves-light" 
+                    class="waves-effect waves-light" 
                     onclick="resendOtp()">
                 <i class="mdi mdi-refresh me-2"></i> Resend Code
             </x-primary-button>
