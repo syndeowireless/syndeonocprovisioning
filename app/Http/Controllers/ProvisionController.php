@@ -586,18 +586,24 @@ class ProvisionController extends Controller
         return $create['groupids'][0];
     }
 // Helper: Get template ID by name
-    private function getTemplateIdByName($templateName, $auth)
-    {
-        // Zabbix espera string em filter.host, NÃO array!
-        $result = $this->zabbixApiRequest('template.get', [
-            'filter' => [
-                'host' => $templateName,
-                'name' => $templateName
-            ]
-        ], $auth);
-        if (!empty($result)) {
-            return $result[0]['templateid'];
-        }
-        throw new \Exception("Template {$templateName} not found.");
+private function getTemplateIdByName($templateName, $auth)
+{
+    // Listar todos os templates para debug
+    $allTemplates = $this->zabbixApiRequest('template.get', [
+        'output' => ['templateid', 'host', 'name']
+    ], $auth);
+    \Log::info('Lista de templates disponíveis', ['templates' => $allTemplates]);
+
+    // Buscar pelo filtro
+    $result = $this->zabbixApiRequest('template.get', [
+        'filter' => [
+            'host' => $templateName,
+            'name' => $templateName
+        ]
+    ], $auth);
+    if (!empty($result)) {
+        return $result[0]['templateid'];
     }
+    throw new \Exception("Template {$templateName} not found.");
+}
 }
