@@ -573,7 +573,10 @@ class ProvisionController extends Controller
     {
         // Zabbix espera string em filter.name, NÃO array!
         $result = $this->zabbixApiRequest('hostgroup.get', [
-            'filter' => ['name' => $groupName]
+        'filter' => [
+            'host' => $templateName,
+            'name' => $templateName
+        ]
         ], $auth);
         if (!empty($result)) {
             return $result[0]['groupid'];
