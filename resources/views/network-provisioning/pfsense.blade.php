@@ -56,6 +56,7 @@
         flex-direction: column;
         gap: 0;
         margin-bottom: 2.5rem;
+        animation: fadeInUp 0.6s ease-out;
     }
     @media (min-width: 768px) {
         .pfsense-row {
@@ -72,6 +73,11 @@
         flex-direction: column;
         justify-content: space-between;
         padding: 2rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .pfsense-segment:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     .pfsense-segment:not(:last-child) {
         border-bottom: 1px solid #cbd5e1;
@@ -94,6 +100,12 @@
         grid-template-columns: 1.5fr 1fr 1fr;
         align-items: center;
         border-bottom: 1px solid #f1f5f9;
+        transition: all 0.2s ease;
+        animation: slideInLeft 0.4s ease-out;
+    }
+    .pfsense-table-grid:hover {
+        background-color: #f8fafc;
+        transform: translateX(4px);
     }
     .pfsense-table-grid-header {
         font-weight: 600;
@@ -146,12 +158,33 @@
         gap: 8px;
         min-width: 110px;
         justify-content: center;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
         text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .pfsense-action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
     }
     .pfsense-action-btn:hover {
-        background-color: #13395d;
+        background-color: #1e4a6b;
         border-color: #fbbf0f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(19, 57, 93, 0.3);
+    }
+    .pfsense-action-btn:hover::before {
+        left: 100%;
+    }
+    .pfsense-action-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(19, 57, 93, 0.3);
     }
     .pfsense-main-btn {
         background-color: #13395d;
@@ -165,11 +198,39 @@
         margin: 0 auto;
         display: block;
         margin-top: 2rem;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        animation: pulse 2s infinite;
+    }
+    .pfsense-main-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(251, 191, 15, 0.3), transparent);
+        transition: left 0.6s;
     }
     .pfsense-main-btn:hover {
-        background-color: #13395d;
+        background-color: #1e4a6b;
         border-color: #fbbf0f;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(19, 57, 93, 0.4);
+        animation: none;
+    }
+    .pfsense-main-btn:hover::before {
+        left: 100%;
+    }
+    .pfsense-main-btn:active {
+        transform: translateY(-1px) scale(1.01);
+        box-shadow: 0 4px 15px rgba(19, 57, 93, 0.4);
+    }
+    .pfsense-main-btn.loading {
+        pointer-events: none;
+        opacity: 0.8;
+        animation: loadingPulse 1.5s ease-in-out infinite;
     }
     .password-group {
         display: flex;
@@ -180,10 +241,17 @@
         color: #64748b;
         cursor: pointer;
         font-size: 18px;
-        transition: color 0.2s;
+        transition: all 0.3s ease;
+        border-radius: 50%;
+        padding: 4px;
     }
     .password-icon:hover {
         color: #13395d;
+        background-color: rgba(19, 57, 93, 0.1);
+        transform: scale(1.1);
+    }
+    .password-icon:active {
+        transform: scale(0.95);
     }
     .password-input {
         border: none;
@@ -193,6 +261,74 @@
         color: #1e293b;
         font-weight: 500;
         width: 120px;
+        transition: all 0.2s ease;
+    }
+    .password-input:focus {
+        background-color: rgba(19, 57, 93, 0.05);
+        border-radius: 4px;
+        padding: 2px 4px;
+    }
+    /* Keyframe Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(251, 191, 15, 0.4);
+        }
+        50% {
+            box-shadow: 0 0 0 10px rgba(251, 191, 15, 0);
+        }
+    }
+    @keyframes loadingPulse {
+        0%, 100% {
+            opacity: 0.8;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+    /* Card animations */
+    .card {
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.8s ease-out;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+    /* Staggered animation for cards */
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    /* Icon animations */
+    .mdi {
+        transition: all 0.3s ease;
+    }
+    .card-header .fas, .card-header .mdi {
+        transition: transform 0.3s ease;
+    }
+    .card:hover .card-header .fas,
+    .card:hover .card-header .mdi {
+        transform: scale(1.1);
     }
 </style>
 <div class="container-fluid">
@@ -333,6 +469,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const provisionId = btn.getAttribute('data-provision-id');
         const csrfToken = '{{ csrf_token() }}';
 
+        // Add loading state
+        btn.classList.add('loading');
+        btn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Processing...';
+        
         try {
             const response = await fetch('{{ route("provision.start") }}', {
                 method: 'POST',
@@ -355,12 +495,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (data.success) {
-                alert('Provisioning successful!');
+                btn.innerHTML = '<i class="mdi mdi-check"></i> Success!';
+                btn.style.backgroundColor = '#10b981';
+                setTimeout(() => {
+                    alert('Provisioning successful!');
+                    btn.innerHTML = 'Start Provisioning';
+                    btn.style.backgroundColor = '#13395d';
+                    btn.classList.remove('loading');
+                }, 1500);
             } else {
-                alert('Provisioning failed: ' + (data.error || 'Unknown error'));
+                btn.innerHTML = '<i class="mdi mdi-alert"></i> Failed';
+                btn.style.backgroundColor = '#ef4444';
+                setTimeout(() => {
+                    alert('Provisioning failed: ' + (data.error || 'Unknown error'));
+                    btn.innerHTML = 'Start Provisioning';
+                    btn.style.backgroundColor = '#13395d';
+                    btn.classList.remove('loading');
+                }, 1500);
             }
         } catch (error) {
-            alert('An error occurred: ' + error.message);
+            btn.innerHTML = '<i class="mdi mdi-alert"></i> Error';
+            btn.style.backgroundColor = '#ef4444';
+            setTimeout(() => {
+                alert('An error occurred: ' + error.message);
+                btn.innerHTML = 'Start Provisioning';
+                btn.style.backgroundColor = '#13395d';
+                btn.classList.remove('loading');
+            }, 1500);
         }
     });
 });
