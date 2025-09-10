@@ -87,15 +87,6 @@ class ProvisionController extends Controller
             ]);
 
             // 3. Determine hosts to create
-            $hosts = [];
-            if ($system_type === 'DAS' || $system_type === 'ERRCS') {
-                $hosts[] = $system_type;
-            } elseif ($system_type === 'DAS & ERRCS') {
-                $hosts[] = 'DAS';
-                $hosts[] = 'ERRCS';
-            }
-
-            // Inicialize as variáveis para IP e nome base do host
             $currentIp = $first_usable_ip;
             $hostNameBase = $property_name;
 
@@ -501,7 +492,16 @@ class ProvisionController extends Controller
         //         ->header('Content-Type', 'text/plain');
         // }
     }
-
+    private function ipIncrement($ip, $increment = 1)
+    {
+        $ipLong = ip2long($ip);
+        if ($ipLong === false) {
+            Log::warning("ProvisionController: IP inválido passado para ipIncrement: {$ip}");
+            return $ip;
+        }
+        $newIp = long2ip($ipLong + $increment);
+        return $newIp;
+    }
     // Função auxiliar para subtrair do último octeto do IP
     private function subtract_from_last_octet($ip_address, $subtract_value)
     {
@@ -525,12 +525,11 @@ class ProvisionController extends Controller
             'id' => 1,
         ];
         if ($auth) $post['auth'] = $auth;
-    
+
         $response = Http::asJson()->post($url, $post);
         $json = $response->json();
 
         if (isset($json['error'])) {
-            // Faz log do erro detalhado e lança Exception
             \Log::error('Zabbix API error', ['error' => $json['error']]);
             throw new \Exception("Zabbix API error: " . $json['error']['message'] . " (" . $json['error']['data'] . ")");
         }
@@ -572,8 +571,9 @@ class ProvisionController extends Controller
 // Helper: Get or create host group
     private function getOrCreateHostGroup($groupName, $auth)
     {
+        // Zabbix espera string em filter.name, NÃO array!
         $result = $this->zabbixApiRequest('hostgroup.get', [
-            'filter' => ['name' => [$groupName]]
+            'filter' => ['name' => $groupName]
         ], $auth);
         if (!empty($result)) {
             return $result[0]['groupid'];
@@ -586,8 +586,9 @@ class ProvisionController extends Controller
 // Helper: Get template ID by name
     private function getTemplateIdByName($templateName, $auth)
     {
+        // Zabbix espera string em filter.host, NÃO array!
         $result = $this->zabbixApiRequest('template.get', [
-            'filter' => ['host' => [$templateName]]
+            'filter' => ['host' => $templateName]
         ], $auth);
         if (!empty($result)) {
             return $result[0]['templateid'];
