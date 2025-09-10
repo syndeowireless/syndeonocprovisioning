@@ -148,6 +148,8 @@
         justify-content: center;
         transition: all 0.2s;
         text-decoration: none;
+        position: relative;
+        overflow: hidden;
     }
     .pfsense-action-btn:hover {
         background-color: #13395d;
@@ -166,6 +168,8 @@
         display: block;
         margin-top: 2rem;
         transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
     }
     .pfsense-main-btn:hover {
         background-color: #13395d;
@@ -193,6 +197,23 @@
         color: #1e293b;
         font-weight: 500;
         width: 120px;
+    }
+    
+    /* Ripple Effect Styles */
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(251, 191, 15, 0.6);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
     }
 </style>
 <div class="container-fluid">
@@ -233,12 +254,12 @@
             </div>
             <div class="pfsense-btn-group">
                 @if(isset($xmlFile))
-                <x-primary-button type="button" class="pfsense-action-btn" href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                <a class="pfsense-action-btn" href="{{ route('network-provisioning.downloadXml', ['fileName' => $xmlFile]) }}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                     <i class="mdi mdi-download" style="color: white;"></i>
                     Download XML
-                </x-primary-button>
+                </a>
                 @endif
-                <x-primary-button type="button"
+                <a
                     class="pfsense-action-btn"
                     style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
                     href="mailto:?subject={{ $mailtoSubject }}&body={{ $mailtoBody }}"
@@ -246,7 +267,7 @@
                 >
                     <i class="mdi mdi-share-variant" style="color: white;"></i>
                     Share
-                </x-primary-button>
+                </a>
             </div>
                         </div>
                     </div>
@@ -319,15 +340,43 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <x-primary-button type="button" id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
+            <a id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
                 Start Provisioning
-            </x-primary-button>
+            </a>
         </div>
     </div>
 </div>
 
 <script>
+// Ripple Effect Function
+function createRipple(event) {
+    const button = event.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+    
+    const rect = button.getBoundingClientRect();
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
+    circle.classList.add('ripple');
+    
+    const ripple = button.getElementsByClassName('ripple')[0];
+    if (ripple) {
+        ripple.remove();
+    }
+    
+    button.appendChild(circle);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Add ripple effect to all pfsense buttons
+    const actionButtons = document.querySelectorAll('.pfsense-action-btn, .pfsense-main-btn');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', createRipple);
+    });
+    
+    // Original provisioning functionality
     const btn = document.getElementById('start-provisioning');
     btn.addEventListener('click', async function() {
         const provisionId = btn.getAttribute('data-provision-id');
