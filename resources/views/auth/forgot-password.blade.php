@@ -5,7 +5,7 @@
     .forgot-password-container {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: 20px;
-        padding: 2.5rem;
+        padding: 1.5rem 2.5rem 2.5rem 2.5rem;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         position: relative;
         overflow: hidden;
@@ -34,7 +34,7 @@
         color: #6c757d;
         font-size: 1rem;
         line-height: 1.6;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
     
     .form-group-enhanced {
@@ -191,8 +191,8 @@
     
     @media (max-width: 576px) {
         .forgot-password-container {
-            padding: 1.5rem;
-            margin: 1rem;
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
+            margin: 0.5rem;
         }
         
         .page-title {
@@ -208,8 +208,8 @@
 
 <div class="forgot-password-container form-animation">
     <div class="text-center">
-        <div class="mb-4">
-            <i class="mdi mdi-lock-reset icon-pulse" style="font-size: 3rem; color: #fbbf0f; margin-bottom: 1rem;"></i>
+        <div class="mb-2">
+            <i class="mdi mdi-lock-reset icon-pulse" style="font-size: 2.5rem; color: #fbbf0f; margin-bottom: 0.5rem;"></i>
         </div>
         <h4 class="page-title">Forgot your password?</h4>
         <p class="page-subtitle">No worries! Enter your email address and we'll send you an OTP to reset your password securely.</p>
