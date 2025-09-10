@@ -148,8 +148,6 @@
         justify-content: center;
         transition: all 0.2s;
         text-decoration: none;
-        position: relative;
-        overflow: hidden;
     }
     .pfsense-action-btn:hover {
         background-color: #13395d;
@@ -168,8 +166,6 @@
         display: block;
         margin-top: 2rem;
         transition: all 0.2s;
-        position: relative;
-        overflow: hidden;
     }
     .pfsense-main-btn:hover {
         background-color: #13395d;
@@ -197,23 +193,6 @@
         color: #1e293b;
         font-weight: 500;
         width: 120px;
-    }
-    
-    /* Ripple Effect Styles */
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background-color: rgba(251, 191, 15, 0.6);
-        transform: scale(0);
-        animation: ripple-animation 0.6s linear;
-        pointer-events: none;
-    }
-    
-    @keyframes ripple-animation {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
     }
 </style>
 <div class="container-fluid">
@@ -259,7 +238,7 @@
                     Download XML
                 </a>
                 @endif
-                <a
+                <a type="button"
                     class="pfsense-action-btn"
                     style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
                     href="mailto:?subject={{ $mailtoSubject }}&body={{ $mailtoBody }}"
@@ -340,43 +319,15 @@
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <a id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
+            <button id="start-provisioning" class="pfsense-main-btn" data-provision-id="{{ $provisionId }}">
                 Start Provisioning
-            </a>
+            </button>
         </div>
     </div>
 </div>
 
 <script>
-// Ripple Effect Function
-function createRipple(event) {
-    const button = event.currentTarget;
-    const circle = document.createElement('span');
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
-    
-    const rect = button.getBoundingClientRect();
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - rect.left - radius}px`;
-    circle.style.top = `${event.clientY - rect.top - radius}px`;
-    circle.classList.add('ripple');
-    
-    const ripple = button.getElementsByClassName('ripple')[0];
-    if (ripple) {
-        ripple.remove();
-    }
-    
-    button.appendChild(circle);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Add ripple effect to all pfsense buttons
-    const actionButtons = document.querySelectorAll('.pfsense-action-btn, .pfsense-main-btn');
-    actionButtons.forEach(button => {
-        button.addEventListener('click', createRipple);
-    });
-    
-    // Original provisioning functionality
     const btn = document.getElementById('start-provisioning');
     btn.addEventListener('click', async function() {
         const provisionId = btn.getAttribute('data-provision-id');
