@@ -29,16 +29,16 @@
 
         <div class="mb-3 row">
             <div class="col-6">
-                <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">
+                <x-primary-button class="btn btn-primary w-100 waves-effect waves-light" type="submit">
                     <i class="mdi mdi-check me-1"></i> Verify OTP
-                </button>
+                </x-primary-button>
             </div>
             <div class="col-6">
-                <button type="button" 
+                <x-primary-button type="button" 
                         class="btn btn-outline-secondary w-100 waves-effect waves-light" 
                         onclick="resendOtp()">
                     <i class="mdi mdi-refresh me-1"></i> Resend OTP
-                </button>
+                </x-primary-button>
             </div>
         </div>
 
