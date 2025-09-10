@@ -543,6 +543,7 @@ class ProvisionController extends Controller
             'user' => $user,
             'password' => $password,
         ]);
+        \Log::error('Zabbix login response', ['result' => $result]);
         return $result['result'] ?? null;
     }
 
