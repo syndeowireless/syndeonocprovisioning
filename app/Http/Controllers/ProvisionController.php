@@ -605,6 +605,8 @@ private function getTemplateIdByName($templateName, $auth)
     //    return $result[0]['templateid'];
     //}
     //throw new \Exception("Template {$templateName} not found.");
+    // Normalize templateName: collapse multiple spaces, trim edges
+    $normalized = trim(preg_replace('/\s+/', ' ', $templateName));
     \Log::info('Buscando template pelo nome normalizado', [
         'original' => $templateName,
         'normalized' => $normalized
