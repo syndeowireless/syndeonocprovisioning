@@ -606,28 +606,22 @@ private function getTemplateIdByName($templateName, $auth)
     //}
     //throw new \Exception("Template {$templateName} not found.");
     // Normalize templateName: collapse multiple spaces, trim edges
-    $normalized = trim(preg_replace('/\s+/', ' ', $templateName));
-    \Log::info('Buscando template pelo nome normalizado', [
-        'original' => $templateName,
-        'normalized' => $normalized
+    // Não normaliza para search!
+    \Log::info('Buscando template pelo nome exato no search', [
+        'original' => $templateName
     ]);
-
-    // 1. Search by host using "search" (flexible/contains)
     $result = $this->zabbixApiRequest('template.get', [
-        'search' => ['host' => $normalized],
+        'search' => ['host' => $templateName],
         'output' => ['templateid', 'host', 'name']
     ], $auth);
 
     if (!empty($result)) {
         \Log::info('Templates encontrados pelo search', [
-            'busca' => $normalized,
+            'busca' => $templateName,
             'matches' => $result
         ]);
-
-        // 2. Try to find an exact match (ignoring multiple spaces)
         foreach ($result as $tpl) {
-            $tplHostNorm = trim(preg_replace('/\s+/', ' ', $tpl['host']));
-            if (strcasecmp($tplHostNorm, $normalized) === 0) {
+            if ($tpl['host'] === $templateName) {
                 \Log::info('Match exato encontrado para o template', [
                     'host' => $tpl['host'],
                     'templateid' => $tpl['templateid']
@@ -635,23 +629,10 @@ private function getTemplateIdByName($templateName, $auth)
                 return $tpl['templateid'];
             }
         }
-        // 3. If not found, fallback to first result
-        \Log::warning('Nenhum match exato, usando o primeiro resultado retornado', [
-            'primeiro_host' => $result[0]['host'],
-            'templateid' => $result[0]['templateid']
-        ]);
         return $result[0]['templateid'];
     }
 
-    // 4. Log all available templates for troubleshooting
-    $allTemplates = $this->zabbixApiRequest('template.get', [
-        'output' => ['templateid', 'host', 'name']
-    ], $auth);
-    \Log::error('Template não encontrado. Listando todos os disponíveis', [
-        'procurado' => $normalized,
-        'all_templates' => $allTemplates
-    ]);
-
     throw new \Exception("Template '{$templateName}' not found in Zabbix.");
+    
 }
 }
