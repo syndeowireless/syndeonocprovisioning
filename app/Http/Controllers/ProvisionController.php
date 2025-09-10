@@ -62,106 +62,107 @@ class ProvisionController extends Controller
 
         //Zabbix 
         try {
-           $auth = $this->zabbixLogin();
-           if (!$auth) {
+            $auth = $this->zabbixLogin();
+            if (!$auth) {
                 Log::error("ZabbixController: Falha no login do Zabbix.");
                 throw new \Exception("Zabbix login failed");
-           }
+            }
             Log::info("ZabbixController: Login realizado com sucesso no Zabbix.");
 
-           // 1. Ensure host group exists
-           $groupId = $this->getOrCreateHostGroup($company_name, $auth);
+            // 1. Ensure host group exists
+            $groupId = $this->getOrCreateHostGroup($company_name, $auth);
             Log::info("ZabbixController: Grupo de hosts obtido/criado.", ['group_id' => $groupId]);
 
-           // 2. Get template ID based on Equipment
-           $templateId_Master_Unit_Equipment = $this->getTemplateIdByName($das_equipment, $auth);
+            // 2. Get template ID based on Equipment
+            $templateId_Master_Unit_Equipment = $this->getTemplateIdByName($das_equipment, $auth);
             Log::info("ZabbixController: Template Master Unit encontrado.", [
                 'das_equipment' => $das_equipment,
                 'template_id' => $templateId_Master_Unit_Equipment
             ]);           
 
-           $templateId_BDA_Equipment = $this->getTemplateIdByName($errcs_equipment, $auth);
+            $templateId_BDA_Equipment = $this->getTemplateIdByName($errcs_equipment, $auth);
             Log::info("ZabbixController: Template BDA encontrado.", [
                 'errcs_equipment' => $errcs_equipment,
                 'template_id' => $templateId_BDA_Equipment
             ]);
 
-        
-           // 3. Determine hosts to create
-           $hosts = [];
-           if ($system_type === 'DAS' || $system_type === 'ERRCS') {
-               $hosts[] = $system_type;
-           } elseif ($system_type === 'DAS & ERRCS') {
-               $hosts[] = 'DAS';
-               $hosts[] = 'ERRCS';
-           }
-    
+            // 3. Determine hosts to create
+            $hosts = [];
+            if ($system_type === 'DAS' || $system_type === 'ERRCS') {
+                $hosts[] = $system_type;
+            } elseif ($system_type === 'DAS & ERRCS') {
+                $hosts[] = 'DAS';
+                $hosts[] = 'ERRCS';
+            }
 
+            // Inicialize as variáveis para IP e nome base do host
+            $currentIp = $first_usable_ip;
+            $hostNameBase = $property_name;
 
-           // Create hosts for master units
-           for ($i = 1; $i <= $master_unit_quantity; $i++) {
-               $hostName = "{$hostName} master unit {$i}";
+            // Create hosts for master units
+            for ($i = 1; $i <= $master_unit_quantity; $i++) {
+                $hostName = "{$hostNameBase} master unit {$i}";
                 Log::info("ZabbixController: Criando host master unit.", [
-                    'host' => $hostNameUnit,
+                    'host' => $hostName,
                     'ip' => $currentIp,
                     'template_id' => $templateId_Master_Unit_Equipment
                 ]);
-               $result = $this->zabbixApiRequest('host.create', [
-                   'host' => $hostName,
-                   'groups' => [['groupid' => $groupId]],
-                   'templates' => [['templateid' => $templateId_Master_Unit_Equipment]],
-                   'interfaces' => [[
-                       'type' => 1,
-                       'main' => 1,
-                       'useip' => 1,
-                       'ip' => $currentIp,
-                       'dns' => '',
-                       'port' => '10050'
-                   ]],
-               ], $auth);
+                $result = $this->zabbixApiRequest('host.create', [
+                    'host' => $hostName,
+                    'groups' => [['groupid' => $groupId]],
+                    'templates' => [['templateid' => $templateId_Master_Unit_Equipment]],
+                    'interfaces' => [[
+                        'type' => 1,
+                        'main' => 1,
+                        'useip' => 1,
+                        'ip' => $currentIp,
+                        'dns' => '',
+                        'port' => '10050'
+                    ]],
+                ], $auth);
                 Log::info("ZabbixController: Host master unit criado.", [
-                    'host' => $hostNameUnit,
+                    'host' => $hostName,
                     'result' => $result
                 ]);
-               $createdHosts[] = $result;
-               $currentIp = ipIncrement($currentIp, 1);
-           }
+                $createdHosts[] = $result;
+                $currentIp = $this->ipIncrement($currentIp, 1);
+            }
 
-           // Create hosts for BDAs
-           for ($i = 1; $i <= $bda_quantity; $i++) {
-               $hostName = "{$hostName} bda {$i}";
+            // Create hosts for BDAs
+            for ($i = 1; $i <= $bda_quantity; $i++) {
+                $hostName = "{$hostNameBase} bda {$i}";
                 Log::info("ZabbixController: Criando host BDA.", [
-                    'host' => $hostNameBda,
+                    'host' => $hostName,
                     'ip' => $currentIp,
                     'template_id' => $templateId_BDA_Equipment
                 ]);
-               $result = $this->zabbixApiRequest('host.create', [
-                   'host' => $hostName,
-                   'groups' => [['groupid' => $groupId]],
-                   'templates' => [['templateid' => $templateId_BDA_Equipment]],
-                   'interfaces' => [[
-                       'type' => 1,
-                       'main' => 1,
-                       'useip' => 1,
-                       'ip' => $currentIp,
-                       'dns' => '',
-                       'port' => '10050'
-                   ]],
-               ], $auth);
+                $result = $this->zabbixApiRequest('host.create', [
+                    'host' => $hostName,
+                    'groups' => [['groupid' => $groupId]],
+                    'templates' => [['templateid' => $templateId_BDA_Equipment]],
+                    'interfaces' => [[
+                        'type' => 1,
+                        'main' => 1,
+                        'useip' => 1,
+                        'ip' => $currentIp,
+                        'dns' => '',
+                        'port' => '10050'
+                    ]],
+                ], $auth);
                 Log::info("ZabbixController: Host BDA criado.", [
-                    'host' => $hostNameBda,
+                    'host' => $hostName,
                     'result' => $result
                 ]);
-               $createdHosts[] = $result;
-               $currentIp = ipIncrement($currentIp, 1);
-           }
-           $results['zabbix'] = 'Success';
+                $createdHosts[] = $result;
+                $currentIp = $this->ipIncrement($currentIp, 1);
+            }
+            $results['zabbix'] = 'Success';
         } catch (\Throwable $e) {
             Log::error("ZabbixController: Exceção durante a chamada à API do Zabbix.", [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-           $errors['zabbix'] = $e->getMessage();
+            $errors['zabbix'] = $e->getMessage();
         }
 
 
@@ -525,15 +526,18 @@ class ProvisionController extends Controller
         ];
         if ($auth) $post['auth'] = $auth;
     
-        // ENVIO CERTO COMO JSON!
         $response = Http::asJson()->post($url, $post);
-    
-        $contentType = $response->header('Content-Type') ?? '';
-        if (strpos($contentType, 'application/json') === false) {
-            throw new \Exception('Zabbix non-JSON response: ' . $response->body());
+        $json = $response->json();
+
+        if (isset($json['error'])) {
+            // Faz log do erro detalhado e lança Exception
+            \Log::error('Zabbix API error', ['error' => $json['error']]);
+            throw new \Exception("Zabbix API error: " . $json['error']['message'] . " (" . $json['error']['data'] . ")");
         }
-    
-        return $response->json();
+        if (!isset($json['result'])) {
+            throw new \Exception("Zabbix API: resposta inesperada: " . json_encode($json));
+        }
+        return $json['result'];
     }
 
     private function zabbixLogin()
@@ -566,28 +570,28 @@ class ProvisionController extends Controller
 
 
 // Helper: Get or create host group
-private function getOrCreateHostGroup($groupName, $auth)
-{
-    $result = $this->zabbixApiRequest('hostgroup.get', [
-        'filter' => ['name' => [$groupName]]
-    ], $auth);
-    if (!empty($result['result'])) {
-        return $result['result'][0]['groupid'];
+    private function getOrCreateHostGroup($groupName, $auth)
+    {
+        $result = $this->zabbixApiRequest('hostgroup.get', [
+            'filter' => ['name' => [$groupName]]
+        ], $auth);
+        if (!empty($result)) {
+            return $result[0]['groupid'];
+        }
+        $create = $this->zabbixApiRequest('hostgroup.create', [
+            'name' => $groupName
+        ], $auth);
+        return $create['groupids'][0];
     }
-    $create = $this->zabbixApiRequest('hostgroup.create', [
-        'name' => $groupName
-    ], $auth);
-    return $create['result']['groupids'][0];
-}
 // Helper: Get template ID by name
-private function getTemplateIdByName($templateName, $auth)
-{
-    $result = $this->zabbixApiRequest('template.get', [
-        'filter' => ['host' => [$templateName]]
-    ], $auth);
-    if (!empty($result['result'])) {
-        return $result['result'][0]['templateid'];
+    private function getTemplateIdByName($templateName, $auth)
+    {
+        $result = $this->zabbixApiRequest('template.get', [
+            'filter' => ['host' => [$templateName]]
+        ], $auth);
+        if (!empty($result)) {
+            return $result[0]['templateid'];
+        }
+        throw new \Exception("Template {$templateName} not found.");
     }
-    throw new \Exception("Template {$templateName} not found.");
-}
 }
