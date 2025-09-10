@@ -238,10 +238,10 @@
         </div>
 
         <div class="button-container">
-            <button type="submit" class="enhanced-primary-button" onclick="createRipple(event, this)">
+            <x-primary-button type="submit" class="enhanced-primary-button" onclick="createRipple(event, this)">
                 <i class="mdi mdi-send me-2"></i>
                 Send OTP
-            </button>
+            </x-primary-button>
         </div>
 
         <div class="text-center">
