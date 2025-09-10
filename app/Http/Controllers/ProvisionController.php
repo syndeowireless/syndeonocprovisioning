@@ -516,7 +516,7 @@ class ProvisionController extends Controller
     }
     private function zabbixApiRequest($method, $params, $auth = null)
     {
-        $url = 'https://104.42.130.35/zabbix/api_jsonrpc.php'; // <---- CHANGE THIS
+        $url = 'http://40.78.20.4:8080/zabbix/api_jsonrpc.php'; // <---- CHANGE THIS
         $post = [
             'jsonrpc' => '2.0',
             'method' => $method,
