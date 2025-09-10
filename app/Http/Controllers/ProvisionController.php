@@ -605,15 +605,51 @@ private function getTemplateIdByName($templateName, $auth)
     //    return $result[0]['templateid'];
     //}
     //throw new \Exception("Template {$templateName} not found.");
+    \Log::info('Buscando template pelo nome normalizado', [
+        'original' => $templateName,
+        'normalized' => $normalized
+    ]);
+
+    // 1. Search by host using "search" (flexible/contains)
     $result = $this->zabbixApiRequest('template.get', [
-        'search' => ['host' => preg_replace('/\s+/', ' ', $templateName)],
+        'search' => ['host' => $normalized],
         'output' => ['templateid', 'host', 'name']
     ], $auth);
+
     if (!empty($result)) {
-        // Deixe este log para debug
-        \Log::info('Templates encontrados pelo search', ['matches' => $result]);
+        \Log::info('Templates encontrados pelo search', [
+            'busca' => $normalized,
+            'matches' => $result
+        ]);
+
+        // 2. Try to find an exact match (ignoring multiple spaces)
+        foreach ($result as $tpl) {
+            $tplHostNorm = trim(preg_replace('/\s+/', ' ', $tpl['host']));
+            if (strcasecmp($tplHostNorm, $normalized) === 0) {
+                \Log::info('Match exato encontrado para o template', [
+                    'host' => $tpl['host'],
+                    'templateid' => $tpl['templateid']
+                ]);
+                return $tpl['templateid'];
+            }
+        }
+        // 3. If not found, fallback to first result
+        \Log::warning('Nenhum match exato, usando o primeiro resultado retornado', [
+            'primeiro_host' => $result[0]['host'],
+            'templateid' => $result[0]['templateid']
+        ]);
         return $result[0]['templateid'];
     }
-    throw new \Exception("Template {$templateName} not found.");
+
+    // 4. Log all available templates for troubleshooting
+    $allTemplates = $this->zabbixApiRequest('template.get', [
+        'output' => ['templateid', 'host', 'name']
+    ], $auth);
+    \Log::error('Template não encontrado. Listando todos os disponíveis', [
+        'procurado' => $normalized,
+        'all_templates' => $allTemplates
+    ]);
+
+    throw new \Exception("Template '{$templateName}' not found in Zabbix.");
 }
 }
