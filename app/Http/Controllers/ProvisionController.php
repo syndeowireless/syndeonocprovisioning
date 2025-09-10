@@ -525,7 +525,7 @@ class ProvisionController extends Controller
         ];
         if ($auth) $post['auth'] = $auth;
     
-        // Esta linha garante o envio como JSON puro!
+        // ENVIO CERTO COMO JSON!
         $response = Http::asJson()->post($url, $post);
     
         $contentType = $response->header('Content-Type') ?? '';
@@ -541,7 +541,7 @@ class ProvisionController extends Controller
         $user = 'support';     
         $password = 'syndeo@123'; 
         $result = $this->zabbixApiRequest('user.login', [
-            'user' => $user,
+            'username' => $user,
             'password' => $password,
         ]);
         \Log::error('Zabbix login response', ['result' => $result]);
