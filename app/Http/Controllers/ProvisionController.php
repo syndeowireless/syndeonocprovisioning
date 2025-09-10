@@ -589,19 +589,29 @@ class ProvisionController extends Controller
 private function getTemplateIdByName($templateName, $auth)
 {
     // Listar todos os templates para debug
-    $allTemplates = $this->zabbixApiRequest('template.get', [
+    //$allTemplates = $this->zabbixApiRequest('template.get', [
+    //    'output' => ['templateid', 'host', 'name']
+    //], $auth);
+    //\Log::info('Lista de templates disponíveis', ['templates' => $allTemplates]);
+//
+    //// Buscar pelo filtro
+    //$result = $this->zabbixApiRequest('template.get', [
+    //    'filter' => [
+    //        'host' => $templateName,
+    //        'name' => $templateName
+    //    ]
+    //], $auth);
+    //if (!empty($result)) {
+    //    return $result[0]['templateid'];
+    //}
+    //throw new \Exception("Template {$templateName} not found.");
+    $result = $this->zabbixApiRequest('template.get', [
+        'search' => ['host' => preg_replace('/\s+/', ' ', $templateName)],
         'output' => ['templateid', 'host', 'name']
     ], $auth);
-    \Log::info('Lista de templates disponíveis', ['templates' => $allTemplates]);
-
-    // Buscar pelo filtro
-    $result = $this->zabbixApiRequest('template.get', [
-        'filter' => [
-            'host' => $templateName,
-            'name' => $templateName
-        ]
-    ], $auth);
     if (!empty($result)) {
+        // Deixe este log para debug
+        \Log::info('Templates encontrados pelo search', ['matches' => $result]);
         return $result[0]['templateid'];
     }
     throw new \Exception("Template {$templateName} not found.");
