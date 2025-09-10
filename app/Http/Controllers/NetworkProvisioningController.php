@@ -152,9 +152,17 @@ class NetworkProvisioningController extends Controller
 
         $dhcp_ip_to = $ipRow-> last_usable_ip;
 
+        $hostname_original = $validated['property_name'];
+
+        $hostname_clean = preg_replace('/[^A-Za-z0-9 ]/', '', $hostname_original);
+
+        $hostname_trimmed = trim($hostname_clean);
+
+        $hostname = str_replace(' ', '_', $hostname_trimmed);
+        
         // Substituição dos placeholders conforme regras
         $placeholders = [
-            '#system.hostname#'   => $validated['property_name'],
+            '#system.hostname#'   => $hostname,
             '#ipsec.hostname#'    => $validated['property_name'],
             '#dyndns.hostname#'   => $dyndnsHostname,
             '#random.password#'   => $randomPassword,
