@@ -525,10 +525,9 @@ class ProvisionController extends Controller
         ];
         if ($auth) $post['auth'] = $auth;
     
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json'
-        ])->post($url, $post);
-        
+        // Esta linha garante o envio como JSON puro!
+        $response = Http::asJson()->post($url, $post);
+    
         $contentType = $response->header('Content-Type') ?? '';
         if (strpos($contentType, 'application/json') === false) {
             throw new \Exception('Zabbix non-JSON response: ' . $response->body());
