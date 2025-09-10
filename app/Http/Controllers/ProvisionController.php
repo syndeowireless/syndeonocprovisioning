@@ -103,7 +103,7 @@ class ProvisionController extends Controller
                     'groups' => [['groupid' => $groupId]],
                     'templates' => [['templateid' => $templateId_Master_Unit_Equipment]],
                     'interfaces' => [[
-                        'type' => 1,
+                        'type' => 2,
                         'main' => 1,
                         'useip' => 1,
                         'ip' => $currentIp,
@@ -132,7 +132,7 @@ class ProvisionController extends Controller
                     'groups' => [['groupid' => $groupId]],
                     'templates' => [['templateid' => $templateId_BDA_Equipment]],
                     'interfaces' => [[
-                        'type' => 1,
+                        'type' => 2,
                         'main' => 1,
                         'useip' => 1,
                         'ip' => $currentIp,
