@@ -108,7 +108,11 @@ class ProvisionController extends Controller
                         'useip' => 1,
                         'ip' => $currentIp,
                         'dns' => '',
-                        'port' => '10050'
+                        'port' => '161',
+                            'details' => [
+                                'version' => 2,
+                                'community' => 'public'
+                            ]
                     ]],
                 ], $auth);
                 Log::info("ZabbixController: Host master unit criado.", [
@@ -137,7 +141,11 @@ class ProvisionController extends Controller
                         'useip' => 1,
                         'ip' => $currentIp,
                         'dns' => '',
-                        'port' => '10050'
+                        'port' => '161',
+                            'details' => [
+                                'version' => 2,
+                                'community' => 'public'
+                            ]
                     ]],
                 ], $auth);
                 Log::info("ZabbixController: Host BDA criado.", [
