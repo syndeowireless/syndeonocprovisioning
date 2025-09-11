@@ -88,8 +88,14 @@
         color: #fff;
     }
     .muted { color: #94a3b8; font-size: .9rem; }
+    /* Ensure finish content stays hidden until overlay completes */
+    #finish-content { visibility: hidden; }
+    /* Simple spinner keyframes as fallback */
+    @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
 </style>
 
+<!-- Content wrapper hidden until transition completes -->
+<div id="finish-content">
 <div class="container-fluid finish-hero">
     <div class="finish-card">
         <div class="finish-badge">
@@ -110,6 +116,7 @@
         <div class="mt-3 muted">You can safely close this page.</div>
     </div>
 </div>
+</div>
 
 <footer class="mt-6 border-t border-gray-200 py-4">
     <div class="max-w-4xl mx-auto px-4 text-center text-sm text-gray-600">
@@ -128,100 +135,108 @@
     }
 })();
 
-// Arrival transition overlay (same experience as search page)
+// Always show transition GIF first, then reveal content
 document.addEventListener('DOMContentLoaded', function() {
-    function fadeOutAndRemoveOverlay(delayMs = 600) {
-        const existing = document.getElementById('transition-overlay');
-        if (!existing) return;
+    const content = document.getElementById('finish-content');
+
+    let overlay;
+    try {
+        overlay = document.createElement('div');
+        overlay.id = 'transition-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 70px; /* Height of topbar */
+            left: 240px; /* Sidebar width */
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        `;
+        if (window.innerWidth <= 992) {
+            overlay.style.left = '0px';
+            overlay.style.top = '60px';
+        }
+
+        const loadingContainer = document.createElement('div');
+        loadingContainer.style.cssText = `
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        `;
+
+        const gifElement = document.createElement('img');
+        gifElement.src = '/assets/images/Transition_Animation.gif';
+        gifElement.alt = 'Loading...';
+        gifElement.style.cssText = `
+            max-width: 300px;
+            max-height: 300px;
+            width: auto;
+            height: auto;
+            margin-bottom: 1.5rem;
+        `;
+
+        const spinner = document.createElement('div');
+        spinner.style.cssText = `
+            width: 60px;
+            height: 60px;
+            border: 6px solid #e5e7eb;
+            border-top: 6px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+            display: none;
+        `;
+
+        gifElement.addEventListener('error', () => {
+            gifElement.style.display = 'none';
+            spinner.style.display = 'block';
+        });
+
+        loadingContainer.appendChild(gifElement);
+        loadingContainer.appendChild(spinner);
+        overlay.appendChild(loadingContainer);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+    } catch (_) {}
+
+    // Minimum visible time for the overlay to ensure GIF is seen
+    const MIN_MS = 1200;
+    const start = Date.now();
+
+    function reveal() {
+        const elapsed = Date.now() - start;
+        const wait = Math.max(0, MIN_MS - elapsed);
         setTimeout(() => {
-            try {
-                existing.style.transition = existing.style.transition || 'opacity 0.3s ease';
-                existing.style.opacity = '0';
+            if (content) content.style.visibility = 'visible';
+            if (overlay && overlay.parentNode) {
+                overlay.style.opacity = '0';
                 setTimeout(() => {
-                    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-                }, 320);
-            } catch (_) {
-                if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                }, 300);
             }
-        }, Math.max(0, delayMs));
+        }, wait);
     }
 
-    let arrivalFlag = false;
-    try { arrivalFlag = sessionStorage.getItem('showTransitionOverlay') === '1'; } catch (_) {}
-    if (arrivalFlag) {
-        try { sessionStorage.removeItem('showTransitionOverlay'); } catch (_) {}
-        if (!document.getElementById('transition-overlay')) {
-            const overlay = document.createElement('div');
-            overlay.id = 'transition-overlay';
-            overlay.style.cssText = `
-                position: fixed;
-                top: 70px;
-                left: 240px;
-                right: 0;
-                bottom: 0;
-                background-color: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(8px);
-                z-index: 9999;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: opacity 0.3s ease;
-                opacity: 0;
-            `;
-            if (window.innerWidth <= 992) {
-                overlay.style.left = '0px';
-                overlay.style.top = '60px';
-            }
-            const loadingContainer = document.createElement('div');
-            loadingContainer.style.cssText = `
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 2rem;
-            `;
-            const gifElement = document.createElement('img');
-            gifElement.src = '/assets/images/Transition_Animation.gif';
-            gifElement.alt = 'Loading...';
-            gifElement.style.cssText = `
-                max-width: 300px;
-                max-height: 300px;
-                width: auto;
-                height: auto;
-                margin-bottom: 1.5rem;
-            `;
-            const spinner = document.createElement('div');
-            spinner.style.cssText = `
-                width: 60px;
-                height: 60px;
-                border: 6px solid #e5e7eb;
-                border-top: 6px solid #3b82f6;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin: 0 auto 1.5rem;
-                display: none;
-            `;
-            gifElement.addEventListener('error', () => {
-                gifElement.style.display = 'none';
-                spinner.style.display = 'block';
-            });
-            loadingContainer.appendChild(gifElement);
-            loadingContainer.appendChild(spinner);
-            overlay.appendChild(loadingContainer);
-            document.body.appendChild(overlay);
-            requestAnimationFrame(() => { overlay.style.opacity = '1'; });
-        }
-        // Keep the animation on arrival briefly
-        fadeOutAndRemoveOverlay(1000);
+    // If GIF loads, still enforce minimum time; on error fallback quickly
+    // Also add a safety timeout in case load doesn't fire
+    const safety = setTimeout(reveal, 4000);
+    const img = document.querySelector('#transition-overlay img');
+    if (img) {
+        img.addEventListener('load', () => { clearTimeout(safety); reveal(); });
+        img.addEventListener('error', () => { clearTimeout(safety); reveal(); });
+    } else {
+        reveal();
     }
-
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            const existing = document.getElementById('transition-overlay');
-            if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-        }
-    });
 });
 </script>
 
