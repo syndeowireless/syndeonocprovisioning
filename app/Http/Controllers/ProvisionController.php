@@ -40,7 +40,7 @@ class ProvisionController extends Controller
         $errcs_equipment        = $provision->errcs_equipment;
         $property_type          = $provision->property_type;
         $latitude               = $provision->latitude;
-        $longtude               = $provision->longtude;
+        $longitude               = $provision->longitude;
 
         // Validação básica dos campos essenciais para a API do pfSense
         if (empty($property_name) || empty($random_password) || empty($first_usable_ip)) {
