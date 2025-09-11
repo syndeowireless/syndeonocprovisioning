@@ -1809,12 +1809,19 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function () {
     function updateFields() {
         const type = document.getElementById('system_type').value;
+        const oem = document.getElementById('oem').value;
         const master = document.getElementById('master_unit_quantity');
         const bda = document.getElementById('bda_quantity');
+        const masterContainer = master.closest('.form-group');
+        const bdaContainer = bda.closest('.form-group');
         
         // Remove any existing error states when fields change
         master.classList.remove('error');
         bda.classList.remove('error');
+        
+        // Show both containers by default
+        masterContainer.style.display = '';
+        bdaContainer.style.display = '';
         
         if (type === 'DAS') {
             master.disabled = false;
@@ -1827,6 +1834,11 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.style.cursor = 'not-allowed';
             master.style.backgroundColor = '';
             master.style.cursor = '';
+            
+            // Hide BDA Unit Quantity if no OEM is selected
+            if (!oem) {
+                bdaContainer.style.display = 'none';
+            }
         } else if (type === 'ERRCS') {
             master.disabled = true;
             master.required = false;
@@ -1838,6 +1850,11 @@ document.addEventListener('DOMContentLoaded', function () {
             master.style.cursor = 'not-allowed';
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
+            
+            // Hide Master Unit Quantity if no OEM is selected
+            if (!oem) {
+                masterContainer.style.display = 'none';
+            }
         } else if (type === 'DAS & ERRCS') {
             master.disabled = false;
             master.required = true;
@@ -1862,9 +1879,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     const systemTypeSelect = document.getElementById('system_type');
+    const oemSelect = document.getElementById('oem');
     if (systemTypeSelect) {
         systemTypeSelect.addEventListener('change', updateFields);
         updateFields(); // Initial call to handle default value
+    }
+    if (oemSelect) {
+        oemSelect.addEventListener('change', updateFields);
     }
 });
 </script>
