@@ -1871,46 +1871,123 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Equipment model configurations based on System Type and OEM combinations
+    const equipmentConfig = {
+        'DAS': {
+            'CommScope': {
+                masterUnit: ['Syndeo V1.0 202505 COMMSCOPE'],
+                bdaEquipment: [],
+                showBDA: false
+            },
+            'JMA': {
+                masterUnit: ['Syndeo V1.0 202505 JMA WIRELESS TEKO OMT DAS'],
+                bdaEquipment: [],
+                showBDA: false
+            },
+            'Solid': {
+                masterUnit: ['Syndeo V1.0 SOLID DMS1200 DAS LLD'],
+                bdaEquipment: [],
+                showBDA: false
+            }
+        },
+        'ERRCS': {
+            'ADRF': {
+                masterUnit: [],
+                bdaEquipment: ['Syndeo V1.0 ADRF 202505 SDR'],
+                showBDA: true
+            },
+            'COMBA': {
+                masterUnit: [],
+                bdaEquipment: ['Syndeo V1.0 COMBA 202505 RX7W22 CLASSB', 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS'],
+                showBDA: true
+            }
+        },
+        'DAS & ERRCS': {
+            'ADRF': {
+                masterUnit: ['Syndeo V1.0 ADRF 202505 DAS'],
+                bdaEquipment: ['Syndeo V1.0 ADRF 202505 SDR'],
+                showBDA: true
+            },
+            'COMBA': {
+                masterUnit: ['Syndeo V1.0 COMBA 202505 DAS LLD', 'Syndeo V1.0 COMBA 202505 Model 2014'],
+                bdaEquipment: ['Syndeo V1.0 COMBA 202505 RX7W22 CLASSB', 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS'],
+                showBDA: true
+            }
+        }
+    };
+
+    function clearDropdown(selectElement) {
+        selectElement.innerHTML = '<option value="">Select the equipment</option>';
+    }
+
+    function populateDropdown(selectElement, options) {
+        clearDropdown(selectElement);
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option;
+            optionElement.textContent = option;
+            selectElement.appendChild(optionElement);
+        });
+    }
+
     function updateEquipmentFields() {
-        const type = document.getElementById('system_type').value;
+        const systemType = document.getElementById('system_type').value;
+        const oem = document.getElementById('oem').value;
         const dasEqContainer = document.getElementById('das_equipment_container');
         const errcsEqContainer = document.getElementById('errcs_equipment_container');
         const dasEq = document.getElementById('das_equipment');
         const errcsEq = document.getElementById('errcs_equipment');
 
-        if (type === 'DAS') {
-            dasEqContainer.style.display = '';
-            errcsEqContainer.style.display = 'none';
-            dasEq.required = true;
-            errcsEq.required = false;
-            errcsEq.value = '';
-        } else if (type === 'ERRCS') {
-            dasEqContainer.style.display = 'none';
-            errcsEqContainer.style.display = '';
-            dasEq.required = false;
-            errcsEq.required = true;
-            dasEq.value = '';
-        } else if (type === 'DAS & ERRCS') {
-            dasEqContainer.style.display = '';
-            errcsEqContainer.style.display = '';
-            dasEq.required = true;
-            errcsEq.required = true;
-        } else {
-            // Hide both if nothing is selected
-            dasEqContainer.style.display = 'none';
-            errcsEqContainer.style.display = 'none';
-            dasEq.required = false;
-            errcsEq.required = false;
-            dasEq.value = '';
-            errcsEq.value = '';
+        // Clear both dropdowns first
+        clearDropdown(dasEq);
+        clearDropdown(errcsEq);
+
+        // Hide both containers initially
+        dasEqContainer.style.display = 'none';
+        errcsEqContainer.style.display = 'none';
+        dasEq.required = false;
+        errcsEq.required = false;
+
+        // If both system type and OEM are selected, apply the configuration
+        if (systemType && oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
+            const config = equipmentConfig[systemType][oem];
+            
+            // Handle Master Unit Equipment
+            if (config.masterUnit.length > 0) {
+                dasEqContainer.style.display = '';
+                dasEq.required = true;
+                populateDropdown(dasEq, config.masterUnit);
+            }
+            
+            // Handle BDA Equipment
+            if (config.showBDA && config.bdaEquipment.length > 0) {
+                errcsEqContainer.style.display = '';
+                errcsEq.required = true;
+                populateDropdown(errcsEq, config.bdaEquipment);
+            }
+        } else if (systemType && !oem) {
+            // Show containers based on system type but keep dropdowns empty until OEM is selected
+            if (systemType === 'DAS') {
+                dasEqContainer.style.display = '';
+                dasEq.required = true;
+            } else if (systemType === 'ERRCS') {
+                errcsEqContainer.style.display = '';
+                errcsEq.required = true;
+            } else if (systemType === 'DAS & ERRCS') {
+                dasEqContainer.style.display = '';
+                errcsEqContainer.style.display = '';
+                dasEq.required = true;
+                errcsEq.required = true;
+            }
         }
     }
 
     // Initial call
     updateEquipmentFields();
 
-    // On change
+    // Add event listeners for both system type and OEM changes
     document.getElementById('system_type').addEventListener('change', updateEquipmentFields);
+    document.getElementById('oem').addEventListener('change', updateEquipmentFields);
 });
 </script>
 
