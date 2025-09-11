@@ -212,21 +212,39 @@ document.addEventListener('DOMContentLoaded', function() {
     content = document.getElementById('finish-content');
     grafanaView = document.getElementById('grafana-credentials-view');
     
-    // Add click event listener to Grafana credentials button
+    // Debug all elements
+    console.log('=== DEBUGGING ELEMENTS ===');
+    console.log('content element:', content);
+    console.log('grafanaView element:', grafanaView);
+    
     const grafanaBtn = document.getElementById('grafana-credentials-btn');
+    console.log('grafanaBtn element:', grafanaBtn);
+    
+    // Add click event listener to Grafana credentials button
     if (grafanaBtn) {
+        console.log('Adding event listener to button');
         grafanaBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Grafana button clicked!');
+            console.log('=== BUTTON CLICKED ===');
+            console.log('content before:', content ? content.style.display : 'null');
+            console.log('grafanaView before:', grafanaView ? grafanaView.style.display : 'null');
+            
             if (content) {
                 content.style.display = 'none';
-                console.log('Content hidden');
+                console.log('Content set to none');
+            } else {
+                console.log('Content element not found!');
             }
+            
             if (grafanaView) {
                 grafanaView.style.display = 'block';
-                console.log('Grafana view shown');
+                console.log('Grafana view set to block');
+            } else {
+                console.log('Grafana view element not found!');
             }
         });
+    } else {
+        console.log('Grafana button not found!');
     }
 
     let overlay;
