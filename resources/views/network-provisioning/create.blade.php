@@ -831,6 +831,7 @@ body.loading-active {
                             <option value="Syndeo V1.0 COMBA 202505 DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 COMBA 202505 DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 DAS LLD</option>
                             <option value="Syndeo V1.0 COMMSCOPE DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 COMMSCOPE DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 COMMSCOPE DAS LLD</option>
                             <option value="Syndeo V1.0 SOLID DMS1200 DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 SOLID DMS1200 DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 SOLID DMS1200 DAS LLD</option>
+                            <option value="Syndeo V1.0 202505 COMMSCOPE" {{ old('das_equipment') == 'Syndeo V1.0 202505 COMMSCOPE' ? 'selected' : '' }}>Syndeo V1.0 202505 COMMSCOPE</option>
                         </select>
 
                     </div>
