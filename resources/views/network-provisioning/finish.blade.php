@@ -94,6 +94,42 @@
     @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
     /* Hide Grafana view by default */
     #grafana-credentials-view { display: none; }
+    .password-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .password-icon {
+        color: #64748b;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        border-radius: 50%;
+        padding: 4px;
+    }
+    .password-icon:hover {
+        color: #13395d;
+        background-color: rgba(19, 57, 93, 0.1);
+        transform: scale(1.1);
+    }
+    .password-icon:active {
+        transform: scale(0.95);
+    }
+    .password-input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: .95rem;
+        color: #1e293b;
+        font-weight: 500;
+        width: 120px;
+        transition: all 0.2s ease;
+    }
+    .password-input:focus {
+        background-color: rgba(19, 57, 93, 0.05);
+        border-radius: 4px;
+        padding: 2px 4px;
+    }
 </style>
 
 @php
@@ -158,22 +194,29 @@
         </div>
         <div class="confetti">🔐</div>
         @if($hasGrafana)
-            <h1 class="finish-title">Customer Access</h1>
-            <div class="finish-sub">Use the credentials below to sign in.</div>
             <div style="text-align:left; margin: 1rem auto; max-width: 520px;">
                 <div style="display:flex; justify-content:space-between; padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:.75rem;">
-                    <span style="color:#64748b; font-weight:600;">Username (Email)</span>
-                    <code style="color:#13395d;">{{ $customerEmail ?? 'N/A' }}</code>
+                    <span style="color:#64748b; font-weight:600;">Username</span>
+                    <code style="color:#13395d;">{{ $customerEmail ? explode('@', $customerEmail)[0] : 'N/A' }}</code>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:10px;">
                     <span style="color:#64748b; font-weight:600;">Password</span>
-                    <code style="color:#13395d;">{{ $randomPassword ?? 'N/A' }}</code>
+                    <div class="password-group" style="display:flex; align-items:center; gap:8px;">
+                        <input class="password-input" type="password" value="{{ $randomPassword ?? 'N/A' }}" id="password_grafana" readonly style="border:none; background:transparent; outline:none; font-size:.95rem; color:#1e293b; font-weight:500; width:120px;">
+                        <i class="mdi mdi-eye password-icon" onclick="show_password_grafana()" title="Show/Hide Password" style="color:#64748b; cursor:pointer; font-size:18px; transition:all 0.3s ease; border-radius:50%; padding:4px;"></i>
+                        <i class="mdi mdi-content-copy password-icon" onclick="copy_to_clipboard_grafana()" title="Copy to Clipboard" style="color:#64748b; cursor:pointer; font-size:18px; transition:all 0.3s ease; border-radius:50%; padding:4px;"></i>
+                    </div>
                 </div>
             </div>
             <div class="cta-row">
-                <a href="#" class="btn-primary-syndeo" id="back-to-finish" onclick="return backToFinish();">
-                    <i class="mdi mdi-arrow-left"></i>
-                    Back
+                <a type="button"
+                    class="btn-primary-syndeo"
+                    style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
+                    href="mailto:?subject={{ rawurlencode('Grafana Credentials - ' . ($finishName ?? 'PROPERTY NAME')) }}&body={{ rawurlencode('Grafana Credentials:\n\nUsername: ' . ($customerEmail ? explode('@', $customerEmail)[0] : 'N/A') . '\nPassword: ' . ($randomPassword ?? 'N/A')) }}"
+                    target="_blank"
+                >
+                    <i class="mdi mdi-share-variant" style="color: white;"></i>
+                    Share
                 </a>
             </div>
         @else
@@ -324,6 +367,39 @@ document.addEventListener('DOMContentLoaded', function() {
             if (content) content.style.display = '';
         } catch (_) {}
         return false;
+    };
+    
+    // Password visibility toggle for Grafana
+    window.show_password_grafana = function() {
+        var x = document.getElementById('password_grafana');
+        var icon = event.target;
+        if (x.type === 'password') {
+            x.type = 'text';
+            icon.classList.remove('mdi-eye');
+            icon.classList.add('mdi-eye-off');
+        } else {
+            x.type = 'password';
+            icon.classList.remove('mdi-eye-off');
+            icon.classList.add('mdi-eye');
+        }
+    };
+    
+    // Copy to clipboard for Grafana
+    window.copy_to_clipboard_grafana = function() {
+        var copyText = document.getElementById('password_grafana');
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+
+        var copyIcon = event.target;
+        copyIcon.classList.remove('mdi-content-copy');
+        copyIcon.classList.add('mdi-check');
+        copyIcon.style.color = '#10b981';
+        setTimeout(function() {
+            copyIcon.classList.remove('mdi-check');
+            copyIcon.classList.add('mdi-content-copy');
+            copyIcon.style.color = '#64748b';
+        }, 2000);
     };
 
     // Toggle views using event delegation for reliability
