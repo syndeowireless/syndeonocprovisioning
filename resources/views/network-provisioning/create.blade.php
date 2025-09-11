@@ -803,18 +803,18 @@ body.loading-active {
                             <option value="COMBA" {{ old('oem') == 'COMBA' ? 'selected' : '' }}>COMBA</option>
                             <option value="CommScope" {{ old('oem') == 'CommScope' ? 'selected' : '' }}>CommScope</option>
                             <option value="JMA" {{ old('oem') == 'JMA' ? 'selected' : '' }}>JMA</option>
-                            <option value="Solid" {{ old('oem') == 'Solid' ? 'selected' : '' }}>Solid</option>
+                            <option value="SOLID" {{ old('oem') == 'SOLID' ? 'selected' : '' }}>SOLID</option>
                         </select>                        
                     </div>
                 </div>
                 <!-- Linha 3: Master Unit Quantity / BDA Quantity -->
                 <div class="grid-container">
-                    <div class="form-group">
+                    <div class="form-group" id="master_unit_quantity_container">
                         <label class="form-label required">Master Unit Quantity</label>
                         <input type="number" name="master_unit_quantity" id="master_unit_quantity" value="{{ old('master_unit_quantity') }}" required
                                class="form-input" placeholder="Type the quantity" min="0">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="bda_quantity_container">
                         <label class="form-label required">BDA Quantity</label>
                         <input type="number" name="bda_quantity" id="bda_quantity" value="{{ old('bda_quantity') }}" required
                                class="form-input" placeholder="Type the quantity" min="0">
@@ -1813,16 +1813,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const oem = document.getElementById('oem').value;
         const master = document.getElementById('master_unit_quantity');
         const bda = document.getElementById('bda_quantity');
-        const masterContainer = master.closest('.form-group');
-        const bdaContainer = bda.closest('.form-group');
+        const masterContainer = document.getElementById('master_unit_quantity_container');
+        const bdaContainer = document.getElementById('bda_quantity_container');
+        const dasEquipmentContainer = document.getElementById('das_equipment_container');
+        const errcsEquipmentContainer = document.getElementById('errcs_equipment_container');
         
         // Remove any existing error states when fields change
         master.classList.remove('error');
         bda.classList.remove('error');
         
-        // Show both containers by default
+        // Reset layout to default
         masterContainer.style.display = '';
         bdaContainer.style.display = '';
+        dasEquipmentContainer.style.display = 'none';
+        errcsEquipmentContainer.style.display = 'none';
         
         if (type === 'DAS') {
             master.disabled = false;
@@ -1830,16 +1834,23 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.disabled = true;
             bda.required = false;
             bda.value = '';
-            // Visual indication for disabled field
-            bda.style.backgroundColor = '#3a3a3aff';
-            bda.style.cursor = 'not-allowed';
+            
+            // Hide BDA Quantity completely for DAS
+            bdaContainer.style.display = 'none';
+            
+            // Move Master Unit Equipment to BDA Quantity's position
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(dasEquipmentContainer)) {
+                bdaParentGrid.appendChild(dasEquipmentContainer);
+            }
+            dasEquipmentContainer.style.display = '';
+            
+            // Hide BDA Equipment completely
+            errcsEquipmentContainer.style.display = 'none';
+            errcsEquipmentContainer.style.visibility = 'hidden';
+            
             master.style.backgroundColor = '';
             master.style.cursor = '';
-            
-            // Hide BDA Unit Quantity if no OEM is selected
-            if (!oem) {
-                bdaContainer.style.display = 'none';
-            }
         } else if (type === 'ERRCS') {
             master.disabled = true;
             master.required = false;
@@ -1856,6 +1867,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!oem) {
                 masterContainer.style.display = 'none';
             }
+            
+            // Reset BDA Equipment visibility
+            errcsEquipmentContainer.style.visibility = 'visible';
         } else if (type === 'DAS & ERRCS') {
             master.disabled = false;
             master.required = true;
@@ -1866,6 +1880,9 @@ document.addEventListener('DOMContentLoaded', function () {
             master.style.cursor = '';
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
+            
+            // Reset BDA Equipment visibility
+            errcsEquipmentContainer.style.visibility = 'visible';
         } else {
             // No system type selected - enable both but don't require
             master.disabled = false;
@@ -1876,17 +1893,29 @@ document.addEventListener('DOMContentLoaded', function () {
             master.style.cursor = '';
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
+            
+            // Reset BDA Equipment visibility
+            errcsEquipmentContainer.style.visibility = 'visible';
         }
     }
+    
+    // Forward declaration
+    let updateEquipmentFields;
     
     const systemTypeSelect = document.getElementById('system_type');
     const oemSelect = document.getElementById('oem');
     if (systemTypeSelect) {
-        systemTypeSelect.addEventListener('change', updateFields);
+        systemTypeSelect.addEventListener('change', function() {
+            updateFields();
+            if (updateEquipmentFields) updateEquipmentFields();
+        });
         updateFields(); // Initial call to handle default value
     }
     if (oemSelect) {
-        oemSelect.addEventListener('change', updateFields);
+        oemSelect.addEventListener('change', function() {
+            updateFields();
+            if (updateEquipmentFields) updateEquipmentFields();
+        });
     }
 });
 </script>
@@ -1962,13 +1991,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function updateEquipmentFields() {
+    updateEquipmentFields = function() {
         const systemType = document.getElementById('system_type').value;
         const oem = document.getElementById('oem').value;
         const dasEqContainer = document.getElementById('das_equipment_container');
         const errcsEqContainer = document.getElementById('errcs_equipment_container');
         const dasEq = document.getElementById('das_equipment');
         const errcsEq = document.getElementById('errcs_equipment');
+        const bdaContainer = document.getElementById('bda_quantity_container');
 
         // Clear both dropdowns first
         clearDropdown(dasEq);
@@ -1980,36 +2010,59 @@ document.addEventListener('DOMContentLoaded', function () {
         dasEq.required = false;
         errcsEq.required = false;
 
-        // If both system type and OEM are selected, apply the configuration
-        if (systemType && oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
-            const config = equipmentConfig[systemType][oem];
+        // Special handling for DAS system type
+        if (systemType === 'DAS') {
+            // For DAS, move Master Unit Equipment to BDA Quantity's position
+             const bdaParentGrid = bdaContainer.parentElement;
+             if (bdaParentGrid && !bdaParentGrid.contains(dasEqContainer)) {
+                 bdaParentGrid.appendChild(dasEqContainer);
+             }
+            dasEqContainer.style.display = '';
+            dasEq.required = true;
             
-            // Handle Master Unit Equipment
-            if (config.masterUnit.length > 0) {
-                dasEqContainer.style.display = '';
-                dasEq.required = true;
-                populateDropdown(dasEq, config.masterUnit);
-            }
+            // Hide BDA Equipment completely for DAS
+            errcsEqContainer.style.display = 'none';
+            errcsEqContainer.style.visibility = 'hidden';
             
-            // Handle BDA Equipment
-            if (config.showBDA && config.bdaEquipment.length > 0) {
-                errcsEqContainer.style.display = '';
-                errcsEq.required = true;
-                populateDropdown(errcsEq, config.bdaEquipment);
+            // If OEM is selected, populate the equipment dropdown
+            if (oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
+                const config = equipmentConfig[systemType][oem];
+                if (config.masterUnit.length > 0) {
+                    populateDropdown(dasEq, config.masterUnit);
+                }
             }
-        } else if (systemType && !oem) {
-            // Show containers based on system type but keep dropdowns empty until OEM is selected
-            if (systemType === 'DAS') {
-                dasEqContainer.style.display = '';
-                dasEq.required = true;
-            } else if (systemType === 'ERRCS') {
-                errcsEqContainer.style.display = '';
-                errcsEq.required = true;
-            } else if (systemType === 'DAS & ERRCS') {
-                dasEqContainer.style.display = '';
-                errcsEqContainer.style.display = '';
-                dasEq.required = true;
-                errcsEq.required = true;
+        } else {
+            // Reset BDA Equipment visibility for non-DAS types
+            errcsEqContainer.style.visibility = 'visible';
+            
+            // If both system type and OEM are selected, apply the configuration
+            if (systemType && oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
+                const config = equipmentConfig[systemType][oem];
+                
+                // Handle Master Unit Equipment
+                if (config.masterUnit.length > 0) {
+                    dasEqContainer.style.display = '';
+                    dasEq.required = true;
+                    populateDropdown(dasEq, config.masterUnit);
+                }
+                
+                // Handle BDA Equipment
+                if (config.showBDA && config.bdaEquipment.length > 0) {
+                    errcsEqContainer.style.display = '';
+                    errcsEq.required = true;
+                    populateDropdown(errcsEq, config.bdaEquipment);
+                }
+            } else if (systemType && !oem) {
+                // Show containers based on system type but keep dropdowns empty until OEM is selected
+                if (systemType === 'ERRCS') {
+                    errcsEqContainer.style.display = '';
+                    errcsEq.required = true;
+                } else if (systemType === 'DAS & ERRCS') {
+                    dasEqContainer.style.display = '';
+                    errcsEqContainer.style.display = '';
+                    dasEq.required = true;
+                    errcsEq.required = true;
+                }
             }
         }
     }
