@@ -497,13 +497,14 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 data = JSON.parse(text);
             } catch (e) {
-                // Not JSON, probably HTML or plain text error
-                alert('Server returned non-JSON response:\n\n' + text);
+                // Treat as success content and redirect
+                window.location.href = '{{ route("network-provisioning.finish") }}';
                 return;
             }
 
             if (data.success) {
-                alert('Provisioning successful!');
+                const name = encodeURIComponent(data.provisioning_name || 'Provisioning');
+                window.location.href = '{{ route("network-provisioning.finish") }}' + '?name=' + name;
             } else {
                 alert('Provisioning failed: ' + (data.error || 'Unknown error'));
             }

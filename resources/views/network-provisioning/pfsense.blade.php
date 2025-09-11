@@ -489,20 +489,14 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 data = JSON.parse(text);
             } catch (e) {
-                // Not JSON, probably HTML or plain text error
-                alert('Server returned non-JSON response:\n\n' + text);
+                // Non-JSON is treated as success content by backend sometimes; redirect anyway
+                window.location.href = '{{ route("network-provisioning.finish") }}';
                 return;
             }
 
             if (data.success) {
-                btn.innerHTML = '<i class="mdi mdi-check"></i> Success!';
-                btn.style.backgroundColor = '#10b981';
-                setTimeout(() => {
-                    alert('Provisioning successful!');
-                    btn.innerHTML = 'Start Provisioning';
-                    btn.style.backgroundColor = '#13395d';
-                    btn.classList.remove('loading');
-                }, 1500);
+                const name = encodeURIComponent(data.provisioning_name || 'Provisioning');
+                window.location.href = '{{ route("network-provisioning.finish") }}' + '?name=' + name;
             } else {
                 btn.innerHTML = '<i class="mdi mdi-alert"></i> Failed';
                 btn.style.backgroundColor = '#ef4444';

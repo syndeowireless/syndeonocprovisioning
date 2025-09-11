@@ -354,9 +354,11 @@ class ProvisionController extends Controller
 
 
 
-        #RETURNS SUCCESS PAGE#
-        //return redirect()->route('success')->with('success', 'Operation completed!');
-        #RETURNS SUCCESS PAGE#
+        // Return a normalized JSON response for the frontend to redirect
+        return response()->json([
+            'success' => true,
+            'provisioning_name' => $property_name,
+        ]);
 
 
         // Início da chamada à API do pfSense

@@ -113,6 +113,11 @@ Route::get('/network-provisioning/pfsense', function () {
     return view('network-provisioning.pfsense');
 })->middleware(['auth'])->name('network-provisioning.pfsense');
 
+// Finish page after provisioning completes
+Route::get('/network-provisioning/finish', function () {
+    return view('network-provisioning.finish');
+})->middleware(['auth'])->name('network-provisioning.finish');
+
 
 Route::get('/network-provisioning/download-xml/{fileName}', [NetworkProvisioningController::class, 'downloadXml'])
     ->middleware(['auth'])
