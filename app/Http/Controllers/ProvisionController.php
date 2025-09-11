@@ -42,6 +42,7 @@ class ProvisionController extends Controller
         $latitude               = $provision->latitude;
         $longitude               = $provision->longitude;
 
+
         // Validação básica dos campos essenciais para a API do pfSense
         if (empty($property_name) || empty($random_password) || empty($first_usable_ip)) {
             Log::error("ProvisionController: Dados essenciais ausentes ou inválidos do registro NetworkManagement.", [
@@ -124,6 +125,7 @@ class ProvisionController extends Controller
                     'inventory_mode' => 1, // manual
                     'inventory' => [
                         'type' => 'DAS',
+                        'type_full' => $property_type,
                         'location_lat' => $latitude,
                         'location_lon' => $longitude,
                         'vendor' => $oem,
@@ -169,6 +171,7 @@ class ProvisionController extends Controller
                     'inventory_mode' => 1, // manual
                     'inventory' => [
                         'type' => 'ERRCS',
+                        'type_full' => $property_type,
                         'location_lat' => $latitude,
                         'location_lon' => $longitude,
                         'vendor' => $oem,
