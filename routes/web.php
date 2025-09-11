@@ -132,4 +132,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/provision/start', [ProvisionController::class, 'start'])->name('provision.start');
 
-
+Route::get('/success', function () {
+    return view('success');
+})->name('success');
