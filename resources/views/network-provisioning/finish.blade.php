@@ -136,7 +136,7 @@
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
         <div class="cta-row">
-            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="alert('Button clicked!'); showGrafanaCredentials();">
+            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
             </button>
@@ -211,6 +211,23 @@ let content, grafanaView;
 document.addEventListener('DOMContentLoaded', function() {
     content = document.getElementById('finish-content');
     grafanaView = document.getElementById('grafana-credentials-view');
+    
+    // Add click event listener to Grafana credentials button
+    const grafanaBtn = document.getElementById('grafana-credentials-btn');
+    if (grafanaBtn) {
+        grafanaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Grafana button clicked!');
+            if (content) {
+                content.style.display = 'none';
+                console.log('Content hidden');
+            }
+            if (grafanaView) {
+                grafanaView.style.display = 'block';
+                console.log('Grafana view shown');
+            }
+        });
+    }
 
     let overlay;
     try {
