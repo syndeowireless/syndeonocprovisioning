@@ -136,7 +136,7 @@
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
         <div class="cta-row">
-            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="showGrafanaCredentials()">
+            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="alert('Button clicked!'); showGrafanaCredentials();">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
             </button>
@@ -204,10 +204,13 @@
     }
 })();
 
+// Global variables for view elements
+let content, grafanaView;
+
 // Always show transition GIF first, then reveal content
 document.addEventListener('DOMContentLoaded', function() {
-    const content = document.getElementById('finish-content');
-    const grafanaView = document.getElementById('grafana-credentials-view');
+    content = document.getElementById('finish-content');
+    grafanaView = document.getElementById('grafana-credentials-view');
 
     let overlay;
     try {
