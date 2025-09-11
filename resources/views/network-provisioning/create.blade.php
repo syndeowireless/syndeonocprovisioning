@@ -1903,6 +1903,9 @@ document.addEventListener('DOMContentLoaded', function () {
             masterContainer.style.display = 'none';
             bdaContainer.style.display = '';
             
+            // Hide Master Unit Equipment for ERRCS
+            dasEquipmentContainer.style.display = 'none';
+            
             master.disabled = true;
             master.required = false;
             master.value = '';
