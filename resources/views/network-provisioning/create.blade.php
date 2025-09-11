@@ -1888,19 +1888,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 masterUnit: ['Syndeo V1.0 SOLID DMS1200 DAS LLD'],
                 bdaEquipment: [],
                 showBDA: false
-            }
-        },
-        'ERRCS': {
+            },
             'ADRF': {
-                masterUnit: [],
+                masterUnit: ['Syndeo V1.0 ADRF 202505 DAS'],
                 bdaEquipment: ['Syndeo V1.0 ADRF 202505 SDR'],
                 showBDA: true
             },
             'COMBA': {
-                masterUnit: [],
+                masterUnit: ['Syndeo V1.0 COMBA 202505 DAS LLD', 'Syndeo V1.0 COMBA 202505 Model 2014'],
                 bdaEquipment: ['Syndeo V1.0 COMBA 202505 RX7W22 CLASSB', 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS'],
                 showBDA: true
             }
+        },
+        'ERRCS': {
+            'ADRF': {
+                masterUnit: ['Syndeo V1.0 ADRF 202505 DAS'],
+                bdaEquipment: ['Syndeo V1.0 ADRF 202505 SDR'],
+                showBDA: true
+            },
+            'COMBA': {
+                masterUnit: ['Syndeo V1.0 COMBA 202505 DAS LLD', 'Syndeo V1.0 COMBA 202505 Model 2014'],
+                bdaEquipment: ['Syndeo V1.0 COMBA 202505 RX7W22 CLASSB', 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS'],
+                showBDA: true
+            },
         },
         'DAS & ERRCS': {
             'ADRF': {
