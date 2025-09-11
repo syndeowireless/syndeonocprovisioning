@@ -2090,11 +2090,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (systemType && oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
                 const config = equipmentConfig[systemType][oem];
                 
-                // Handle Master Unit Equipment
-                if (config.masterUnit.length > 0) {
+                // Handle Master Unit Equipment - but hide for ERRCS
+                if (config.masterUnit.length > 0 && systemType !== 'ERRCS') {
                     dasEqContainer.style.display = '';
                     dasEq.required = true;
                     populateDropdown(dasEq, config.masterUnit);
+                } else if (systemType === 'ERRCS') {
+                    // Ensure Master Unit Equipment is hidden for ERRCS
+                    dasEqContainer.style.display = 'none';
+                    dasEq.required = false;
                 }
                 
                 // Handle BDA Equipment
@@ -2106,6 +2110,8 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (systemType && !oem) {
                 // Show containers based on system type but keep dropdowns empty until OEM is selected
                 if (systemType === 'ERRCS') {
+                    // For ERRCS, only show BDA Equipment, hide Master Unit Equipment
+                    dasEqContainer.style.display = 'none';
                     errcsEqContainer.style.display = '';
                     errcsEq.required = true;
                 } else if (systemType === 'DAS & ERRCS') {
