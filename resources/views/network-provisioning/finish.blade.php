@@ -385,10 +385,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Toggle views using event delegation for reliability
     document.addEventListener('click', function(e) {
         console.log('Click event detected on:', e.target);
-        const showBtn = e.target.closest('#grafana-credentials-btn');
-        if (showBtn) {
-            console.log('Grafana credentials button clicked via event delegation');
+        console.log('Target ID:', e.target.id);
+        console.log('Target classes:', e.target.className);
+        
+        // Check if the clicked element is the button or inside the button
+        if (e.target.id === 'grafana-credentials-btn' || e.target.closest('#grafana-credentials-btn')) {
+            console.log('Grafana credentials button clicked!');
             e.preventDefault();
+            e.stopPropagation();
+            
             if (content) {
                 content.style.display = 'none';
                 console.log('content hidden via delegation');
