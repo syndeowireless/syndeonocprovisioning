@@ -31,6 +31,7 @@
         height: 200%;
         background: radial-gradient(closest-side, rgba(19,57,93,.06), transparent 60%);
         transform: rotate(15deg);
+        pointer-events: none;
     }
     .finish-badge {
         display: inline-flex;
