@@ -824,15 +824,15 @@ body.loading-active {
                             </div>
                             
                             <!-- BDA Unit Equipment - will be shown in same row for ERRCS -->
-                            <div id="errcs_equipment_container" class="form-group" style="display:none;">
-                                <label class="form-label">BDA Unit Equipment</label>
-                                <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
-                                    <option value="">Select the BDA equipment</option>
-                                    <option value="Syndeo V1.0  ADRF 202505 SDR" {{ old('errcs_equipment') == 'Syndeo V1.0  ADRF 202505 SDR' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 SDR</option>
-                                    <option value="Syndeo V1.0 COMBA 202505 RX7W22 CLASSB" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA 202505 RX7W22 CLASSB' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 RX7W22 CLASSB</option>
-                                    <option value="Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS' ? 'selected' : '' }}>Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS</option>
-                                </select>
-                            </div>
+            <div id="errcs_equipment_container" class="form-group">
+                <label class="form-label">BDA Unit Equipment</label>
+                <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
+                    <option value="">Select the BDA equipment</option>
+                    <option value="Syndeo V1.0  ADRF 202505 SDR" {{ old('errcs_equipment') == 'Syndeo V1.0  ADRF 202505 SDR' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 SDR</option>
+                    <option value="Syndeo V1.0 COMBA 202505 RX7W22 CLASSB" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA 202505 RX7W22 CLASSB' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 RX7W22 CLASSB</option>
+                    <option value="Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS' ? 'selected' : '' }}>Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS</option>
+                </select>
+            </div>
                         </div>
                     </div>
                 </div>
@@ -1874,6 +1874,7 @@ document.addEventListener('DOMContentLoaded', function () {
         bdaContainer.style.display = '';
         dasEquipmentContainer.style.display = 'none';
         errcsEquipmentContainer.style.display = 'none';
+        errcsEquipmentContainer.style.visibility = 'hidden';
         
         if (type === 'DAS') {
             master.disabled = false;
@@ -1916,7 +1917,7 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.style.cursor = '';
             
             // Show BDA Unit Equipment (already nested in BDA container)
-            errcsEquipmentContainer.style.display = '';
+            errcsEquipmentContainer.style.display = 'block';
             errcsEquipmentContainer.style.visibility = 'visible';
         } else if (type === 'DAS & ERRCS') {
             master.disabled = false;
@@ -2103,7 +2104,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 // Handle BDA Equipment
                 if (config.showBDA && config.bdaEquipment.length > 0) {
-                    errcsEqContainer.style.display = '';
+                    errcsEqContainer.style.display = 'block';
+                    errcsEqContainer.style.visibility = 'visible';
                     errcsEq.required = true;
                     populateDropdown(errcsEq, config.bdaEquipment);
                 }
@@ -2112,11 +2114,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (systemType === 'ERRCS') {
                     // For ERRCS, only show BDA Equipment, hide Master Unit Equipment
                     dasEqContainer.style.display = 'none';
-                    errcsEqContainer.style.display = '';
+                    errcsEqContainer.style.display = 'block';
+                    errcsEqContainer.style.visibility = 'visible';
                     errcsEq.required = true;
                 } else if (systemType === 'DAS & ERRCS') {
-                    dasEqContainer.style.display = '';
-                    errcsEqContainer.style.display = '';
+                    dasEqContainer.style.display = 'block';
+                    errcsEqContainer.style.display = 'block';
+                    errcsEqContainer.style.visibility = 'visible';
                     dasEq.required = true;
                     errcsEq.required = true;
                 }
