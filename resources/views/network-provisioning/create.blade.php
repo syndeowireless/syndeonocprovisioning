@@ -800,7 +800,10 @@ body.loading-active {
                         <select name="oem" id="oem" class="form-select" required>
                             <option value="">Select the OEM</option>
                             <option value="ADRF" {{ old('oem') == 'ADRF' ? 'selected' : '' }}>ADRF</option>
-                            <option value="COMBA ERRCS" {{ old('oem') == 'COMBA ERRCS' ? 'selected' : '' }}>COMBA ERRCS</option>
+                            <option value="COMBA" {{ old('oem') == 'COMBA' ? 'selected' : '' }}>COMBA</option>
+                            <option value="CommScope" {{ old('oem') == 'CommScope' ? 'selected' : '' }}>CommScope</option>
+                            <option value="JMA" {{ old('oem') == 'JMA' ? 'selected' : '' }}>JMA</option>
+                            <option value="Solid" {{ old('oem') == 'Solid' ? 'selected' : '' }}>Solid</option>
                         </select>                        
                     </div>
                 </div>
