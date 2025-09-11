@@ -312,34 +312,69 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Explicit functions for inline handlers (most reliable across browsers)
     window.showGrafanaCredentials = function() {
+        console.log('showGrafanaCredentials called');
+        console.log('content element:', content);
+        console.log('grafanaView element:', grafanaView);
         try {
-            if (content) content.style.display = 'none';
-            if (grafanaView) grafanaView.style.display = 'block';
-        } catch (_) {}
+            if (content) {
+                content.style.display = 'none';
+                console.log('content hidden');
+            }
+            if (grafanaView) {
+                grafanaView.style.display = 'block';
+                console.log('grafanaView shown');
+            }
+        } catch (e) {
+            console.error('Error in showGrafanaCredentials:', e);
+        }
         return false; // prevent default anchor navigation
     };
     window.backToFinish = function() {
+        console.log('backToFinish called');
         try {
-            if (grafanaView) grafanaView.style.display = 'none';
-            if (content) content.style.display = '';
-        } catch (_) {}
+            if (grafanaView) {
+                grafanaView.style.display = 'none';
+                console.log('grafanaView hidden');
+            }
+            if (content) {
+                content.style.display = '';
+                console.log('content shown');
+            }
+        } catch (e) {
+            console.error('Error in backToFinish:', e);
+        }
         return false;
     };
 
     // Toggle views using event delegation for reliability
     document.addEventListener('click', function(e) {
+        console.log('Click event detected on:', e.target);
         const showBtn = e.target.closest('#grafana-credentials-btn');
         if (showBtn) {
+            console.log('Grafana credentials button clicked via event delegation');
             e.preventDefault();
-            if (content) content.style.display = 'none';
-            if (grafanaView) grafanaView.style.display = 'block';
+            if (content) {
+                content.style.display = 'none';
+                console.log('content hidden via delegation');
+            }
+            if (grafanaView) {
+                grafanaView.style.display = 'block';
+                console.log('grafanaView shown via delegation');
+            }
             return false;
         }
         const backBtn = e.target.closest('#back-to-finish');
         if (backBtn) {
+            console.log('Back button clicked via event delegation');
             e.preventDefault();
-            if (grafanaView) grafanaView.style.display = 'none';
-            if (content) content.style.display = '';
+            if (grafanaView) {
+                grafanaView.style.display = 'none';
+                console.log('grafanaView hidden via delegation');
+            }
+            if (content) {
+                content.style.display = '';
+                console.log('content shown via delegation');
+            }
             return false;
         }
     });
