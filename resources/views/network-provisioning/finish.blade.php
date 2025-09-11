@@ -137,7 +137,7 @@
 
         @if($hasGrafana)
         <div class="cta-row">
-            <a href="#" class="btn-primary-syndeo" id="grafana-credentials-btn">
+            <a href="#" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="return showGrafanaCredentials();">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
             </a>
@@ -171,7 +171,7 @@
                 </div>
             </div>
             <div class="cta-row">
-                <a href="#" class="btn-primary-syndeo" id="back-to-finish">
+                <a href="#" class="btn-primary-syndeo" id="back-to-finish" onclick="return backToFinish();">
                     <i class="mdi mdi-arrow-left"></i>
                     Back
                 </a>
@@ -180,7 +180,7 @@
             <h1 class="finish-title">No Credentials Available</h1>
             <div class="finish-sub">Credentials were not generated for this provisioning.</div>
             <div class="cta-row">
-                <a href="#" class="btn-primary-syndeo" id="back-to-finish">
+                <a href="#" class="btn-primary-syndeo" id="back-to-finish" onclick="return backToFinish();">
                     <i class="mdi mdi-arrow-left"></i>
                     Back
                 </a>
@@ -309,6 +309,22 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         reveal();
     }
+
+    // Explicit functions for inline handlers (most reliable across browsers)
+    window.showGrafanaCredentials = function() {
+        try {
+            if (content) content.style.display = 'none';
+            if (grafanaView) grafanaView.style.display = 'block';
+        } catch (_) {}
+        return false; // prevent default anchor navigation
+    };
+    window.backToFinish = function() {
+        try {
+            if (grafanaView) grafanaView.style.display = 'none';
+            if (content) content.style.display = '';
+        } catch (_) {}
+        return false;
+    };
 
     // Toggle views using event delegation for reliability
     document.addEventListener('click', function(e) {
