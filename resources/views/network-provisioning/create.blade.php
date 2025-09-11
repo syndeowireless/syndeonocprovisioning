@@ -832,6 +832,7 @@ body.loading-active {
                             <option value="Syndeo V1.0 COMMSCOPE DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 COMMSCOPE DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 COMMSCOPE DAS LLD</option>
                             <option value="Syndeo V1.0 SOLID DMS1200 DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 SOLID DMS1200 DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 SOLID DMS1200 DAS LLD</option>
                             <option value="Syndeo V1.0 202505 COMMSCOPE" {{ old('das_equipment') == 'Syndeo V1.0 202505 COMMSCOPE' ? 'selected' : '' }}>Syndeo V1.0 202505 COMMSCOPE</option>
+                            <option value="Syndeo V1.0 COMBA 202505 Model 2014" {{ old('das_equipment') == 'Syndeo V1.0 COMBA 202505 Model 2014' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 Model 2014</option>
                         </select>
 
                     </div>
@@ -840,6 +841,8 @@ body.loading-active {
                         <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
                             <option value="">Select the system type</option>
                             <option value="Syndeo V1.0  ADRF 202505 SDR" {{ old('errcs_equipment') == 'Syndeo V1.0  ADRF 202505 SDR' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 SDR</option>
+                            <option value="Syndeo V1.0 COMBA 202505 RX7W22 CLASSB" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA 202505 RX7W22 CLASSB' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 RX7W22 CLASSB</option>
+                            <option value="Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS' ? 'selected' : '' }}>Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS</option>
                         </select>
                     </div>
                 </div>
