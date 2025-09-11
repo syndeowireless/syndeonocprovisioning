@@ -801,10 +801,6 @@ body.loading-active {
                             <option value="">Select the OEM</option>
                             <option value="ADRF" {{ old('oem') == 'ADRF' ? 'selected' : '' }}>ADRF</option>
                             <option value="COMBA ERRCS" {{ old('oem') == 'COMBA ERRCS' ? 'selected' : '' }}>COMBA ERRCS</option>
-                            <option value="JMA" {{ old('jma') == 'JMA' ? 'selected' : '' }}>JMA</option>
-                            <option value="COMMSCOPE" {{ old('commscope') == 'COMMSCOPE' ? 'selected' : '' }}>COMMSCOPE</option>
-                            <option value="SOLID" {{ old('solid') == 'SOLID' ? 'selected' : '' }}>SOLID</option>
-                            <option value="COMBA" {{ old('comba') == 'COMBA' ? 'selected' : '' }}>COMBA</option>
                         </select>                        
                     </div>
                 </div>
