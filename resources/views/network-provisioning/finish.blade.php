@@ -98,9 +98,19 @@
 
 @php
     $finishId = request()->query('id');
+    $finishName = request()->query('name');
     $nmRecord = null;
     try {
-        $nmRecord = $finishId ? \Illuminate\Support\Facades\DB::table('networkmanagement')->where('id', $finishId)->first() : null;
+        if ($finishId) {
+            $nmRecord = \Illuminate\Support\Facades\DB::table('networkmanagement')->where('id', $finishId)->first();
+        }
+        // Fallback: if no id in URL, try resolving by name (property_name) most recent
+        if (!$nmRecord && $finishName) {
+            $nmRecord = \Illuminate\Support\Facades\DB::table('networkmanagement')
+                ->where('property_name', $finishName)
+                ->orderByDesc('id')
+                ->first();
+        }
     } catch (\Throwable $e) { $nmRecord = null; }
     $hasGrafana = false;
     $customerEmail = null;
