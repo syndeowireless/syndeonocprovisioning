@@ -38,6 +38,9 @@ class ProvisionController extends Controller
         $bda_quantity           = $provision->bda_quantity;
         $das_equipment          = $provision->das_equipment;
         $errcs_equipment        = $provision->errcs_equipment;
+        $property_type          = $provision->property_type;
+        $latitude               = $provision->latitude;
+        $longtude               = $provision->longtude;
 
         // Validação básica dos campos essenciais para a API do pfSense
         if (empty($property_name) || empty($random_password) || empty($first_usable_ip)) {
@@ -70,7 +73,7 @@ class ProvisionController extends Controller
             Log::info("ZabbixController: Login realizado com sucesso no Zabbix.");
 
             // 1. Ensure host group exists
-            $groupId = $this->getOrCreateHostGroup($company_name, $auth);
+            $groupId = $this->getOrCreateHostGroup($oem, $auth);
             Log::info("ZabbixController: Grupo de hosts obtido/criado.", ['group_id' => $groupId]);
 
             // 2. Get template ID based on Equipment
@@ -114,6 +117,18 @@ class ProvisionController extends Controller
                                 'community' => 'public'
                             ]
                     ]],
+                    'tags' => [
+                        ['tag' => 'Site', 'value' => $hostNameBase]
+                        // add more tags if needed
+                    ],
+                    'inventory_mode' => 1, // manual
+                    'inventory' => [
+                        'type' => 'DAS',
+                        'location_lat' => $latitude,
+                        'location_lon' => $longitude,
+                        'vendor' => $oem,
+                        'url_a' => $currentIp
+                    ]
                 ], $auth);
                 Log::info("ZabbixController: Host master unit criado.", [
                     'host' => $hostName,
@@ -147,6 +162,19 @@ class ProvisionController extends Controller
                                 'community' => 'public'
                             ]
                     ]],
+                    'tags' => [
+                        ['tag' => 'Site', 'value' => $hostNameBase]
+                        // add more tags if needed
+                    ],
+                    'inventory_mode' => 1, // manual
+                    'inventory' => [
+                        'type' => 'ERRCS',
+                        'location_lat' => $latitude,
+                        'location_lon' => $longitude,
+                        'vendor' => $oem,
+                        'url_a' => $currentIp
+                    ]
+
                 ], $auth);
                 Log::info("ZabbixController: Host BDA criado.", [
                     'host' => $hostName,
