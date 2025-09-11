@@ -815,29 +815,14 @@ body.loading-active {
                                class="form-input" placeholder="Type the quantity" min="0">
                     </div>
                     <div class="form-group" id="bda_quantity_container">
-                        <!-- BDA fields in same row for ERRCS -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="form-label required">BDA Unit Quantity</label>
-                                <input type="number" name="bda_quantity" id="bda_quantity" value="{{ old('bda_quantity') }}" required
-                                       class="form-input" placeholder="Type the quantity" min="0">
-                            </div>
-                            
-                            <!-- BDA Unit Equipment - will be shown in same row for ERRCS -->
-            <div id="errcs_equipment_container" class="form-group">
-                <label class="form-label">BDA Unit Equipment</label>
-                <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
-                    <option value="">Select the BDA equipment</option>
-                    <option value="Syndeo V1.0  ADRF 202505 SDR" {{ old('errcs_equipment') == 'Syndeo V1.0  ADRF 202505 SDR' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 SDR</option>
-                    <option value="Syndeo V1.0 COMBA 202505 RX7W22 CLASSB" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA 202505 RX7W22 CLASSB' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 RX7W22 CLASSB</option>
-                    <option value="Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS' ? 'selected' : '' }}>Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS</option>
-                </select>
-            </div>
-                        </div>
+                        <label class="form-label required">BDA Unit Quantity</label>
+                        <input type="number" name="bda_quantity" id="bda_quantity" value="{{ old('bda_quantity') }}" required
+                               class="form-input" placeholder="Type the quantity" min="0">
                     </div>
                 </div>
 
                 <div class="grid-container">
+                    <!-- Master Unit Equipment for DAS -->
                     <div id="das_equipment_container" class="form-group" style="display:none;">
                         <label class="form-label">Master Unit Equipment</label>
                         <select name="das_equipment" id="das_equipment" class="form-select" required>
@@ -849,6 +834,17 @@ body.loading-active {
                             <option value="Syndeo V1.0 SOLID DMS1200 DAS LLD" {{ old('das_equipment') == 'Syndeo V1.0 SOLID DMS1200 DAS LLD' ? 'selected' : '' }}>Syndeo V1.0 SOLID DMS1200 DAS LLD</option>
                             <option value="Syndeo V1.0 202505 COMMSCOPE" {{ old('das_equipment') == 'Syndeo V1.0 202505 COMMSCOPE' ? 'selected' : '' }}>Syndeo V1.0 202505 COMMSCOPE</option>
                             <option value="Syndeo V1.0 COMBA 202505 Model 2014" {{ old('das_equipment') == 'Syndeo V1.0 COMBA 202505 Model 2014' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 Model 2014</option>
+                        </select>
+                    </div>
+                    
+                    <!-- BDA Unit Equipment for ERRCS - will toggle with Master Unit Equipment -->
+                    <div id="errcs_equipment_container" class="form-group" style="display:none;">
+                        <label class="form-label">BDA Unit Equipment</label>
+                        <select name="errcs_equipment" id="errcs_equipment" class="form-select" required>
+                            <option value="">Select the BDA equipment</option>
+                            <option value="Syndeo V1.0  ADRF 202505 SDR" {{ old('errcs_equipment') == 'Syndeo V1.0  ADRF 202505 SDR' ? 'selected' : '' }}>Syndeo V1.0 ADRF 202505 SDR</option>
+                            <option value="Syndeo V1.0 COMBA 202505 RX7W22 CLASSB" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA 202505 RX7W22 CLASSB' ? 'selected' : '' }}>Syndeo V1.0 COMBA 202505 RX7W22 CLASSB</option>
+                            <option value="Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS" {{ old('errcs_equipment') == 'Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS' ? 'selected' : '' }}>Syndeo V1.0 COMBA RX7W22 CLASS A LLD ERRCS</option>
                         </select>
                     </div>
                 </div>
@@ -1904,9 +1900,6 @@ document.addEventListener('DOMContentLoaded', function () {
             masterContainer.style.display = 'none';
             bdaContainer.style.display = '';
             
-            // Hide Master Unit Equipment for ERRCS
-            dasEquipmentContainer.style.display = 'none';
-            
             master.disabled = true;
             master.required = false;
             master.value = '';
@@ -1916,7 +1909,8 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
             
-            // Show BDA Unit Equipment (already nested in BDA container)
+            // Toggle: Hide Master Unit Equipment and Show BDA Unit Equipment in same position
+            dasEquipmentContainer.style.display = 'none';
             errcsEquipmentContainer.style.display = 'block';
             errcsEquipmentContainer.style.visibility = 'visible';
         } else if (type === 'DAS & ERRCS') {
