@@ -1059,6 +1059,7 @@ function playLoadingAnimation(event) {
     // Function to submit form after animation
     function submitForm() {
         console.log('Submitting form after animation...');
+        try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
         form.submit();
     }
     
