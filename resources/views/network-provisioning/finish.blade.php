@@ -136,10 +136,10 @@
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
         <div class="cta-row">
-            <a href="#" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="return showGrafanaCredentials();">
+            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="showGrafanaCredentials()">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
-            </a>
+            </button>
         </div>
 
         <div class="mt-3 muted">You can safely close this page.</div>
