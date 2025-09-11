@@ -135,14 +135,12 @@
         <h1 class="finish-title" id="finish-title">Provisioning completed</h1>
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
-        @if($hasGrafana)
         <div class="cta-row">
             <a href="#" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="return showGrafanaCredentials();">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
             </a>
         </div>
-        @endif
 
         <div class="mt-3 muted">You can safely close this page.</div>
     </div>
