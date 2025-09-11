@@ -31,6 +31,7 @@
         height: 200%;
         background: radial-gradient(closest-side, rgba(19,57,93,.06), transparent 60%);
         transform: rotate(15deg);
+        pointer-events: none;
     }
     .finish-badge {
         display: inline-flex;
@@ -171,14 +172,12 @@
         <h1 class="finish-title" id="finish-title">Provisioning completed</h1>
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
-        @if($hasGrafana)
         <div class="cta-row">
-            <a href="#" class="btn-primary-syndeo" id="grafana-credentials-btn" onclick="return showGrafanaCredentials();">
+            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
-            </a>
+            </button>
         </div>
-        @endif
 
         <div class="mt-3 muted">You can safely close this page.</div>
     </div>
@@ -249,10 +248,48 @@
     }
 })();
 
+// Global variables for view elements
+let content, grafanaView;
+
 // Always show transition GIF first, then reveal content
 document.addEventListener('DOMContentLoaded', function() {
-    const content = document.getElementById('finish-content');
-    const grafanaView = document.getElementById('grafana-credentials-view');
+    content = document.getElementById('finish-content');
+    grafanaView = document.getElementById('grafana-credentials-view');
+    
+    // Debug all elements
+    console.log('=== DEBUGGING ELEMENTS ===');
+    console.log('content element:', content);
+    console.log('grafanaView element:', grafanaView);
+    
+    const grafanaBtn = document.getElementById('grafana-credentials-btn');
+    console.log('grafanaBtn element:', grafanaBtn);
+    
+    // Add click event listener to Grafana credentials button
+    if (grafanaBtn) {
+        console.log('Adding event listener to button');
+        grafanaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('=== BUTTON CLICKED ===');
+            console.log('content before:', content ? content.style.display : 'null');
+            console.log('grafanaView before:', grafanaView ? grafanaView.style.display : 'null');
+            
+            if (content) {
+                content.style.display = 'none';
+                console.log('Content set to none');
+            } else {
+                console.log('Content element not found!');
+            }
+            
+            if (grafanaView) {
+                grafanaView.style.display = 'block';
+                console.log('Grafana view set to block');
+            } else {
+                console.log('Grafana view element not found!');
+            }
+        });
+    } else {
+        console.log('Grafana button not found!');
+    }
 
     let overlay;
     try {
@@ -355,17 +392,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Explicit functions for inline handlers (most reliable across browsers)
     window.showGrafanaCredentials = function() {
+        console.log('showGrafanaCredentials called');
+        console.log('content element:', content);
+        console.log('grafanaView element:', grafanaView);
         try {
-            if (content) content.style.display = 'none';
-            if (grafanaView) grafanaView.style.display = 'block';
-        } catch (_) {}
+            if (content) {
+                content.style.display = 'none';
+                console.log('content hidden');
+            }
+            if (grafanaView) {
+                grafanaView.style.display = 'block';
+                console.log('grafanaView shown');
+            }
+        } catch (e) {
+            console.error('Error in showGrafanaCredentials:', e);
+        }
         return false; // prevent default anchor navigation
     };
     window.backToFinish = function() {
+        console.log('backToFinish called');
         try {
-            if (grafanaView) grafanaView.style.display = 'none';
-            if (content) content.style.display = '';
-        } catch (_) {}
+            if (grafanaView) {
+                grafanaView.style.display = 'none';
+                console.log('grafanaView hidden');
+            }
+            if (content) {
+                content.style.display = '';
+                console.log('content shown');
+            }
+        } catch (e) {
+            console.error('Error in backToFinish:', e);
+        }
         return false;
     };
     
@@ -404,18 +461,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Toggle views using event delegation for reliability
     document.addEventListener('click', function(e) {
-        const showBtn = e.target.closest('#grafana-credentials-btn');
-        if (showBtn) {
+        console.log('Click event detected on:', e.target);
+        console.log('Target ID:', e.target.id);
+        console.log('Target classes:', e.target.className);
+        
+        // Check if the clicked element is the button or inside the button
+        if (e.target.id === 'grafana-credentials-btn' || e.target.closest('#grafana-credentials-btn')) {
+            console.log('Grafana credentials button clicked!');
             e.preventDefault();
-            if (content) content.style.display = 'none';
-            if (grafanaView) grafanaView.style.display = 'block';
+            e.stopPropagation();
+            
+            if (content) {
+                content.style.display = 'none';
+                console.log('content hidden via delegation');
+            }
+            if (grafanaView) {
+                grafanaView.style.display = 'block';
+                console.log('grafanaView shown via delegation');
+            }
             return false;
         }
         const backBtn = e.target.closest('#back-to-finish');
         if (backBtn) {
+            console.log('Back button clicked via event delegation');
             e.preventDefault();
-            if (grafanaView) grafanaView.style.display = 'none';
-            if (content) content.style.display = '';
+            if (grafanaView) {
+                grafanaView.style.display = 'none';
+                console.log('grafanaView hidden via delegation');
+            }
+            if (content) {
+                content.style.display = '';
+                console.log('content shown via delegation');
+            }
             return false;
         }
     });
