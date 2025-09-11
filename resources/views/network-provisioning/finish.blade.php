@@ -92,7 +92,26 @@
     #finish-content { visibility: hidden; }
     /* Simple spinner keyframes as fallback */
     @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+    /* Hide Grafana view by default */
+    #grafana-credentials-view { display: none; }
 </style>
+
+@php
+    $finishId = request()->query('id');
+    $nmRecord = null;
+    try {
+        $nmRecord = $finishId ? \Illuminate\Support\Facades\DB::table('networkmanagement')->where('id', $finishId)->first() : null;
+    } catch (\Throwable $e) { $nmRecord = null; }
+    $hasGrafana = false;
+    $customerEmail = null;
+    $randomPassword = null;
+    if ($nmRecord) {
+        $customerEmail = $nmRecord->customer_email ?? null;
+        $randomPassword = $nmRecord->random_password ?? null;
+        $hasGrafana = isset($nmRecord->grafana_toggle) ? (int)$nmRecord->grafana_toggle === 1 : false;
+        if (!$hasGrafana && ($customerEmail || $randomPassword)) { $hasGrafana = true; }
+    }
+@endphp
 
 <!-- Content wrapper hidden until transition completes -->
 <div id="finish-content">
@@ -106,16 +125,58 @@
         <h1 class="finish-title" id="finish-title">Provisioning completed</h1>
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
+        @if($hasGrafana)
         <div class="cta-row">
             <a href="#" class="btn-primary-syndeo" id="grafana-credentials-btn">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
             </a>
         </div>
+        @endif
 
         <div class="mt-3 muted">You can safely close this page.</div>
     </div>
 </div>
+</div>
+
+<!-- Grafana Credentials View -->
+<div id="grafana-credentials-view" class="container-fluid finish-hero">
+    <div class="finish-card">
+        <div class="finish-badge">
+            <i class="mdi mdi-shield-key-outline"></i>
+            Grafana Credentials
+        </div>
+        <div class="confetti">🔐</div>
+        @if($hasGrafana)
+            <h1 class="finish-title">Customer Access</h1>
+            <div class="finish-sub">Use the credentials below to sign in.</div>
+            <div style="text-align:left; margin: 1rem auto; max-width: 520px;">
+                <div style="display:flex; justify-content:space-between; padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:.75rem;">
+                    <span style="color:#64748b; font-weight:600;">Username (Email)</span>
+                    <code style="color:#13395d;">{{ $customerEmail ?? 'N/A' }}</code>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:10px;">
+                    <span style="color:#64748b; font-weight:600;">Password</span>
+                    <code style="color:#13395d;">{{ $randomPassword ?? 'N/A' }}</code>
+                </div>
+            </div>
+            <div class="cta-row">
+                <a href="#" class="btn-primary-syndeo" id="back-to-finish">
+                    <i class="mdi mdi-arrow-left"></i>
+                    Back
+                </a>
+            </div>
+        @else
+            <h1 class="finish-title">No Credentials Available</h1>
+            <div class="finish-sub">Credentials were not generated for this provisioning.</div>
+            <div class="cta-row">
+                <a href="#" class="btn-primary-syndeo" id="back-to-finish">
+                    <i class="mdi mdi-arrow-left"></i>
+                    Back
+                </a>
+            </div>
+        @endif
+    </div>
 </div>
 
 <footer class="mt-6 border-t border-gray-200 py-4">
@@ -138,6 +199,7 @@
 // Always show transition GIF first, then reveal content
 document.addEventListener('DOMContentLoaded', function() {
     const content = document.getElementById('finish-content');
+    const grafanaView = document.getElementById('grafana-credentials-view');
 
     let overlay;
     try {
@@ -210,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (_) {}
 
     // Minimum visible time for the overlay to ensure GIF is seen
-    const MIN_MS = 1200;
+    const MIN_MS = 5000;
     const start = Date.now();
 
     function reveal() {
@@ -237,6 +299,24 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         reveal();
     }
+
+    // Toggle to Grafana credentials view
+    const grafanaBtn = document.getElementById('grafana-credentials-btn');
+    if (grafanaBtn) {
+        grafanaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (content) content.style.display = 'none';
+            if (grafanaView) grafanaView.style.display = 'block';
+        });
+    }
+    document.addEventListener('click', function(e) {
+        const backBtn = e.target.closest('#back-to-finish');
+        if (backBtn) {
+            e.preventDefault();
+            if (grafanaView) grafanaView.style.display = 'none';
+            if (content) content.style.display = '';
+        }
+    });
 });
 </script>
 

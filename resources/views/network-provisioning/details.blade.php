@@ -573,15 +573,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Treat as success content and redirect
                 await waitForMinTime();
                 try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
-                window.location.href = '{{ route("network-provisioning.finish") }}';
+                const id = encodeURIComponent(provisionId || '');
+                const url = '{{ route("network-provisioning.finish") }}' + (id ? ('?id=' + id) : '');
+                window.location.href = url;
                 return;
             }
 
             if (data.success) {
                 const name = encodeURIComponent(data.provisioning_name || 'Provisioning');
+                const id = encodeURIComponent((data.id || provisionId || ''));
                 await waitForMinTime();
                 try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
-                window.location.href = '{{ route("network-provisioning.finish") }}' + '?name=' + name;
+                let qs = [];
+                if (id) qs.push('id=' + id);
+                if (name) qs.push('name=' + name);
+                const url = '{{ route("network-provisioning.finish") }}' + (qs.length ? ('?' + qs.join('&')) : '');
+                window.location.href = url;
             } else {
                 // Failure: remove overlay and show error
                 if (overlay && overlay.parentNode) {
