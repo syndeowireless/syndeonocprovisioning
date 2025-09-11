@@ -480,6 +480,79 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.addEventListener('click', async function() {
         const provisionId = btn.getAttribute('data-provision-id');
         const csrfToken = '{{ csrf_token() }}';
+        // Show transition overlay immediately (same style as search -> details)
+        let overlay;
+        let spinner;
+        let gifElement;
+        try {
+            overlay = document.createElement('div');
+            overlay.id = 'transition-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 70px;
+                left: 240px;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(8px);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.3s ease;
+                opacity: 0;
+            `;
+            if (window.innerWidth <= 992) {
+                overlay.style.left = '0px';
+                overlay.style.top = '60px';
+            }
+            const loadingContainer = document.createElement('div');
+            loadingContainer.style.cssText = `
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+            `;
+            gifElement = document.createElement('img');
+            gifElement.src = '/assets/images/Transition_Animation.gif';
+            gifElement.alt = 'Loading...';
+            gifElement.style.cssText = `
+                max-width: 300px;
+                max-height: 300px;
+                width: auto;
+                height: auto;
+                margin-bottom: 1.5rem;
+            `;
+            spinner = document.createElement('div');
+            spinner.style.cssText = `
+                width: 60px;
+                height: 60px;
+                border: 6px solid #e5e7eb;
+                border-top: 6px solid #3b82f6;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 1.5rem;
+                display: none;
+            `;
+            gifElement.addEventListener('error', () => {
+                gifElement.style.display = 'none';
+                spinner.style.display = 'block';
+            });
+            loadingContainer.appendChild(gifElement);
+            loadingContainer.appendChild(spinner);
+            overlay.appendChild(loadingContainer);
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+        } catch (_) { /* non-blocking */ }
+
+        const MIN_OVERLAY_MS = 3000; // ensure animation is visible
+        const overlayShownAt = Date.now();
+        const waitForMinTime = () => new Promise(res => {
+            const remaining = MIN_OVERLAY_MS - (Date.now() - overlayShownAt);
+            setTimeout(res, Math.max(0, remaining));
+        });
 
         try {
             const response = await fetch('{{ route("provision.start") }}', {
@@ -498,17 +571,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 data = JSON.parse(text);
             } catch (e) {
                 // Treat as success content and redirect
+                await waitForMinTime();
+                try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
                 window.location.href = '{{ route("network-provisioning.finish") }}';
                 return;
             }
 
             if (data.success) {
                 const name = encodeURIComponent(data.provisioning_name || 'Provisioning');
+                await waitForMinTime();
+                try { sessionStorage.setItem('showTransitionOverlay', '1'); } catch (_) {}
                 window.location.href = '{{ route("network-provisioning.finish") }}' + '?name=' + name;
             } else {
+                // Failure: remove overlay and show error
+                if (overlay && overlay.parentNode) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 320);
+                }
                 alert('Provisioning failed: ' + (data.error || 'Unknown error'));
             }
         } catch (error) {
+            if (overlay && overlay.parentNode) {
+                overlay.style.opacity = '0';
+                setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 320);
+            }
             alert('An error occurred: ' + error.message);
         }
     });

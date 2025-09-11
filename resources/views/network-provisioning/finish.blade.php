@@ -80,7 +80,13 @@
         gap: .5rem;
         transition: all .25s ease;
     }
-    .btn-primary-syndeo:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(19,57,93,.35); }
+    .btn-primary-syndeo:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 10px 22px rgba(19,57,93,.35);
+        background-color: #fbbf0f;
+        border-color: #13395d;
+        color: #fff;
+    }
     .muted { color: #94a3b8; font-size: .9rem; }
 </style>
 
@@ -128,5 +134,3 @@
 </script>
 
 @endsection
-
-
