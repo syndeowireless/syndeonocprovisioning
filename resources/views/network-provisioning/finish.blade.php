@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // If GIF loads, still enforce minimum time; on error fallback quickly
     // Also add a safety timeout in case load doesn't fire
-    const safety = setTimeout(reveal, 4000);
+    const safety = setTimeout(reveal, 5000);
     const img = document.querySelector('#transition-overlay img');
     if (img) {
         img.addEventListener('load', () => { clearTimeout(safety); reveal(); });
@@ -310,21 +310,21 @@ document.addEventListener('DOMContentLoaded', function() {
         reveal();
     }
 
-    // Toggle to Grafana credentials view
-    const grafanaBtn = document.getElementById('grafana-credentials-btn');
-    if (grafanaBtn) {
-        grafanaBtn.addEventListener('click', function(e) {
+    // Toggle views using event delegation for reliability
+    document.addEventListener('click', function(e) {
+        const showBtn = e.target.closest('#grafana-credentials-btn');
+        if (showBtn) {
             e.preventDefault();
             if (content) content.style.display = 'none';
             if (grafanaView) grafanaView.style.display = 'block';
-        });
-    }
-    document.addEventListener('click', function(e) {
+            return false;
+        }
         const backBtn = e.target.closest('#back-to-finish');
         if (backBtn) {
             e.preventDefault();
             if (grafanaView) grafanaView.style.display = 'none';
             if (content) content.style.display = '';
+            return false;
         }
     });
 });
