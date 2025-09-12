@@ -821,7 +821,8 @@ body.loading-active {
                     </div>
                 </div>
 
-                <div class="grid-container">
+                <!-- Equipment fields - will be dynamically positioned based on system type -->
+                <div class="grid-container" id="equipment_fields_container">
                     <!-- Master Unit Equipment for DAS -->
                     <div id="das_equipment_container" class="form-group" style="display:none;">
                         <label class="form-label">Master Unit Equipment</label>
@@ -1860,6 +1861,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const bdaContainer = document.getElementById('bda_quantity_container');
         const dasEquipmentContainer = document.getElementById('das_equipment_container');
         const errcsEquipmentContainer = document.getElementById('errcs_equipment_container');
+        const equipmentFieldsContainer = document.getElementById('equipment_fields_container');
         
         // Remove any existing error states when fields change
         master.classList.remove('error');
@@ -1871,6 +1873,21 @@ document.addEventListener('DOMContentLoaded', function () {
         dasEquipmentContainer.style.display = 'none';
         errcsEquipmentContainer.style.display = 'none';
         errcsEquipmentContainer.style.visibility = 'hidden';
+        
+        // Reset equipment container to default position
+        if (equipmentFieldsContainer && equipmentFieldsContainer.parentElement) {
+            // Move equipment container back to its original position if it was moved
+            const originalParent = document.querySelector('.form-wrapper');
+            if (originalParent && !originalParent.contains(equipmentFieldsContainer)) {
+                // Find the position after the quantity fields
+                const quantityGrid = bdaContainer.parentElement;
+                if (quantityGrid && quantityGrid.nextSibling) {
+                    quantityGrid.parentElement.insertBefore(equipmentFieldsContainer, quantityGrid.nextSibling);
+                } else {
+                    originalParent.appendChild(equipmentFieldsContainer);
+                }
+            }
+        }
         
         if (type === 'DAS') {
             master.disabled = false;
@@ -1909,10 +1926,17 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
             
-            // Toggle: Hide Master Unit Equipment and Show BDA Unit Equipment in same position
-            dasEquipmentContainer.style.display = 'none';
+            // For ERRCS: Show BDA Unit Equipment side by side with BDA Unit Quantity
+            // Move BDA Unit Equipment to the same row as BDA Unit Quantity
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(errcsEquipmentContainer)) {
+                bdaParentGrid.appendChild(errcsEquipmentContainer);
+            }
             errcsEquipmentContainer.style.display = 'block';
             errcsEquipmentContainer.style.visibility = 'visible';
+            
+            // Hide Master Unit Equipment
+            dasEquipmentContainer.style.display = 'none';
         } else if (type === 'DAS & ERRCS') {
             master.disabled = false;
             master.required = true;
@@ -1924,7 +1948,19 @@ document.addEventListener('DOMContentLoaded', function () {
             bda.style.backgroundColor = '';
             bda.style.cursor = '';
             
-            // Reset BDA Equipment visibility
+            // For DAS & ERRCS: Show Master Unit Equipment and BDA Unit Equipment side by side
+            // Move both equipment containers to the same row
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(dasEquipmentContainer)) {
+                bdaParentGrid.appendChild(dasEquipmentContainer);
+            }
+            if (bdaParentGrid && !bdaParentGrid.contains(errcsEquipmentContainer)) {
+                bdaParentGrid.appendChild(errcsEquipmentContainer);
+            }
+            
+            // Show both equipment containers
+            dasEquipmentContainer.style.display = 'block';
+            errcsEquipmentContainer.style.display = 'block';
             errcsEquipmentContainer.style.visibility = 'visible';
         } else {
             // No system type selected - enable both but don't require
@@ -2077,8 +2113,62 @@ document.addEventListener('DOMContentLoaded', function () {
                     populateDropdown(dasEq, config.masterUnit);
                 }
             }
+        } else if (systemType === 'ERRCS') {
+            // For ERRCS: Show BDA Unit Equipment side by side with BDA Unit Quantity
+            // Move BDA Unit Equipment to the same row as BDA Unit Quantity
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(errcsEqContainer)) {
+                bdaParentGrid.appendChild(errcsEqContainer);
+            }
+            errcsEqContainer.style.display = 'block';
+            errcsEqContainer.style.visibility = 'visible';
+            errcsEq.required = true;
+            
+            // Hide Master Unit Equipment
+            dasEqContainer.style.display = 'none';
+            dasEq.required = false;
+            
+            // If OEM is selected, populate the BDA equipment dropdown
+            if (oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
+                const config = equipmentConfig[systemType][oem];
+                if (config.showBDA && config.bdaEquipment.length > 0) {
+                    populateDropdown(errcsEq, config.bdaEquipment);
+                }
+            }
+        } else if (systemType === 'DAS & ERRCS') {
+            // For DAS & ERRCS: Show Master Unit Equipment and BDA Unit Equipment side by side
+            // Move both equipment containers to the same row
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(dasEqContainer)) {
+                bdaParentGrid.appendChild(dasEqContainer);
+            }
+            if (bdaParentGrid && !bdaParentGrid.contains(errcsEqContainer)) {
+                bdaParentGrid.appendChild(errcsEqContainer);
+            }
+            
+            // Show both equipment containers
+            dasEqContainer.style.display = 'block';
+            errcsEqContainer.style.display = 'block';
+            errcsEqContainer.style.visibility = 'visible';
+            dasEq.required = true;
+            errcsEq.required = true;
+            
+            // If OEM is selected, populate both dropdowns
+            if (oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
+                const config = equipmentConfig[systemType][oem];
+                
+                // Handle Master Unit Equipment
+                if (config.masterUnit.length > 0) {
+                    populateDropdown(dasEq, config.masterUnit);
+                }
+                
+                // Handle BDA Equipment
+                if (config.showBDA && config.bdaEquipment.length > 0) {
+                    populateDropdown(errcsEq, config.bdaEquipment);
+                }
+            }
         } else {
-            // Reset BDA Equipment visibility for non-DAS types
+            // Reset BDA Equipment visibility for other types
             errcsEqContainer.style.visibility = 'visible';
             
             // If both system type and OEM are selected, apply the configuration
