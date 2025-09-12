@@ -1819,8 +1819,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Clear all options except the first one
         oemSelect.innerHTML = '<option value="">Select the OEM</option>';
         
-        if (type === 'ERRCS') {
-            // For ERRCS, only show ADRF and COMBA
+        if (type === 'ERRCS' || type === 'DAS & ERRCS') {
+            // For ERRCS and DAS & ERRCS, only show ADRF and COMBA
             const adrfOption = document.createElement('option');
             adrfOption.value = 'ADRF';
             adrfOption.textContent = 'ADRF';
