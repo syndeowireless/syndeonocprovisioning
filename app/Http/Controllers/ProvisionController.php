@@ -202,154 +202,150 @@ class ProvisionController extends Controller
 
 
         // Grafana FUNCIONANDO E TESTADO
-        try {
-            if ($grafana_toggle === null) {
-                // Set your variables
-                $folderUid = 'bedmyrwbic7pce';
-            
-                Log::info("Grafana: Buscando informações da pasta", ['folderUid' => $folderUid]);
-                $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
-                Log::info("Grafana: Resposta da pasta recebida", ['folderResp' => $folderResp]);
-                $folderId = $folderResp['id'];
-            
-                // Seleção de templates
-                if ($oem === 'ADRF') {
-                    $templateUid1 = 'beiyn9fdbtvale';
-                } elseif ($oem === 'COMBA ERRCS') {
-                    $templateUid1 = 'beiyn9fdbt5hce';
-                }
-            
-                if ($oem === 'ADRF') {
-                    $templateUid2 = 'feutv2m5zcs1se';
-                } elseif ($oem === 'COMBA ERRCS') {
-                    $templateUid2 = 'aebkeah3awdba';
-                }
-            
-                $property_name_1 = $property_name . '_1';
-                $property_name_2 = $property_name . '_2';
-            
-                // --------- Dashboard 1 ---------
-                Log::info("Grafana: Buscando template para Dashboard 1", ['templateUid1' => $templateUid1]);
-                $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
-                $templateDashboard1 = $templateResp1['dashboard'];
-            
-                unset($templateDashboard1['id'], $templateDashboard1['uid']);
-                $templateDashboard1['title'] = $property_name_1;
-            
-                Log::info("Grafana: Criando Dashboard 1", [
-                    'dashboard' => $templateDashboard1,
-                    'folderId'  => $folderId,
-                ]);
-                $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                    'dashboard' => $templateDashboard1,
-                    'folderId'  => $folderId,
-                    'overwrite' => false,
-                ]);
-                Log::info("Grafana: Dashboard 1 criado", ['response' => $newDashboardResp1]);
-            
-                // --------- Dashboard 2 ---------
-                Log::info("Grafana: Buscando template para Dashboard 2", ['templateUid2' => $templateUid2]);
-                $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
-                $templateDashboard2 = $templateResp2['dashboard'];
-            
-                unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                $templateDashboard2['title'] = $property_name_2;
-            
-                Log::info("Grafana: Criando Dashboard 2", [
-                    'dashboard' => $templateDashboard2,
-                    'folderId'  => $folderId,
-                ]);
-                $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                    'dashboard' => $templateDashboard2,
-                    'folderId'  => $folderId,
-                    'overwrite' => false,
-                ]);
-                Log::info("Grafana: Dashboard 2 criado", ['response' => $newDashboardResp2]);
-            
+    try {
+        if ($grafana_toggle === null) {
+            // Set your variables
+            $folderUid = 'bedmyrwbic7pce';
+
+            Log::info("Grafana: Buscando informações da pasta", ['folderUid' => $folderUid]);
+            $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
+            Log::info("Grafana: Resposta da pasta recebida", ['folderResp' => $folderResp]);
+            $folderId = $folderResp['id'];
+
+            // Seleção de templates
+            if ($oem === 'ADRF') {
+                $templateUid1 = 'beiyn9fdbtvale';
+                $templateUid2 = 'feutv2m5zcs1se';
+            } elseif ($oem === 'COMBA ERRCS') {
+                $templateUid1 = 'beiyn9fdbt5hce';
+                $templateUid2 = 'aebkeah3awdba';
             } else {
-            
-                Log::info("Grafana: Criando nova pasta", ['title' => $company_name]);
-                $folderResp = $this->grafanaApiRequest('post', '/folders', [
-                    'title' => $company_name,
-                ]);
-                Log::info("Grafana: Pasta criada", ['folderResp' => $folderResp]);
-                $folderId = $folderResp['id'] ?? null; 
-            
-                $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
-                Log::info("Grafana: Buscando dashboard modelo", ['modelUid' => $modelUid]);
-                $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
-                $modelDashboard = $modelDashboardResp['dashboard'];
-                $modelDashboardId = $modelDashboard['id'];
-            
-                $newDashboard = $modelDashboard;
-                unset($newDashboard['id']);
-                unset($newDashboard['uid']);
-                $newDashboard['title'] = $company_name;
-            
-                Log::info("Grafana: Criando dashboard baseado no modelo", [
-                    'dashboard' => $newDashboard,
-                    'folderId'  => $folderId, 
-                ]);
-                $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                    'dashboard' => $newDashboard,
-                    'folderId'  => $folderId, 
-                    'overwrite' => false,
-                ]);
-                Log::info("Grafana: Dashboard criado", ['response' => $dashboardResp]);
-            
-                $email_parts = explode('@', $customer_email);
-                $username_grafana = $email_parts[0];
-            
-                // 1. Create new user
-                Log::info("Grafana: Criando novo usuário", [
-                    'name' => $username_grafana,
-                    'email' => $customer_email,
-                ]);
-                $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
-                    'name' => $username_grafana,
-                    'email' => $customer_email,
-                    'login' => $username_grafana,
-                    'password' => '$ynd30@noc',
-                ]);
-                Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
-                $newUserId = $newUserResp['id'] ?? null;
-            
-                // 2. Get permissions for the model dashboard
-                $dashboardId = $modelDashboardId; 
-                Log::info("Grafana: Buscando permissões do dashboard modelo", ['dashboardId' => $dashboardId]);
-                $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
-                Log::info("Grafana: Permissões recebidas", ['permissionsResp' => $permissionsResp]);
-                $permissions = $permissionsResp; 
-            
-                // 3. Find the model user's permission
-                $modelUserId = $modelUserId; //ask Tayroni tomorrow witch user to get.
-                $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
-            
-                // 4. Assign the same permission to the new user
-                if ($modelUserPermission && $newUserId) {
-                    $payload = [
-                        [
-                            'userId' => $newUserId,
-                            'permission' => $modelUserPermission['permission'],
-                        ]
-                    ];
-                    Log::info("Grafana: Definindo permissão para novo usuário", [
-                        'dashboardId' => $dashboardId,
-                        'payload' => $payload,
-                    ]);
-                    $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
-                    Log::info("Grafana: Permissão definida resposta", ['setPermissionResp' => $setPermissionResp]);
-                }
+                throw new \Exception("OEM inválido: $oem");
             }
-            $results['grafana'] = 'Success';
-            Log::info("Grafana: Provisionamento finalizado com sucesso", ['results' => $results]);
-        } catch (\Throwable $e) {
-            $errors['grafana'] = $e->getMessage();
-            Log::error("Erro no provisionamento Grafana", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+
+            // --------- Dashboard 1 ---------
+            Log::info("Grafana: Buscando template para Dashboard 1", ['templateUid1' => $templateUid1]);
+            $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
+            $templateDashboard1 = $templateResp1['dashboard'];
+
+            unset($templateDashboard1['id'], $templateDashboard1['uid']);
+            $templateDashboard1['title'] = $property_name_1;
+            $templateDashboard1 = substituteDashboardPlaceholders($templateDashboard1, $oem, $property_name_1);
+
+            Log::info("Grafana: Criando Dashboard 1", [
+                'dashboard' => $templateDashboard1,
+                'folderId'  => $folderId,
             ]);
+            $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $templateDashboard1,
+                'folderId'  => $folderId,
+                'overwrite' => false,
+            ]);
+            Log::info("Grafana: Dashboard 1 criado", ['response' => $newDashboardResp1]);
+
+            // --------- Dashboard 2 ---------
+            Log::info("Grafana: Buscando template para Dashboard 2", ['templateUid2' => $templateUid2]);
+            $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
+            $templateDashboard2 = $templateResp2['dashboard'];
+
+            unset($templateDashboard2['id'], $templateDashboard2['uid']);
+            $templateDashboard2['title'] = $property_name_2;
+            $templateDashboard2 = substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name_2);
+
+            Log::info("Grafana: Criando Dashboard 2", [
+                'dashboard' => $templateDashboard2,
+                'folderId'  => $folderId,
+            ]);
+            $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $templateDashboard2,
+                'folderId'  => $folderId,
+                'overwrite' => false,
+            ]);
+            Log::info("Grafana: Dashboard 2 criado", ['response' => $newDashboardResp2]);
+
+        } else {
+
+            Log::info("Grafana: Criando nova pasta", ['title' => $company_name]);
+            $folderResp = $this->grafanaApiRequest('post', '/folders', [
+                'title' => $company_name,
+            ]);
+            Log::info("Grafana: Pasta criada", ['folderResp' => $folderResp]);
+            $folderId = $folderResp['id'] ?? null; 
+
+            $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
+            Log::info("Grafana: Buscando dashboard modelo", ['modelUid' => $modelUid]);
+            $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
+            $modelDashboard = $modelDashboardResp['dashboard'];
+            $modelDashboardId = $modelDashboard['id'];
+
+            $newDashboard = $modelDashboard;
+            unset($newDashboard['id'], $newDashboard['uid']);
+            $newDashboard['title'] = $company_name;
+            // Optionally substitute variables here as well if needed
+
+            Log::info("Grafana: Criando dashboard baseado no modelo", [
+                'dashboard' => $newDashboard,
+                'folderId'  => $folderId, 
+            ]);
+            $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $newDashboard,
+                'folderId'  => $folderId, 
+                'overwrite' => false,
+            ]);
+            Log::info("Grafana: Dashboard criado", ['response' => $dashboardResp]);
+
+            $email_parts = explode('@', $customer_email);
+            $username_grafana = $email_parts[0];
+
+            // 1. Create new user
+            Log::info("Grafana: Criando novo usuário", [
+                'name' => $username_grafana,
+                'email' => $customer_email,
+            ]);
+            $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                'name' => $username_grafana,
+                'email' => $customer_email,
+                'login' => $username_grafana,
+                'password' => '$ynd30@noc',
+            ]);
+            Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
+            $newUserId = $newUserResp['id'] ?? null;
+
+            // 2. Get permissions for the model dashboard
+            $dashboardId = $modelDashboardId; 
+            Log::info("Grafana: Buscando permissões do dashboard modelo", ['dashboardId' => $dashboardId]);
+            $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
+            Log::info("Grafana: Permissões recebidas", ['permissionsResp' => $permissionsResp]);
+            $permissions = $permissionsResp; 
+
+            // 3. Find the model user's permission
+            $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
+
+            // 4. Assign the same permission to the new user
+            if ($modelUserPermission && $newUserId) {
+                $payload = [
+                    [
+                        'userId' => $newUserId,
+                        'permission' => $modelUserPermission['permission'],
+                    ]
+                ];
+                Log::info("Grafana: Definindo permissão para novo usuário", [
+                    'dashboardId' => $dashboardId,
+                    'payload' => $payload,
+                ]);
+                $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+                Log::info("Grafana: Permissão definida resposta", ['setPermissionResp' => $setPermissionResp]);
+            }
         }
+        $results['grafana'] = 'Success';
+        Log::info("Grafana: Provisionamento finalizado com sucesso", ['results' => $results]);
+    } catch (\Throwable $e) {
+        $errors['grafana'] = $e->getMessage();
+        Log::error("Erro no provisionamento Grafana", [
+            'erro' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
 
 
 
@@ -534,6 +530,28 @@ class ProvisionController extends Controller
         //         ->header('Content-Type', 'text/plain');
         // }
     }
+
+
+function substituteDashboardPlaceholders($data, $oem, $property_name) {
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+            $data[$key] = substituteDashboardPlaceholders($value, $oem, $property_name);
+        }
+        return $data;
+    } elseif (is_string($data)) {
+        // Replace both OEM and PROPERTY_NAME
+        return str_replace(
+            ['OEM', 'PROPERTY_NAME'],
+            [$oem, $property_name],
+            $data
+        );
+    } else {
+        return $data;
+    }
+}
+
+
+
     private function ipIncrement($ip, $increment = 1)
     {
         $ipLong = ip2long($ip);
