@@ -168,7 +168,6 @@
         $customerEmail = $nmRecord->customer_email ?? null;
         $randomPassword = $nmRecord->random_password ?? null;
         $hasGrafana = isset($nmRecord->grafana_toggle) ? (int)$nmRecord->grafana_toggle === 1 : false;
-        if (!$hasGrafana && ($customerEmail || $randomPassword)) { $hasGrafana = true; }
     }
 @endphp
 
