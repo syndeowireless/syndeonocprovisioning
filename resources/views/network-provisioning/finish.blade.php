@@ -94,7 +94,19 @@
     /* Simple spinner keyframes as fallback */
     @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
     /* Hide Grafana view by default */
-    #grafana-credentials-view { display: none; }
+    #grafana-credentials-view { 
+        display: none; 
+        position: relative;
+        z-index: 1;
+    }
+    #grafana-credentials-view.finish-hero {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 200px);
+        text-align: center;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
     .password-group {
         display: flex;
         align-items: center;
@@ -172,12 +184,14 @@
         <h1 class="finish-title" id="finish-title">Provisioning completed</h1>
         <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
+        @if($hasGrafana)
         <div class="cta-row">
             <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn">
                 <i class="mdi mdi-account-key-outline"></i>
                 Customer Grafana Credentials
             </button>
         </div>
+        @endif
 
         <div class="mt-3 muted">You can safely close this page.</div>
     </div>
@@ -280,12 +294,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Content element not found!');
             }
             
-            if (grafanaView) {
-                grafanaView.style.display = 'block';
-                console.log('Grafana view set to block');
-            } else {
-                console.log('Grafana view element not found!');
-            }
+             if (grafanaView) {
+                 grafanaView.style.display = 'flex';
+                 grafanaView.style.alignItems = 'center';
+                 grafanaView.style.justifyContent = 'center';
+                 grafanaView.style.minHeight = 'calc(100vh - 200px)';
+                 console.log('Grafana view set to flex with centering');
+             } else {
+                 console.log('Grafana view element not found!');
+             }
         });
     } else {
         console.log('Grafana button not found!');
@@ -400,10 +417,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 content.style.display = 'none';
                 console.log('content hidden');
             }
-            if (grafanaView) {
-                grafanaView.style.display = 'block';
-                console.log('grafanaView shown');
-            }
+             if (grafanaView) {
+                 grafanaView.style.display = 'flex';
+                 grafanaView.style.alignItems = 'center';
+                 grafanaView.style.justifyContent = 'center';
+                 grafanaView.style.minHeight = 'calc(100vh - 200px)';
+                 console.log('grafanaView shown with centering');
+             }
         } catch (e) {
             console.error('Error in showGrafanaCredentials:', e);
         }
@@ -475,10 +495,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 content.style.display = 'none';
                 console.log('content hidden via delegation');
             }
-            if (grafanaView) {
-                grafanaView.style.display = 'block';
-                console.log('grafanaView shown via delegation');
-            }
+             if (grafanaView) {
+                 grafanaView.style.display = 'flex';
+                 grafanaView.style.alignItems = 'center';
+                 grafanaView.style.justifyContent = 'center';
+                 grafanaView.style.minHeight = 'calc(100vh - 200px)';
+                 console.log('grafanaView shown via delegation with centering');
+             }
             return false;
         }
         const backBtn = e.target.closest('#back-to-finish');
