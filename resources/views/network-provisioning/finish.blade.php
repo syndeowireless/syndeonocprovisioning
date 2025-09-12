@@ -80,6 +80,7 @@
         align-items: center;
         gap: .5rem;
         transition: all .25s ease;
+        cursor: pointer;
     }
     .btn-primary-syndeo:hover { 
         transform: translateY(-2px); 
@@ -93,14 +94,15 @@
     #finish-content { visibility: hidden; }
     /* Simple spinner keyframes as fallback */
     @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
-    /* Hide Grafana view by default */
+    /* Hide Grafana view by default and ensure it doesn't interfere */
     #grafana-credentials-view { 
-        display: none; 
-        position: relative;
-        z-index: 1;
+        display: none !important;
+        visibility: hidden;
     }
-    #grafana-credentials-view.finish-hero {
+    /* When shown, override the display none */
+    #grafana-credentials-view.active {
         display: flex !important;
+        visibility: visible;
         align-items: center;
         justify-content: center;
         min-height: calc(100vh - 200px);
@@ -161,51 +163,57 @@
                 ->first();
         }
     } catch (\Throwable $e) { $nmRecord = null; }
+    
+    // Strictly check grafana_toggle flag only
     $hasGrafana = false;
     $customerEmail = null;
     $randomPassword = null;
     if ($nmRecord) {
         $customerEmail = $nmRecord->customer_email ?? null;
         $randomPassword = $nmRecord->random_password ?? null;
-        $hasGrafana = isset($nmRecord->grafana_toggle) ? (int)$nmRecord->grafana_toggle === 1 : false;
+        // Only show Grafana button if grafana_toggle is explicitly set to 1
+        $hasGrafana = isset($nmRecord->grafana_toggle) && (int)$nmRecord->grafana_toggle === 1;
     }
 @endphp
 
-<!-- Content wrapper hidden until transition completes -->
-<div id="finish-content">
-<div class="container-fluid finish-hero">
-    <div class="finish-card">
-        <div class="finish-badge">
-            <i class="mdi mdi-check-decagram"></i>
-            Success
-        </div>
-        <div class="confetti">🎉</div>
-        <h1 class="finish-title" id="finish-title">Provisioning completed</h1>
-        <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
+<!-- Main content wrapper -->
+<div id="main-wrapper">
+    <!-- Success View -->
+    <div id="finish-content">
+        <div class="container-fluid finish-hero">
+            <div class="finish-card">
+                <div class="finish-badge">
+                    <i class="mdi mdi-check-decagram"></i>
+                    Success
+                </div>
+                <div class="confetti">🎉</div>
+                <h1 class="finish-title" id="finish-title">Provisioning completed</h1>
+                <div class="finish-sub" id="finish-sub">Everything is set. Great job!</div>
 
-        @if($hasGrafana)
-        <div class="cta-row">
-            <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn">
-                <i class="mdi mdi-account-key-outline"></i>
-                Customer Grafana Credentials
-            </button>
-        </div>
-        @endif
+                @if($hasGrafana)
+                <div class="cta-row">
+                    <button type="button" class="btn-primary-syndeo" id="grafana-credentials-btn">
+                        <i class="mdi mdi-account-key-outline"></i>
+                        Customer Grafana Credentials
+                    </button>
+                </div>
+                @endif
 
-        <div class="mt-3 muted">You can safely close this page.</div>
+                <div class="mt-3 muted">You can safely close this page.</div>
+            </div>
+        </div>
     </div>
-</div>
-</div>
 
-<!-- Grafana Credentials View -->
-<div id="grafana-credentials-view" class="container-fluid finish-hero">
-    <div class="finish-card">
-        <div class="finish-badge">
-            <i class="mdi mdi-shield-key-outline"></i>
-            Grafana Credentials
-        </div>
-        <div class="confetti">🔐</div>
-        @if($hasGrafana)
+    <!-- Grafana Credentials View (Initially Hidden) -->
+    @if($hasGrafana)
+    <div id="grafana-credentials-view" class="container-fluid">
+        <div class="finish-card">
+            <div class="finish-badge">
+                <i class="mdi mdi-shield-key-outline"></i>
+                Grafana Credentials
+            </div>
+            <div class="confetti">🔐</div>
+            <h1 class="finish-title">Grafana Credentials</h1>
             <div style="text-align:left; margin: 1rem auto; max-width: 520px;">
                 <div style="display:flex; justify-content:space-between; padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:.75rem;">
                     <span style="color:#64748b; font-weight:600;">Username</span>
@@ -213,35 +221,28 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:10px;">
                     <span style="color:#64748b; font-weight:600;">Password</span>
-                    <div class="password-group" style="display:flex; align-items:center; gap:8px;">
-                        <input class="password-input" type="password" value="{{ $randomPassword ?? 'N/A' }}" id="password_grafana" readonly style="border:none; background:transparent; outline:none; font-size:.95rem; color:#1e293b; font-weight:500; width:120px;">
-                        <i class="mdi mdi-eye password-icon" onclick="show_password_grafana()" title="Show/Hide Password" style="color:#64748b; cursor:pointer; font-size:18px; transition:all 0.3s ease; border-radius:50%; padding:4px;"></i>
-                        <i class="mdi mdi-content-copy password-icon" onclick="copy_to_clipboard_grafana()" title="Copy to Clipboard" style="color:#64748b; cursor:pointer; font-size:18px; transition:all 0.3s ease; border-radius:50%; padding:4px;"></i>
+                    <div class="password-group">
+                        <input class="password-input" type="password" value="{{ $randomPassword ?? 'N/A' }}" id="password_grafana" readonly>
+                        <i class="mdi mdi-eye password-icon" id="toggle-password" title="Show/Hide Password"></i>
+                        <i class="mdi mdi-content-copy password-icon" id="copy-password" title="Copy to Clipboard"></i>
                     </div>
                 </div>
             </div>
             <div class="cta-row">
-                <a type="button"
-                    class="btn-primary-syndeo"
-                    style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
-                    href="mailto:?subject={{ rawurlencode('Grafana Credentials - ' . ($finishName ?? 'PROPERTY NAME')) }}&body={{ rawurlencode('Grafana Credentials:\n\nUsername: ' . ($customerEmail ? explode('@', $customerEmail)[0] : 'N/A') . '\nPassword: ' . ($randomPassword ?? 'N/A')) }}"
-                    target="_blank"
-                >
-                    <i class="mdi mdi-share-variant" style="color: white;"></i>
+                <button type="button" class="btn-primary-syndeo" id="back-to-finish">
+                    <i class="mdi mdi-arrow-left"></i>
+                    Back to Success
+                </button>
+                <a class="btn-primary-syndeo"
+                   href="mailto:?subject={{ rawurlencode('Grafana Credentials - ' . ($finishName ?? 'Property')) }}&body={{ rawurlencode('Grafana Credentials:\n\nUsername: ' . ($customerEmail ? explode('@', $customerEmail)[0] : 'N/A') . '\nPassword: ' . ($randomPassword ?? 'N/A')) }}"
+                   target="_blank">
+                    <i class="mdi mdi-share-variant"></i>
                     Share
                 </a>
             </div>
-        @else
-            <h1 class="finish-title">No Credentials Available</h1>
-            <div class="finish-sub">Credentials were not generated for this provisioning.</div>
-            <div class="cta-row">
-                <a href="#" class="btn-primary-syndeo" id="back-to-finish" onclick="return backToFinish();">
-                    <i class="mdi mdi-arrow-left"></i>
-                    Back
-                </a>
-            </div>
-        @endif
+        </div>
     </div>
+    @endif
 </div>
 
 <footer class="mt-6 border-t border-gray-200 py-4">
@@ -251,7 +252,7 @@
 </footer>
 
 <script>
-// Populate title/subtitle from query string: ?name=...
+// Populate title/subtitle from query string
 (function() {
     const params = new URLSearchParams(window.location.search);
     const name = params.get('name');
@@ -261,60 +262,92 @@
     }
 })();
 
-// Global variables for view elements
-let content, grafanaView;
-
-// Always show transition GIF first, then reveal content
 document.addEventListener('DOMContentLoaded', function() {
-    content = document.getElementById('finish-content');
-    grafanaView = document.getElementById('grafana-credentials-view');
-    
-    // Debug all elements
-    console.log('=== DEBUGGING ELEMENTS ===');
-    console.log('content element:', content);
-    console.log('grafanaView element:', grafanaView);
-    
+    const content = document.getElementById('finish-content');
+    const grafanaView = document.getElementById('grafana-credentials-view');
     const grafanaBtn = document.getElementById('grafana-credentials-btn');
-    console.log('grafanaBtn element:', grafanaBtn);
-    
-    // Add click event listener to Grafana credentials button
-    if (grafanaBtn) {
-        console.log('Adding event listener to button');
-        grafanaBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('=== BUTTON CLICKED ===');
-            console.log('content before:', content ? content.style.display : 'null');
-            console.log('grafanaView before:', grafanaView ? grafanaView.style.display : 'null');
-            
+    const backBtn = document.getElementById('back-to-finish');
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const copyPasswordBtn = document.getElementById('copy-password');
+    const passwordInput = document.getElementById('password_grafana');
+
+    // State management function
+    function showView(viewName) {
+        if (viewName === 'success') {
+            if (content) {
+                content.style.display = '';
+                content.style.visibility = 'visible';
+            }
+            if (grafanaView) {
+                grafanaView.classList.remove('active');
+            }
+        } else if (viewName === 'grafana') {
             if (content) {
                 content.style.display = 'none';
-                console.log('Content set to none');
-            } else {
-                console.log('Content element not found!');
             }
-            
-             if (grafanaView) {
-                 grafanaView.style.display = 'flex';
-                 grafanaView.style.alignItems = 'center';
-                 grafanaView.style.justifyContent = 'center';
-                 grafanaView.style.minHeight = 'calc(100vh - 200px)';
-                 console.log('Grafana view set to flex with centering');
-             } else {
-                 console.log('Grafana view element not found!');
-             }
-        });
-    } else {
-        console.log('Grafana button not found!');
+            if (grafanaView) {
+                grafanaView.classList.add('active');
+            }
+        }
     }
 
+    // Button event listeners
+    if (grafanaBtn) {
+        grafanaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showView('grafana');
+        });
+    }
+
+    if (backBtn) {
+        backBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showView('success');
+        });
+    }
+
+    // Password toggle
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.classList.remove('mdi-eye');
+                this.classList.add('mdi-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                this.classList.remove('mdi-eye-off');
+                this.classList.add('mdi-eye');
+            }
+        });
+    }
+
+    // Copy to clipboard
+    if (copyPasswordBtn && passwordInput) {
+        copyPasswordBtn.addEventListener('click', function() {
+            passwordInput.select();
+            passwordInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(passwordInput.value).then(() => {
+                this.classList.remove('mdi-content-copy');
+                this.classList.add('mdi-check');
+                this.style.color = '#10b981';
+                setTimeout(() => {
+                    this.classList.remove('mdi-check');
+                    this.classList.add('mdi-content-copy');
+                    this.style.color = '#64748b';
+                }, 2000);
+            });
+        });
+    }
+
+    // Transition overlay
     let overlay;
     try {
         overlay = document.createElement('div');
         overlay.id = 'transition-overlay';
         overlay.style.cssText = `
             position: fixed;
-            top: 70px; /* Height of topbar */
-            left: 240px; /* Sidebar width */
+            top: 70px;
+            left: 240px;
             right: 0;
             bottom: 0;
             background-color: rgba(255, 255, 255, 0.98);
@@ -326,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
             transition: opacity 0.3s ease;
             opacity: 0;
         `;
+        
         if (window.innerWidth <= 992) {
             overlay.style.left = '0px';
             overlay.style.top = '60px';
@@ -374,10 +408,12 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.appendChild(loadingContainer);
         document.body.appendChild(overlay);
 
-        requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+        requestAnimationFrame(() => { 
+            overlay.style.opacity = '1'; 
+        });
     } catch (_) {}
 
-    // Minimum visible time for the overlay to ensure GIF is seen
+    // Minimum visible time for overlay
     const MIN_MS = 5000;
     const start = Date.now();
 
@@ -385,139 +421,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const elapsed = Date.now() - start;
         const wait = Math.max(0, MIN_MS - elapsed);
         setTimeout(() => {
-            if (content) content.style.visibility = 'visible';
+            if (content) {
+                content.style.visibility = 'visible';
+            }
             if (overlay && overlay.parentNode) {
                 overlay.style.opacity = '0';
                 setTimeout(() => {
-                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                    if (overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
                 }, 300);
             }
         }, wait);
     }
 
-    // If GIF loads, still enforce minimum time; on error fallback quickly
-    // Also add a safety timeout in case load doesn't fire
+    // Handle GIF loading
     const safety = setTimeout(reveal, 5000);
     const img = document.querySelector('#transition-overlay img');
     if (img) {
-        img.addEventListener('load', () => { clearTimeout(safety); reveal(); });
-        img.addEventListener('error', () => { clearTimeout(safety); reveal(); });
+        img.addEventListener('load', () => { 
+            clearTimeout(safety); 
+            reveal(); 
+        });
+        img.addEventListener('error', () => { 
+            clearTimeout(safety); 
+            reveal(); 
+        });
     } else {
         reveal();
     }
-
-    // Explicit functions for inline handlers (most reliable across browsers)
-    window.showGrafanaCredentials = function() {
-        console.log('showGrafanaCredentials called');
-        console.log('content element:', content);
-        console.log('grafanaView element:', grafanaView);
-        try {
-            if (content) {
-                content.style.display = 'none';
-                console.log('content hidden');
-            }
-             if (grafanaView) {
-                 grafanaView.style.display = 'flex';
-                 grafanaView.style.alignItems = 'center';
-                 grafanaView.style.justifyContent = 'center';
-                 grafanaView.style.minHeight = 'calc(100vh - 200px)';
-                 console.log('grafanaView shown with centering');
-             }
-        } catch (e) {
-            console.error('Error in showGrafanaCredentials:', e);
-        }
-        return false; // prevent default anchor navigation
-    };
-    window.backToFinish = function() {
-        console.log('backToFinish called');
-        try {
-            if (grafanaView) {
-                grafanaView.style.display = 'none';
-                console.log('grafanaView hidden');
-            }
-            if (content) {
-                content.style.display = '';
-                console.log('content shown');
-            }
-        } catch (e) {
-            console.error('Error in backToFinish:', e);
-        }
-        return false;
-    };
-    
-    // Password visibility toggle for Grafana
-    window.show_password_grafana = function() {
-        var x = document.getElementById('password_grafana');
-        var icon = event.target;
-        if (x.type === 'password') {
-            x.type = 'text';
-            icon.classList.remove('mdi-eye');
-            icon.classList.add('mdi-eye-off');
-        } else {
-            x.type = 'password';
-            icon.classList.remove('mdi-eye-off');
-            icon.classList.add('mdi-eye');
-        }
-    };
-    
-    // Copy to clipboard for Grafana
-    window.copy_to_clipboard_grafana = function() {
-        var copyText = document.getElementById('password_grafana');
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
-
-        var copyIcon = event.target;
-        copyIcon.classList.remove('mdi-content-copy');
-        copyIcon.classList.add('mdi-check');
-        copyIcon.style.color = '#10b981';
-        setTimeout(function() {
-            copyIcon.classList.remove('mdi-check');
-            copyIcon.classList.add('mdi-content-copy');
-            copyIcon.style.color = '#64748b';
-        }, 2000);
-    };
-
-    // Toggle views using event delegation for reliability
-    document.addEventListener('click', function(e) {
-        console.log('Click event detected on:', e.target);
-        console.log('Target ID:', e.target.id);
-        console.log('Target classes:', e.target.className);
-        
-        // Check if the clicked element is the button or inside the button
-        if (e.target.id === 'grafana-credentials-btn' || e.target.closest('#grafana-credentials-btn')) {
-            console.log('Grafana credentials button clicked!');
-            e.preventDefault();
-            e.stopPropagation();
-            
-            if (content) {
-                content.style.display = 'none';
-                console.log('content hidden via delegation');
-            }
-             if (grafanaView) {
-                 grafanaView.style.display = 'flex';
-                 grafanaView.style.alignItems = 'center';
-                 grafanaView.style.justifyContent = 'center';
-                 grafanaView.style.minHeight = 'calc(100vh - 200px)';
-                 console.log('grafanaView shown via delegation with centering');
-             }
-            return false;
-        }
-        const backBtn = e.target.closest('#back-to-finish');
-        if (backBtn) {
-            console.log('Back button clicked via event delegation');
-            e.preventDefault();
-            if (grafanaView) {
-                grafanaView.style.display = 'none';
-                console.log('grafanaView hidden via delegation');
-            }
-            if (content) {
-                content.style.display = '';
-                console.log('content shown via delegation');
-            }
-            return false;
-        }
-    });
 });
 </script>
 
