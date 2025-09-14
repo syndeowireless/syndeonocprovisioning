@@ -1899,17 +1899,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // Hide BDA Quantity completely for DAS
             bdaContainer.style.display = 'none';
             
-            // Check if OEM is SOLID - if so, hide Master Unit Equipment
-            if (oem === 'SOLID') {
-                dasEquipmentContainer.style.display = 'none';
-            } else {
-                // Move Master Unit Equipment to BDA Quantity's position
-                const bdaParentGrid = bdaContainer.parentElement;
-                if (bdaParentGrid && !bdaParentGrid.contains(dasEquipmentContainer)) {
-                    bdaParentGrid.appendChild(dasEquipmentContainer);
-                }
-                dasEquipmentContainer.style.display = '';
+            // Show Master Unit Equipment for DAS system type
+            // Move Master Unit Equipment to BDA Quantity's position
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(dasEquipmentContainer)) {
+                bdaParentGrid.appendChild(dasEquipmentContainer);
             }
+            dasEquipmentContainer.style.display = '';
             
             // Hide BDA Equipment completely
             errcsEquipmentContainer.style.display = 'none';
@@ -2022,7 +2018,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 bdaEquipment: [],
                 showBDA: false
             },
-            'Solid': {
+            'SOLID': {
                 masterUnit: ['Syndeo V1.0 SOLID DMS1200 DAS LLD'],
                 bdaEquipment: [],
                 showBDA: false
@@ -2099,25 +2095,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Special handling for DAS system type
         if (systemType === 'DAS') {
-            // Check if OEM is SOLID - if so, hide Master Unit Equipment
-            if (oem === 'SOLID') {
-                dasEqContainer.style.display = 'none';
-                dasEq.required = false;
-            } else {
-                // For DAS, move Master Unit Equipment to BDA Quantity's position
-                const bdaParentGrid = bdaContainer.parentElement;
-                if (bdaParentGrid && !bdaParentGrid.contains(dasEqContainer)) {
-                    bdaParentGrid.appendChild(dasEqContainer);
-                }
-                dasEqContainer.style.display = '';
-                dasEq.required = true;
-                
-                // If OEM is selected, populate the equipment dropdown
-                if (oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
-                    const config = equipmentConfig[systemType][oem];
-                    if (config.masterUnit.length > 0) {
-                        populateDropdown(dasEq, config.masterUnit);
-                    }
+            // For DAS, always show Master Unit Equipment (including when OEM is SOLID)
+            // Move Master Unit Equipment to BDA Quantity's position
+            const bdaParentGrid = bdaContainer.parentElement;
+            if (bdaParentGrid && !bdaParentGrid.contains(dasEqContainer)) {
+                bdaParentGrid.appendChild(dasEqContainer);
+            }
+            dasEqContainer.style.display = '';
+            dasEq.required = true;
+            
+            // If OEM is selected, populate the equipment dropdown
+            if (oem && equipmentConfig[systemType] && equipmentConfig[systemType][oem]) {
+                const config = equipmentConfig[systemType][oem];
+                if (config.masterUnit.length > 0) {
+                    populateDropdown(dasEq, config.masterUnit);
                 }
             }
             
