@@ -97,113 +97,93 @@ class ProvisionController extends Controller
             // Create hosts for master units
             for ($i = 1; $i <= $master_unit_quantity; $i++) {
                 $hostName = "{$hostNameBase} master unit {$i}";
-                $existingHostId = $this->getZabbixHostIdByName($hostName, $auth);
-                if ($existingHostId) {
-                    Log::warning('Zabbix host already exists', ['host_name' => $hostName, 'zabbix_id' => $existingHostId]);
-                    // Optionally, update the host here if needed. For now, we just skip creation.
-                    $createdHosts[] = ['hostid' => $existingHostId]; // Add existing host to results
-                } else {
-                    Log::info("ZabbixController: Criando host master unit.", [
-                        'host' => $hostName,
+                Log::info("ZabbixController: Criando host master unit.", [
+                    'host' => $hostName,
+                    'ip' => $currentIp,
+                    'template_id' => $templateId_Master_Unit_Equipment
+                ]);
+                $result = $this->zabbixApiRequest('host.create', [
+                    'host' => $hostName,
+                    'groups' => [['groupid' => $groupId]],
+                    'templates' => [['templateid' => $templateId_Master_Unit_Equipment]],
+                    'interfaces' => [[
+                        'type' => 2,
+                        'main' => 1,
+                        'useip' => 1,
                         'ip' => $currentIp,
-                        'template_id' => $templateId_Master_Unit_Equipment
-                    ]);
-                    $result = $this->zabbixApiRequest('host.create', [
-                        'host' => $hostName,
-                        'groups' => [['groupid' => $groupId]],
-                        'templates' => [['templateid' => $templateId_Master_Unit_Equipment]],
-                        'interfaces' => [[
-                            'type' => 2,
-                            'main' => 1,
-                            'useip' => 1,
-                            'ip' => $currentIp,
-                            'dns' => '',
-                            'port' => '161',
-                                'details' => [
-                                    'version' => 2,
-                                    'community' => 'public'
-                                ]
-                        ]],
-                        'tags' => [
-                            ['tag' => 'Site', 'value' => $hostNameBase],
-                            ['tag' => 'Company', 'value' => $company_name],
-                            ['tag' => 'SystemType', 'value' => $system_type],
-                            ['tag' => 'OEM', 'value' => $oem],
-                            ['tag' => 'PropertyType', 'value' => $property_type]
-                        ],
-                        'inventory_mode' => 1, // manual
-                        'inventory' => [
-                            'type' => $property_type,
-                            'type_full' => 'DAS',
-                            'location_lat' => $latitude,
-                            'location_lon' => $longitude,
-                            'vendor' => $oem,
-                            'url_a' => $currentIp
-                        ]
-                    ], $auth);
-                    Log::info("ZabbixController: Host master unit criado.", [
-                        'host' => $hostName,
-                        'result' => $result
-                    ]);
-                    $createdHosts[] = $result;
-                }
+                        'dns' => '',
+                        'port' => '161',
+                            'details' => [
+                                'version' => 2,
+                                'community' => 'public'
+                            ]
+                    ]],
+                    'tags' => [
+                        ['tag' => 'Site', 'value' => $hostNameBase]
+                        // add more tags if needed
+                    ],
+                    'inventory_mode' => 1, // manual
+                    'inventory' => [
+                        'type' => $property_type,
+                        'type_full' => 'DAS',
+                        'location_lat' => $latitude,
+                        'location_lon' => $longitude,
+                        'vendor' => $oem,
+                        'url_a' => $currentIp
+                    ]
+                ], $auth);
+                Log::info("ZabbixController: Host master unit criado.", [
+                    'host' => $hostName,
+                    'result' => $result
+                ]);
+                $createdHosts[] = $result;
                 $currentIp = $this->ipIncrement($currentIp, 1);
             }
 
             // Create hosts for BDAs
             for ($i = 1; $i <= $bda_quantity; $i++) {
                 $hostName = "{$hostNameBase} bda {$i}";
-                $existingHostId = $this->getZabbixHostIdByName($hostName, $auth);
-                if ($existingHostId) {
-                    Log::warning('Zabbix host already exists', ['host_name' => $hostName, 'zabbix_id' => $existingHostId]);
-                    // Optionally, update the host here if needed. For now, we just skip creation.
-                    $createdHosts[] = ['hostid' => $existingHostId]; // Add existing host to results
-                } else {
-                    Log::info("ZabbixController: Criando host BDA.", [
-                        'host' => $hostName,
+                Log::info("ZabbixController: Criando host BDA.", [
+                    'host' => $hostName,
+                    'ip' => $currentIp,
+                    'template_id' => $templateId_BDA_Equipment
+                ]);
+                $result = $this->zabbixApiRequest('host.create', [
+                    'host' => $hostName,
+                    'groups' => [['groupid' => $groupId]],
+                    'templates' => [['templateid' => $templateId_BDA_Equipment]],
+                    'interfaces' => [[
+                        'type' => 2,
+                        'main' => 1,
+                        'useip' => 1,
                         'ip' => $currentIp,
-                        'template_id' => $templateId_BDA_Equipment
-                    ]);
-                    $result = $this->zabbixApiRequest('host.create', [
-                        'host' => $hostName,
-                        'groups' => [['groupid' => $groupId]],
-                        'templates' => [['templateid' => $templateId_BDA_Equipment]],
-                        'interfaces' => [[
-                            'type' => 2,
-                            'main' => 1,
-                            'useip' => 1,
-                            'ip' => $currentIp,
-                            'dns' => '',
-                            'port' => '161',
-                                'details' => [
-                                    'version' => 2,
-                                    'community' => 'public'
-                                ]
-                        ]],
-                        'tags' => [
-                            ['tag' => 'Site', 'value' => $hostNameBase],
-                            ['tag' => 'Company', 'value' => $company_name],
-                            ['tag' => 'SystemType', 'value' => $system_type],
-                            ['tag' => 'OEM', 'value' => $oem],
-                            ['tag' => 'PropertyType', 'value' => $property_type]
-                        ],
-                        'inventory_mode' => 1, // manual
-                        'inventory' => [
-                            'type' => $property_type,
-                            'type_full' => 'ERRCS',
-                            'location_lat' => $latitude,
-                            'location_lon' => $longitude,
-                            'vendor' => $oem,
-                            'url_a' => $currentIp
-                        ]
+                        'dns' => '',
+                        'port' => '161',
+                            'details' => [
+                                'version' => 2,
+                                'community' => 'public'
+                            ]
+                    ]],
+                    'tags' => [
+                        ['tag' => 'Site', 'value' => $hostNameBase]
+                        // add more tags if needed
+                    ],
+                    'inventory_mode' => 1, // manual
+                    'inventory' => [
+                        'type' => $property_type,
+                        'type_full' => 'ERRCS',
+                        'location_lat' => $latitude,
+                        'location_lon' => $longitude,
+                        'vendor' => $oem,
+                        'url_a' => $currentIp
+                    ]
 
-                    ], $auth);
-                    Log::info("ZabbixController: Host BDA criado.", [
-                        'host' => $hostName,
-                        'result' => $result
-                    ]);
-                    $createdHosts[] = $result;
-                }
+                ], $auth);
+                Log::info("ZabbixController: Host BDA criado.", [
+                    'host' => $hostName,
+                    'result' => $result
+                ]);
+                $createdHosts[] = $result;
                 $currentIp = $this->ipIncrement($currentIp, 1);
             }
             $results['zabbix'] = 'Success';
@@ -260,6 +240,7 @@ class ProvisionController extends Controller
                 return $dashboards;
             };
 
+            
             // --- Geração dinâmica de dashboards ---
             // 1. Se NÃO houver credencial do Grafana (grafana_toggle === null)
             if ($grafana_toggle === null) {
@@ -289,21 +270,13 @@ class ProvisionController extends Controller
 
                 // Criar dashboards na pasta Syndeo
                 foreach ($dashboardsToCreate as $dashboard) {
-                    $dashboardTitle = $dashboard["title"];
-                    $existingDashboardUid = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle, $syndeoFolderId);
-
-                    if ($existingDashboardUid) {
-                        Log::warning("Grafana dashboard already exists in Syndeo folder", ["dashboard_title" => $dashboardTitle, "grafana_uid" => $existingDashboardUid]);
-                        // Optionally, update the dashboard here if needed. For now, we just skip creation.
-                    } else {
-                        unset($dashboard["id"], $dashboard["uid"]);
-                        $resp = $this->grafanaApiRequest("post", "/dashboards/db", [
-                            "dashboard" => $dashboard,
-                            "folderId"  => $syndeoFolderId,
-                            "overwrite" => false,
-                        ]);
-                        Log::info("Grafana: Dashboard criado na pasta Syndeo", ["dashboard_title" => $dashboardTitle, "response" => $resp]);
-                    }
+                    unset($dashboard['id'], $dashboard['uid']);
+                    $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                        'dashboard' => $dashboard,
+                        'folderId'  => $syndeoFolderId,
+                        'overwrite' => false,
+                    ]);
+                    Log::info("Grafana: Dashboard criado na pasta Syndeo", ['response' => $resp]);
                 }
 
                 // --- SEGUNDO TEMPLATE conforme OEM ---
@@ -313,63 +286,27 @@ class ProvisionController extends Controller
                     $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
                     $templateDashboard2 = $templateResp2['dashboard'];
                     unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $dashboardTitle2 = $property_name . ' - ADRF';
-                    $templateDashboard2['title'] = $dashboardTitle2;
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $dashboardTitle2);
-
-                    $existingDashboardUid2 = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle2, $syndeoFolderId);
-
-                    if ($existingDashboardUid2) {
-                        Log::warning("Grafana dashboard already exists in Syndeo folder (ADRF template)", ["dashboard_title" => $dashboardTitle2, "grafana_uid" => $existingDashboardUid2]);
-                    } else {
-                        $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                            'dashboard' => $templateDashboard2,
-                            'folderId'  => $syndeoFolderId,
-                            'overwrite' => false,
-                        ]);
-                        Log::info("Grafana: Segundo Dashboard (ADRF) criado na pasta Syndeo", ["dashboard_title" => $dashboardTitle2, "response" => $resp2]);
-                    }                } elseif ($oem === 'COMBA' && $das_equipment === 'Syndeo V1.0 COMBA 202505 Model 2014') {
+                    $templateDashboard2['title'] = $property_name . ' - ADRF';
+                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - ADRF');
+                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                        'dashboard' => $templateDashboard2,
+                        'folderId'  => $syndeoFolderId,
+                        'overwrite' => false,
+                    ]);
+                } elseif ($oem === 'COMBA' && $das_equipment === 'Syndeo V1.0 COMBA 202505 Model 2014') {
                     // PASTE SEGUNDO TEMPLATE UID PARA COMBA
                     $secondTemplateUid = 'PASTE_SECOND_TEMPLATE_UID_COMBA_HERE';
                     $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
                     $templateDashboard2 = $templateResp2['dashboard'];
                     unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $dashboardTitle2 = $property_name . ' - COMBA';
-                    $templateDashboard2['title'] = $dashboardTitle2;
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $dashboardTitle2);
-
-                    $existingDashboardUid2 = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle2, $syndeoFolderId);
-
-                    if ($existingDashboardUid2) {
-                        Log::warning("Grafana dashboard already exists in Syndeo folder (COMBA template)", ["dashboard_title" => $dashboardTitle2, "grafana_uid" => $existingDashboardUid2]);
-                    } else {
-                        $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                            'dashboard' => $templateDashboard2,
-                            'folderId'  => $syndeoFolderId,
-                            'overwrite' => false,
-                        ]);
-                        Log::info("Grafana: Segundo Dashboard (COMBA) criado na pasta Syndeo", ["dashboard_title" => $dashboardTitle2, "response" => $resp2]);
-                    }
+                    $templateDashboard2['title'] = $property_name . ' - COMBA';
+                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - COMBA');
+                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                        'dashboard' => $templateDashboard2,
+                        'folderId'  => $syndeoFolderId,
+                        'overwrite' => false,
+                    ]);
                 }
-
-                // Criar nova pasta com nome da company
-                $companyFolderId = $this->getGrafanaFolderIdByName($company_name);
-                if ($companyFolderId) {
-                    Log::warning("Grafana folder already exists", ["folder_name" => $company_name, "grafana_id" => $companyFolderId]);
-                } else {
-                    $companyFolderResp = $this->grafanaApiRequest(
-                        "post",
-                        "/folders",
-                        ["title" => $company_name]
-                    );
-                    $companyFolderId = $companyFolderResp["id"] ?? null;
-                    if ($companyFolderId) {
-                        Log::info("Grafana folder created", ["folder_name" => $company_name, "grafana_id" => $companyFolderId]);
-                    } else {
-                        Log::error("Grafana folder creation failed", ["folder_name" => $company_name, "response" => $companyFolderResp]);
-                    }
-                }
-
             }
             // 2. Se JÁ houver credencial do Grafana
             else {
@@ -398,20 +335,12 @@ class ProvisionController extends Controller
                     $dashboardsToCreate = array_merge($dasDashboards, $errcsDashboards);
                 }
                 foreach ($dashboardsToCreate as $dashboard) {
-                    $dashboardTitle = $dashboard["title"];
-                    $existingDashboardUid = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle, $syndeoFolderId);
-
-                    if ($existingDashboardUid) {
-                        Log::warning("Grafana dashboard already exists in Syndeo folder", ["dashboard_title" => $dashboardTitle, "grafana_uid" => $existingDashboardUid]);
-                    } else {
-                        unset($dashboard['id'], $dashboard['uid']);
-                        $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                            'dashboard' => $dashboard,
-                            'folderId'  => $syndeoFolderId,
-                            'overwrite' => false,
-                        ]);
-                        Log::info("Grafana: Dashboard criado na pasta Syndeo", ["dashboard_title" => $dashboardTitle, "response" => $resp]);
-                    }
+                    unset($dashboard['id'], $dashboard['uid']);
+                    $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                        'dashboard' => $dashboard,
+                        'folderId'  => $syndeoFolderId,
+                        'overwrite' => false,
+                    ]);
                 }
 
                 // --- SEGUNDO TEMPLATE conforme OEM ---
@@ -420,62 +349,32 @@ class ProvisionController extends Controller
                     $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
                     $templateDashboard2 = $templateResp2['dashboard'];
                     unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $dashboardTitle2 = $property_name . ' - ADRF';
-                    $templateDashboard2['title'] = $dashboardTitle2;
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $dashboardTitle2);
-
-                    $existingDashboardUid2 = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle2, $syndeoFolderId);
-
-                    if ($existingDashboardUid2) {
-                        Log::warning("Grafana dashboard already exists in Syndeo folder (ADRF template)", ["dashboard_title" => $dashboardTitle2, "grafana_uid" => $existingDashboardUid2]);
-                    } else {
-                        $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                            'dashboard' => $templateDashboard2,
-                            'folderId'  => $syndeoFolderId,
-                            'overwrite' => false,
-                        ]);
-                        Log::info("Grafana: Segundo Dashboard (ADRF) criado na pasta Syndeo", ["dashboard_title" => $dashboardTitle2, "response" => $resp2]);
-                    }
+                    $templateDashboard2['title'] = $property_name . ' - ADRF';
+                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - ADRF');
+                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                        'dashboard' => $templateDashboard2,
+                        'folderId'  => $syndeoFolderId,
+                        'overwrite' => false,
+                    ]);
                 } elseif ($oem === 'COMBA' && $das_equipment === 'Syndeo V1.0 COMBA 202505 Model 2014') {
                     $secondTemplateUid = 'PASTE_SECOND_TEMPLATE_UID_COMBA_HERE';
                     $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
                     $templateDashboard2 = $templateResp2['dashboard'];
                     unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $dashboardTitle2 = $property_name . ' - COMBA';
-                    $templateDashboard2['title'] = $dashboardTitle2;
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $dashboardTitle2);
-
-                    $existingDashboardUid2 = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle2, $syndeoFolderId);
-
-                    if ($existingDashboardUid2) {
-                        Log::warning("Grafana dashboard already exists in Syndeo folder (COMBA template)", ["dashboard_title" => $dashboardTitle2, "grafana_uid" => $existingDashboardUid2]);
-                    } else {
-                        $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                            'dashboard' => $templateDashboard2,
-                            'folderId'  => $syndeoFolderId,
-                            'overwrite' => false,
-                        ]);
-                        Log::info("Grafana: Segundo Dashboard (COMBA) criado na pasta Syndeo", ["dashboard_title" => $dashboardTitle2, "response" => $resp2]);
-                    }
+                    $templateDashboard2['title'] = $property_name . ' - COMBA';
+                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - COMBA');
+                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                        'dashboard' => $templateDashboard2,
+                        'folderId'  => $syndeoFolderId,
+                        'overwrite' => false,
+                    ]);
                 }
 
                 // Criar nova pasta com nome da company
-                $companyFolderId = $this->getGrafanaFolderIdByName($company_name);
-                if ($companyFolderId) {
-                    Log::warning("Grafana folder already exists", ["folder_name" => $company_name, "grafana_id" => $companyFolderId]);
-                } else {
-                    $companyFolderResp = $this->grafanaApiRequest(
-                        "post",
-                        "/folders",
-                        ["title" => $company_name]
-                    );
-                    $companyFolderId = $companyFolderResp["id"] ?? null;
-                    if ($companyFolderId) {
-                        Log::info("Grafana folder created", ["folder_name" => $company_name, "grafana_id" => $companyFolderId]);
-                    } else {
-                        Log::error("Grafana folder creation failed", ["folder_name" => $company_name, "response" => $companyFolderResp]);
-                    }
-                }
+                $companyFolderResp = $this->grafanaApiRequest('post', '/folders', [
+                    'title' => $company_name,
+                ]);
+                $companyFolderId = $companyFolderResp['id'] ?? null;
 
                 // Criar dashboard na pasta da company baseado no system_type
                 if ($companyFolderId) {
@@ -493,42 +392,24 @@ class ProvisionController extends Controller
                         unset($templateDashboard['id'], $templateDashboard['uid']);
                         $templateDashboard['title'] = $company_name . ' - ' . $system_type;
                         $templateDashboard = $this->substituteDashboardPlaceholders($templateDashboard, $oem, $company_name . ' - ' . $system_type);
-                        $dashboardTitle = $company_name . ' - ' . $system_type;
-                        $existingDashboardUid = $this->getGrafanaDashboardIdByNameAndFolderId($dashboardTitle, $companyFolderId);
-
-                        if ($existingDashboardUid) {
-                            Log::warning("Grafana dashboard already exists in company folder", ["dashboard_title" => $dashboardTitle, "grafana_uid" => $existingDashboardUid]);
-                        } else {
-                            $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                                'dashboard' => $templateDashboard,
-                                'folderId'  => $companyFolderId,
-                                'overwrite' => false,
-                            ]);
-                            Log::info("Grafana: Dashboard criado na pasta da empresa", ["dashboard_title" => $dashboardTitle, "response" => $resp]);
-                        }
+                        $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                            'dashboard' => $templateDashboard,
+                            'folderId'  => $companyFolderId,
+                            'overwrite' => false,
+                        ]);
                     }
                 }
 
                 // Criar usuário e senha para o cliente
                 $email_parts = explode('@', $customer_email);
                 $username_grafana = $email_parts[0];
-                $existingUserId = $this->getGrafanaUserIdByLogin($username_grafana);
-
-                if ($existingUserId) {
-                    Log::warning('Grafana user already exists', ['username' => $username_grafana, 'grafana_id' => $existingUserId]);
-                } else {
-                    $password = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10/strlen($x)) )),1,10);
-                    $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
-                        'name' => $username_grafana,
-                        'email' => $customer_email,
-                        'login' => $username_grafana,
-                        'password' => $password,
-                        'OrgId' => 1 // Default OrgId, ajuste se necessário
-                    ]);
-                    Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
-                    $provision->grafana_password = $password;
-                    $provision->save();
-                }
+                $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                    'name' => $username_grafana,
+                    'email' => $customer_email,
+                    'login' => $username_grafana,
+                    'password' => 'PASTE_DEFAULT_PASSWORD_HERE',
+                ]);
+                Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
             }
 
             $results['grafana'] = 'Success';
@@ -781,7 +662,7 @@ function substituteDashboardPlaceholders($data, $oem, $property_name) {
         $parts[count($parts) - 1] = $last_octet - $subtract_value;
         return implode('.', $parts);
     }
-    private function zabbixApiRequest($method, $params, $auth = null, $retries = 3, $delay = 1000)
+    private function zabbixApiRequest($method, $params, $auth = null)
     {
         $url = 'http://40.78.20.4:8080/zabbix/api_jsonrpc.php';
         $post = [
@@ -792,76 +673,45 @@ function substituteDashboardPlaceholders($data, $oem, $property_name) {
         ];
         if ($auth) $post['auth'] = $auth;
 
-        for ($i = 0; $i < $retries; $i++) {
-            try {
-                \Log::debug("Zabbix API Request", ["method" => $method, "params" => $params, "attempt" => $i + 1]);
-                $response = Http::asJson()->post($url, $post);
-                $json = $response->json();
-                \Log::info("Zabbix API Response", ["method" => $method, "response" => $json, "attempt" => $i + 1]);
+        $response = Http::asJson()->post($url, $post);
+        $json = $response->json();
 
-                if (isset($json['error'])) {
-                    \Log::error('Zabbix API error', ['error' => $json['error'], 'attempt' => $i + 1]);
-                    throw new \Exception("Zabbix API error: " . $json['error']['message'] . " (" . $json['error']['data'] . ")");
-                }
-                if (!isset($json['result'])) {
-                    throw new \Exception("Zabbix API: resposta inesperada: " . json_encode($json));
-                }
-                return $json['result'];
-            } catch (\Throwable $e) {
-                if ($i < $retries - 1) {
-                    \Log::warning("Zabbix API request failed, retrying...", ['attempt' => $i + 1, 'message' => $e->getMessage()]);
-                    usleep($delay * pow(2, $i)); // Exponential backoff
-                } else {
-                    throw $e; // Re-throw after all retries fail
-                }
-            }
+        if (isset($json['error'])) {
+            \Log::error('Zabbix API error', ['error' => $json['error']]);
+            throw new \Exception("Zabbix API error: " . $json['error']['message'] . " (" . $json['error']['data'] . ")");
         }
-        throw new \Exception("Zabbix API request failed after {$retries} attempts.");
+        if (!isset($json['result'])) {
+            throw new \Exception("Zabbix API: resposta inesperada: " . json_encode($json));
+        }
+        return $json['result'];
     }
 
     private function zabbixLogin()
     {
         $user = 'support';     
         $password = 'syndeo@123'; 
-        $result = $this->zabbixApiRequest("user.login", [
-            "username" => $user,
-            "password" => $password,
-        ], null, 3, 1000);
+        $result = $this->zabbixApiRequest('user.login', [
+            'username' => $user,
+            'password' => $password,
+        ]);
         \Log::error('Zabbix login response', ['result' => $result]);
         return $result;
     }
 
-    private function grafanaApiRequest($method, $endpoint, $data = [], $retries = 3, $delay = 1000)
+    private function grafanaApiRequest($method, $endpoint, $data = [])
     {
         $url = 'https://dashboard.syndeonoc.com/api' . $endpoint; // Ensure /api prefix
         $username = 'support';
         $password = 'syndeo@123';
         
-        for ($i = 0; $i < $retries; $i++) {
-            try {
-                Log::debug("Grafana API Request", ["method" => $method, "endpoint" => $endpoint, "data" => $data, "attempt" => $i + 1]);
-                $response = Http::withBasicAuth($username, $password)
-                    ->$method($url, $data);
-                Log::info("Grafana API Response", ["method" => $method, "endpoint" => $endpoint, "response" => $response->json(), "attempt" => $i + 1]);
+        $response = Http::withBasicAuth($username, $password)
+            ->$method($url, $data);
 
-                $contentType = $response->header('Content-Type') ?? '';
-                if (strpos($contentType, 'application/json') === false) {
-                    throw new \Exception('Grafana non-JSON response: ' . $response->body());
-                }
-                if ($response->clientError() || $response->serverError()) {
-                    throw new \Exception('Grafana API error: ' . $response->body());
-                }
-                return $response->json();
-            } catch (\Throwable $e) {
-                if ($i < $retries - 1) {
-                    Log::warning("Grafana API request failed, retrying...", ["attempt" => $i + 1, "message" => $e->getMessage()]);
-                    usleep($delay * pow(2, $i)); // Exponential backoff
-                } else {
-                    throw $e; // Re-throw after all retries fail
-                }
-            }
+        $contentType = $response->header('Content-Type') ?? '';
+        if (strpos($contentType, 'application/json') === false) {
+            throw new \Exception('Grafana non-JSON response: ' . $response->body());
         }
-        throw new \Exception("Grafana API request failed after {$retries} attempts.");
+        return $response->json();
     }
 
 
@@ -875,15 +725,12 @@ function substituteDashboardPlaceholders($data, $oem, $property_name) {
         ]
         ], $auth);
         if (!empty($result)) {
-            Log::warning('Zabbix host group already exists', ['group_name' => $groupName, 'zabbix_id' => $result[0]['groupid']]);
             return $result[0]['groupid'];
         }
         $create = $this->zabbixApiRequest('hostgroup.create', [
             'name' => $groupName
         ], $auth);
-        $newGroupId = $create['groupids'][0];
-        Log::info('Zabbix host group created', ['group_name' => $groupName, 'zabbix_id' => $newGroupId]);
-        return $newGroupId;
+        return $create['groupids'][0];
     }
 // Helper: Get template ID by name
 private function getTemplateIdByName($templateName, $auth)
@@ -935,126 +782,4 @@ private function getTemplateIdByName($templateName, $auth)
     throw new \Exception("Template '{$templateName}' not found in Zabbix.");
     
 }
-
-
-    private function getZabbixHostIdByName($hostName, $auth)
-    {
-        $result = $this->zabbixApiRequest(
-            'host.get',
-            [
-                'filter' => ['name' => $hostName],
-                'output' => ['hostid']
-            ],
-            $auth
-        );
-        return !empty($result) ? $result[0]['hostid'] : null;
-    }
-
-
-
-
-    private function getGrafanaFolderIdByName($folderName)
-    {
-        try {
-            $response = $this->grafanaApiRequest(
-                'get',
-                '/folders',
-                []
-            );
-            foreach ($response as $folder) {
-                if ($folder['title'] === $folderName) {
-                    return $folder['id'];
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('Grafana: Erro ao buscar pastas', ['message' => $e->getMessage()]);
-        }
-        return null;
-    }
-
-
-
-
-    private function getGrafanaDashboardIdByNameAndFolderId($dashboardName, $folderId)
-    {
-        try {
-            $response = $this->grafanaApiRequest(
-                'get',
-                '/search?query=' . urlencode($dashboardName) . '&folderIds=' . $folderId,
-                []
-            );
-            foreach ($response as $dashboard) {
-                if ($dashboard['title'] === $dashboardName && $dashboard['folderId'] == $folderId) {
-                    return $dashboard['uid'];
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('Grafana: Erro ao buscar dashboard', ['message' => $e->getMessage()]);
-        }
-        return null;
-    }
-
-
-
-
-    private function getGrafanaUserIdByLogin($loginOrEmail)
-    {
-        try {
-            $response = $this->grafanaApiRequest(
-                'get',
-                '/users/lookup?loginOrEmail=' . urlencode($loginOrEmail)
-            );
-            // If user is found, Grafana API returns user object, otherwise 404
-            if (isset($response['id'])) {
-                return $response['id'];
-            }
-        } catch (\Exception $e) {
-            // Log 404 as info, other errors as error
-            if (strpos($e->getMessage(), '404 Not Found') !== false) {
-                Log::info('Grafana: Usuário não encontrado', ['loginOrEmail' => $loginOrEmail]);
-            } else {
-                Log::error('Grafana: Erro ao buscar usuário', ['loginOrEmail' => $loginOrEmail, 'message' => $e->getMessage()]);
-            }
-        }
-        return null;
-    }
-
-
-
-        // // -------- INÍCIO LÓGICA DE CRIAÇÃO DE USUÁRIO GRAFANA --------
-        // if ($grafana_toggle) {
-        //     try {
-        //         $username = explode('@', $customer_email)[0];
-        //         $existingUserId = $this->getGrafanaUserIdByLogin($username);
-
-        //         if ($existingUserId) {
-        //             Log::warning('Grafana user already exists', ['username' => $username, 'grafana_id' => $existingUserId]);
-        //             // Opcional: Atualizar usuário se necessário
-        //         } else {
-        //             $password = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10/strlen($x)) )),1,10);
-
-        //             $userPayload = [
-        //                 'name'      => $username,
-        //                 'email'     => $customer_email,
-        //                 'login'     => $username,
-        //                 'password'  => $password,
-        //                 'OrgId'     => 1 // Default OrgId, ajuste se necessário
-        //             ];
-
-        //             $userResp = $this->grafanaApiRequest('post', '/admin/users', $userPayload);
-        //             Log::info('Grafana user created', ['username' => $username, 'response' => $userResp]);
-
-        //             // Salvar a senha no banco de dados (exemplo)
-        //             $provision->grafana_password = $password;
-        //             $provision->save();
-        //         }
-        //     } catch (\Throwable $e) {
-        //         Log::error("Grafana: Exceção durante a criação de usuário.", [
-        //             'message' => $e->getMessage(),
-        //             'trace' => $e->getTraceAsString()
-        //         ]);
-        //         $errors['grafana_user'] = $e->getMessage();
-        //     }
-        // }
-
-    }
+}
