@@ -201,236 +201,151 @@ class ProvisionController extends Controller
 
 
 
-        // -------- INÍCIO LÓGICA GRAFANA --------
-        try {
-            // IDs de pasta e templates (preencher conforme sua necessidade)
-            $syndeofolderUid = 'PASTE_FOLDER_UID_HERE';
-            $syndeoFolderId = 'PASTE_FOLDER_ID_HERE';
+        // Grafana FUNCIONANDO E TESTADO
+    try {
+        if ($grafana_toggle === null) {
+            // Set your variables
+            $folderUid = 'bedmyrwbic7pce';
 
-            // Templates IDs para cada tipo (preencher conforme sua necessidade)
-            $templateUidDas = 'PASTE_DAS_TEMPLATE_UID_HERE';
-            $templateUidErrcs = 'PASTE_ERRCS_TEMPLATE_UID_HERE';
-            $templateUidDasErrcs = 'PASTE_DAS_ERRCS_TEMPLATE_UID_HERE';
+            Log::info("Grafana: Buscando informações da pasta", ['folderUid' => $folderUid]);
+            $folderResp = $this->grafanaApiRequest('get', '/folders/' . $folderUid);
+            Log::info("Grafana: Resposta da pasta recebida", ['folderResp' => $folderResp]);
+            $folderId = $folderResp['id'];
 
-            // --- Função para gerar dashboards dinâmicos ---
-            $buildDashboard = function($templateDashboard, $type, $qty, $oem, $property_name, $startIdx = 1) {
-                $dashboards = [];
-                for ($i = 0; $i < $qty; $i++) {
-                    $idx = $i + $startIdx;
-                    $name = "{$property_name}_{$idx}";
-                    // Deep copy do template
-                    $dashboard = json_decode(json_encode($templateDashboard), true);
-                    $dashboard['title'] = $name;
-                    // Substituir os placeholders em todo JSON
-                    $dashboard = $this->substituteDashboardPlaceholders($dashboard, $oem, $name);
-                    // Para cada panel, procurar targets com host.filter = PROPERTY_NAME e substituir pelo nome correto
-                    if (isset($dashboard['panels']) && is_array($dashboard['panels'])) {
-                        foreach ($dashboard['panels'] as &$panel) {
-                            if (isset($panel['targets']) && is_array($panel['targets'])) {
-                                foreach ($panel['targets'] as &$target) {
-                                    if (isset($target['host']['filter']) && $target['host']['filter'] === 'PROPERTY_NAME') {
-                                        $target['host']['filter'] = $name;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    $dashboards[] = $dashboard;
-                }
-                return $dashboards;
-            };
-
-            // --- Geração dinâmica de dashboards ---
-            // 1. Se NÃO houver credencial do Grafana (grafana_toggle === null)
-            if ($grafana_toggle === null) {
-                // Buscar template correto pelo system_type
-                $dashboardsToCreate = [];
-                if ($system_type === 'DAS') {
-                    $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidDas);
-                    $templateDashboard = $templateResp['dashboard'];
-                    $dashboardsToCreate = $buildDashboard($templateDashboard, 'DAS', $master_unit_quantity, $oem, $property_name);
-                } elseif ($system_type === 'ERRCS') {
-                    $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidErrcs);
-                    $templateDashboard = $templateResp['dashboard'];
-                    $dashboardsToCreate = $buildDashboard($templateDashboard, 'ERRCS', $bda_quantity, $oem, $property_name);
-                } elseif ($system_type === 'DAS & ERRCS') {
-                    // DAS
-                    $templateRespDas = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidDas);
-                    $templateDashboardDas = $templateRespDas['dashboard'];
-                    $dasDashboards = $buildDashboard($templateDashboardDas, 'DAS', $master_unit_quantity, $oem, $property_name, 1);
-
-                    // ERRCS (começa do master_unit_quantity+1)
-                    $templateRespErrcs = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidErrcs);
-                    $templateDashboardErrcs = $templateRespErrcs['dashboard'];
-                    $errcsDashboards = $buildDashboard($templateDashboardErrcs, 'ERRCS', $bda_quantity, $oem, $property_name, $master_unit_quantity + 1);
-
-                    $dashboardsToCreate = array_merge($dasDashboards, $errcsDashboards);
-                }
-
-                // Criar dashboards na pasta Syndeo
-                foreach ($dashboardsToCreate as $dashboard) {
-                    unset($dashboard['id'], $dashboard['uid']);
-                    $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $dashboard,
-                        'folderId'  => $syndeoFolderId,
-                        'overwrite' => false,
-                    ]);
-                    Log::info("Grafana: Dashboard criado na pasta Syndeo", ['response' => $resp]);
-                }
-
-                // --- SEGUNDO TEMPLATE conforme OEM ---
-                if ($oem === 'ADRF') {
-                    // PASTE SEGUNDO TEMPLATE UID PARA ADRF
-                    $secondTemplateUid = 'PASTE_SECOND_TEMPLATE_UID_ADRF_HERE';
-                    $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
-                    $templateDashboard2 = $templateResp2['dashboard'];
-                    unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $templateDashboard2['title'] = $property_name . ' - ADRF';
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - ADRF');
-                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $templateDashboard2,
-                        'folderId'  => $syndeoFolderId,
-                        'overwrite' => false,
-                    ]);
-                } elseif ($oem === 'COMBA' && $das_equipment === 'Syndeo V1.0 COMBA 202505 Model 2014') {
-                    // PASTE SEGUNDO TEMPLATE UID PARA COMBA
-                    $secondTemplateUid = 'PASTE_SECOND_TEMPLATE_UID_COMBA_HERE';
-                    $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
-                    $templateDashboard2 = $templateResp2['dashboard'];
-                    unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $templateDashboard2['title'] = $property_name . ' - COMBA';
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - COMBA');
-                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $templateDashboard2,
-                        'folderId'  => $syndeoFolderId,
-                        'overwrite' => false,
-                    ]);
-                }
-            }
-            // 2. Se JÁ houver credencial do Grafana
-            else {
-                // Criar pasta Syndeo se necessário
-                // (Pasta Syndeo já deve existir, apenas usar syndeoFolderId e syndeoFolderUid)
-
-                // Seguir a mesma lógica para criar dashboards na pasta Syndeo
-                $dashboardsToCreate = [];
-                if ($system_type === 'DAS') {
-                    $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidDas);
-                    $templateDashboard = $templateResp['dashboard'];
-                    $dashboardsToCreate = $buildDashboard($templateDashboard, 'DAS', $master_unit_quantity, $oem, $property_name);
-                } elseif ($system_type === 'ERRCS') {
-                    $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidErrcs);
-                    $templateDashboard = $templateResp['dashboard'];
-                    $dashboardsToCreate = $buildDashboard($templateDashboard, 'ERRCS', $bda_quantity, $oem, $property_name);
-                } elseif ($system_type === 'DAS & ERRCS') {
-                    $templateRespDas = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidDas);
-                    $templateDashboardDas = $templateRespDas['dashboard'];
-                    $dasDashboards = $buildDashboard($templateDashboardDas, 'DAS', $master_unit_quantity, $oem, $property_name, 1);
-
-                    $templateRespErrcs = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUidErrcs);
-                    $templateDashboardErrcs = $templateRespErrcs['dashboard'];
-                    $errcsDashboards = $buildDashboard($templateDashboardErrcs, 'ERRCS', $bda_quantity, $oem, $property_name, $master_unit_quantity + 1);
-
-                    $dashboardsToCreate = array_merge($dasDashboards, $errcsDashboards);
-                }
-                foreach ($dashboardsToCreate as $dashboard) {
-                    unset($dashboard['id'], $dashboard['uid']);
-                    $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $dashboard,
-                        'folderId'  => $syndeoFolderId,
-                        'overwrite' => false,
-                    ]);
-                }
-
-                // --- SEGUNDO TEMPLATE conforme OEM ---
-                if ($oem === 'ADRF') {
-                    $secondTemplateUid = 'PASTE_SECOND_TEMPLATE_UID_ADRF_HERE';
-                    $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
-                    $templateDashboard2 = $templateResp2['dashboard'];
-                    unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $templateDashboard2['title'] = $property_name . ' - ADRF';
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - ADRF');
-                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $templateDashboard2,
-                        'folderId'  => $syndeoFolderId,
-                        'overwrite' => false,
-                    ]);
-                } elseif ($oem === 'COMBA' && $das_equipment === 'Syndeo V1.0 COMBA 202505 Model 2014') {
-                    $secondTemplateUid = 'PASTE_SECOND_TEMPLATE_UID_COMBA_HERE';
-                    $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $secondTemplateUid);
-                    $templateDashboard2 = $templateResp2['dashboard'];
-                    unset($templateDashboard2['id'], $templateDashboard2['uid']);
-                    $templateDashboard2['title'] = $property_name . ' - COMBA';
-                    $templateDashboard2 = $this->substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name . ' - COMBA');
-                    $resp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $templateDashboard2,
-                        'folderId'  => $syndeoFolderId,
-                        'overwrite' => false,
-                    ]);
-                }
-
-                // Criar nova pasta com nome da company
-                $companyFolderResp = $this->grafanaApiRequest('post', '/folders', [
-                    'title' => $company_name,
-                ]);
-                $companyFolderId = $companyFolderResp['id'] ?? null;
-
-                // Criar dashboard na pasta da company baseado no system_type
-                if ($companyFolderId) {
-                    $companyTemplateUid = '';
-                    if ($system_type === 'DAS') {
-                        $companyTemplateUid = 'PASTE_DAS_TEMPLATE_UID_HERE';
-                    } elseif ($system_type === 'ERRCS') {
-                        $companyTemplateUid = 'PASTE_ERRCS_TEMPLATE_UID_HERE';
-                    } elseif ($system_type === 'DAS & ERRCS') {
-                        $companyTemplateUid = 'PASTE_DAS_ERRCS_TEMPLATE_UID_HERE';
-                    }
-                    if ($companyTemplateUid) {
-                        $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $companyTemplateUid);
-                        $templateDashboard = $templateResp['dashboard'];
-                        unset($templateDashboard['id'], $templateDashboard['uid']);
-                        $templateDashboard['title'] = $company_name . ' - ' . $system_type;
-                        $templateDashboard = $this->substituteDashboardPlaceholders($templateDashboard, $oem, $company_name . ' - ' . $system_type);
-                        $resp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                            'dashboard' => $templateDashboard,
-                            'folderId'  => $companyFolderId,
-                            'overwrite' => false,
-                        ]);
-                    }
-                }
-
-                // Criar usuário e senha para o cliente
-                $email_parts = explode('@', $customer_email);
-                $username_grafana = $email_parts[0];
-                $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
-                    'name' => $username_grafana,
-                    'email' => $customer_email,
-                    'login' => $username_grafana,
-                    'password' => 'PASTE_DEFAULT_PASSWORD_HERE',
-                ]);
-                Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
+            // Seleção de templates
+            if ($oem === 'ADRF') {
+                $templateUid1 = 'beiyn9fdbtvale';
+                $templateUid2 = 'feutv2m5zcs1se';
+            } elseif ($oem === 'COMBA ERRCS') {
+                $templateUid1 = 'beiyn9fdbt5hce';
+                $templateUid2 = 'aebkeah3awdba';
+            } else {
+                throw new \Exception("OEM inválido: $oem");
             }
 
-            $results['grafana'] = 'Success';
-            Log::info("Grafana: Provisionamento finalizado com sucesso", ['results' => $results]);
-        } catch (\Throwable $e) {
-            $errors['grafana'] = $e->getMessage();
-            Log::error("Erro no provisionamento Grafana", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+            // --------- Dashboard 1 ---------
+            Log::info("Grafana: Buscando template para Dashboard 1", ['templateUid1' => $templateUid1]);
+            $templateResp1 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid1);
+            $templateDashboard1 = $templateResp1['dashboard'];
+
+            unset($templateDashboard1['id'], $templateDashboard1['uid']);
+            $templateDashboard1['title'] = $property_name_1;
+            $templateDashboard1 = substituteDashboardPlaceholders($templateDashboard1, $oem, $property_name_1);
+
+            Log::info("Grafana: Criando Dashboard 1", [
+                'dashboard' => $templateDashboard1,
+                'folderId'  => $folderId,
             ]);
+            $newDashboardResp1 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $templateDashboard1,
+                'folderId'  => $folderId,
+                'overwrite' => false,
+            ]);
+            Log::info("Grafana: Dashboard 1 criado", ['response' => $newDashboardResp1]);
+
+            // --------- Dashboard 2 ---------
+            Log::info("Grafana: Buscando template para Dashboard 2", ['templateUid2' => $templateUid2]);
+            $templateResp2 = $this->grafanaApiRequest('get', '/dashboards/uid/' . $templateUid2);
+            $templateDashboard2 = $templateResp2['dashboard'];
+
+            unset($templateDashboard2['id'], $templateDashboard2['uid']);
+            $templateDashboard2['title'] = $property_name_2;
+            $templateDashboard2 = substituteDashboardPlaceholders($templateDashboard2, $oem, $property_name_2);
+
+            Log::info("Grafana: Criando Dashboard 2", [
+                'dashboard' => $templateDashboard2,
+                'folderId'  => $folderId,
+            ]);
+            $newDashboardResp2 = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $templateDashboard2,
+                'folderId'  => $folderId,
+                'overwrite' => false,
+            ]);
+            Log::info("Grafana: Dashboard 2 criado", ['response' => $newDashboardResp2]);
+
+        } else {
+
+            Log::info("Grafana: Criando nova pasta", ['title' => $company_name]);
+            $folderResp = $this->grafanaApiRequest('post', '/folders', [
+                'title' => $company_name,
+            ]);
+            Log::info("Grafana: Pasta criada", ['folderResp' => $folderResp]);
+            $folderId = $folderResp['id'] ?? null; 
+
+            $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid 
+            Log::info("Grafana: Buscando dashboard modelo", ['modelUid' => $modelUid]);
+            $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/'.$modelUid);
+            $modelDashboard = $modelDashboardResp['dashboard'];
+            $modelDashboardId = $modelDashboard['id'];
+
+            $newDashboard = $modelDashboard;
+            unset($newDashboard['id'], $newDashboard['uid']);
+            $newDashboard['title'] = $company_name;
+            // Optionally substitute variables here as well if needed
+
+            Log::info("Grafana: Criando dashboard baseado no modelo", [
+                'dashboard' => $newDashboard,
+                'folderId'  => $folderId, 
+            ]);
+            $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
+                'dashboard' => $newDashboard,
+                'folderId'  => $folderId, 
+                'overwrite' => false,
+            ]);
+            Log::info("Grafana: Dashboard criado", ['response' => $dashboardResp]);
+
+            $email_parts = explode('@', $customer_email);
+            $username_grafana = $email_parts[0];
+
+            // 1. Create new user
+            Log::info("Grafana: Criando novo usuário", [
+                'name' => $username_grafana,
+                'email' => $customer_email,
+            ]);
+            $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
+                'name' => $username_grafana,
+                'email' => $customer_email,
+                'login' => $username_grafana,
+                'password' => '$ynd30@noc',
+            ]);
+            Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
+            $newUserId = $newUserResp['id'] ?? null;
+
+            // 2. Get permissions for the model dashboard
+            $dashboardId = $modelDashboardId; 
+            Log::info("Grafana: Buscando permissões do dashboard modelo", ['dashboardId' => $dashboardId]);
+            $permissionsResp = $this->grafanaApiRequest('get', "/dashboards/id/{$dashboardId}/permissions");
+            Log::info("Grafana: Permissões recebidas", ['permissionsResp' => $permissionsResp]);
+            $permissions = $permissionsResp; 
+
+            // 3. Find the model user's permission
+            $modelUserPermission = collect($permissions)->firstWhere('userId', $modelUserId);
+
+            // 4. Assign the same permission to the new user
+            if ($modelUserPermission && $newUserId) {
+                $payload = [
+                    [
+                        'userId' => $newUserId,
+                        'permission' => $modelUserPermission['permission'],
+                    ]
+                ];
+                Log::info("Grafana: Definindo permissão para novo usuário", [
+                    'dashboardId' => $dashboardId,
+                    'payload' => $payload,
+                ]);
+                $setPermissionResp = $this->grafanaApiRequest('post', "/dashboards/id/{$dashboardId}/permissions", $payload);
+                Log::info("Grafana: Permissão definida resposta", ['setPermissionResp' => $setPermissionResp]);
+            }
         }
-        // -------- FIM LÓGICA GRAFANA --------
-
-        // Return a normalized JSON response for the frontend to redirect
-        return response()->json([
-            'success' => empty($errors),
-            'provisioning_name' => $property_name,
-            'errors' => $errors,
+        $results['grafana'] = 'Success';
+        Log::info("Grafana: Provisionamento finalizado com sucesso", ['results' => $results]);
+    } catch (\Throwable $e) {
+        $errors['grafana'] = $e->getMessage();
+        Log::error("Erro no provisionamento Grafana", [
+            'erro' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
         ]);
-    
-
-
+    }
 
 
 
@@ -634,7 +549,6 @@ function substituteDashboardPlaceholders($data, $oem, $property_name) {
         return $data;
     }
 }
-
 
 
 
