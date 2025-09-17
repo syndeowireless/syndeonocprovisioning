@@ -120,7 +120,7 @@ class ProvisionController extends Controller
                     ]],
                     'tags' => [
                         ['tag' => 'Site', 'value' => $hostNameBase]
-                        // add more tags if needed
+                        
                     ],
                     'inventory_mode' => 1, // manual
                     'inventory' => [
@@ -166,9 +166,9 @@ class ProvisionController extends Controller
                     ]],
                     'tags' => [
                         ['tag' => 'Site', 'value' => $hostNameBase]
-                        // add more tags if needed
+                        
                     ],
-                    'inventory_mode' => 1, // manual
+                    'inventory_mode' => 1, 
                     'inventory' => [
                         'type' => $property_type,
                         'type_full' => 'ERRCS',
