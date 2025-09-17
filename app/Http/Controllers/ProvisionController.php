@@ -204,7 +204,7 @@ class ProvisionController extends Controller
                 $currentIp = $this->ipIncrement($currentIp, 1);
             }
             
-            // Create service for monitoring - FIXED with algorithm parameter
+            // Create service for monitoring - Ultra minimal approach
             $serviceResult = $this->zabbixApiRequest('service.create', [
                 'name' => $property_name,
                 'algorithm' => 1,
@@ -287,10 +287,19 @@ class ProvisionController extends Controller
                 
                 unset($templateDashboard['id'], $templateDashboard['uid']);
                 $templateDashboard['title'] = $property_name . ' - Simplified';
-                $templateDashboard = $this->substituteDashboardPlaceholders($templateDashboard, $oem, $property_name);
+                
+                // Process the dashboard JSON with the new advanced placeholder replacement
+                $processedDashboard = $this->processGrafanaDashboard(
+                    $templateDashboard, 
+                    $oem, 
+                    $property_name, 
+                    $system_type, 
+                    $master_unit_quantity, 
+                    $bda_quantity
+                );
                 
                 $simplifiedDashResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                    'dashboard' => $templateDashboard,
+                    'dashboard' => $processedDashboard,
                     'folderId'  => $syndeoFolderId,
                     'overwrite' => false,
                 ]);
@@ -306,10 +315,19 @@ class ProvisionController extends Controller
                 
                 unset($templateDashboard['id'], $templateDashboard['uid']);
                 $templateDashboard['title'] = $property_name . ' - Detailed';
-                $templateDashboard = $this->substituteDashboardPlaceholders($templateDashboard, $oem, $property_name);
+                
+                // Process the dashboard JSON with the new advanced placeholder replacement
+                $processedDashboard = $this->processGrafanaDashboard(
+                    $templateDashboard, 
+                    $oem, 
+                    $property_name, 
+                    $system_type, 
+                    $master_unit_quantity, 
+                    $bda_quantity
+                );
                 
                 $detailedDashResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                    'dashboard' => $templateDashboard,
+                    'dashboard' => $processedDashboard,
                     'folderId'  => $syndeoFolderId,
                     'overwrite' => false,
                 ]);
@@ -334,10 +352,19 @@ class ProvisionController extends Controller
                     
                     unset($templateDashboard['id'], $templateDashboard['uid']);
                     $templateDashboard['title'] = $property_name . ' - Dashboard';
-                    $templateDashboard = $this->substituteDashboardPlaceholders($templateDashboard, $oem, $property_name);
+                    
+                    // Process the dashboard JSON with the new advanced placeholder replacement
+                    $processedDashboard = $this->processGrafanaDashboard(
+                        $templateDashboard, 
+                        $oem, 
+                        $property_name, 
+                        $system_type, 
+                        $master_unit_quantity, 
+                        $bda_quantity
+                    );
                     
                     $customerDashResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                        'dashboard' => $templateDashboard,
+                        'dashboard' => $processedDashboard,
                         'folderId'  => $newFolderId,
                         'overwrite' => false,
                     ]);
@@ -377,8 +404,11 @@ class ProvisionController extends Controller
                 unset($modelDashboard['id'], $modelDashboard['uid']);
                 $modelDashboard['title'] = $company_name;
                 
+                // This dashboard doesn't need the host-specific processing
+                $processedDashboard = $this->substituteDashboardPlaceholders($modelDashboard, $oem, $property_name);
+                
                 $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
-                    'dashboard' => $modelDashboard,
+                    'dashboard' => $processedDashboard,
                     'folderId'  => $newFolderId,
                     'overwrite' => false,
                 ]);
@@ -575,6 +605,163 @@ class ProvisionController extends Controller
             'results' => $results,
             'errors' => $errors
         ]);
+    }
+
+    /**
+     * Process Grafana dashboard by handling host placeholders and duplicating targets as needed
+     */
+    private function processGrafanaDashboard($dashboard, $oem, $property_name, $system_type, $master_unit_quantity, $bda_quantity)
+    {
+        // First, do basic placeholder substitution (OEM, PROPERTY_NAME)
+        $dashboard = $this->substituteDashboardPlaceholders($dashboard, $oem, $property_name);
+        
+        // Process panels to duplicate targets with appropriate host names
+        if (isset($dashboard['panels']) && is_array($dashboard['panels'])) {
+            foreach ($dashboard['panels'] as &$panel) {
+                if (isset($panel['targets']) && is_array($panel['targets'])) {
+                    $newTargets = [];
+                    
+                    foreach ($panel['targets'] as $target) {
+                        // Check if this target has a host filter with PROPERTY_HOST placeholders
+                        if (isset($target['host']['filter'])) {
+                            $hostFilter = $target['host']['filter'];
+                            
+                            // Handle different system types
+                            if ($system_type === 'DAS' && strpos($hostFilter, 'PROPERTY_HOST') !== false) {
+                                // Add the first target with the first Master Unit
+                                $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit 1', $hostFilter);
+                                $newTargets[] = $target;
+                                
+                                // Create additional targets for each Master Unit (starting from 2)
+                                for ($i = 2; $i <= $master_unit_quantity; $i++) {
+                                    $newTarget = $target;
+                                    $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
+                                    $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
+                                    $newTargets[] = $newTarget;
+                                }
+                            } 
+                            elseif ($system_type === 'ERRCS' && strpos($hostFilter, 'PROPERTY_HOST') !== false) {
+                                // Add the first target with the first BDA
+                                $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA 1', $hostFilter);
+                                $newTargets[] = $target;
+                                
+                                // Create additional targets for each BDA (starting from 2)
+                                for ($i = 2; $i <= $bda_quantity; $i++) {
+                                    $newTarget = $target;
+                                    $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA ' . $i, $hostFilter);
+                                    $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
+                                    $newTargets[] = $newTarget;
+                                }
+                            }
+                            elseif ($system_type === 'DAS & ERRCS') {
+                                if (strpos($hostFilter, 'PROPERTY_HOST_MASTER') !== false) {
+                                    // Add the first target with the first Master Unit
+                                    $target['host']['filter'] = str_replace('PROPERTY_HOST_MASTER', $property_name . ' Master Unit 1', $hostFilter);
+                                    $newTargets[] = $target;
+                                    
+                                    // Create additional targets for each Master Unit (starting from 2)
+                                    for ($i = 2; $i <= $master_unit_quantity; $i++) {
+                                        $newTarget = $target;
+                                        $newTarget['host']['filter'] = str_replace('PROPERTY_HOST_MASTER', $property_name . ' Master Unit ' . $i, $hostFilter);
+                                        $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
+                                        $newTargets[] = $newTarget;
+                                    }
+                                }
+                                elseif (strpos($hostFilter, 'PROPERTY_HOST_BDA') !== false) {
+                                    // Add the first target with the first BDA
+                                    $target['host']['filter'] = str_replace('PROPERTY_HOST_BDA', $property_name . ' BDA 1', $hostFilter);
+                                    $newTargets[] = $target;
+                                    
+                                    // Create additional targets for each BDA (starting from 2)
+                                    for ($i = 2; $i <= $bda_quantity; $i++) {
+                                        $newTarget = $target;
+                                        $newTarget['host']['filter'] = str_replace('PROPERTY_HOST_BDA', $property_name . ' BDA ' . $i, $hostFilter);
+                                        $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
+                                        $newTargets[] = $newTarget;
+                                    }
+                                }
+                                elseif (strpos($hostFilter, 'PROPERTY_HOST') !== false) {
+                                    // Generic PROPERTY_HOST in DAS & ERRCS should be replaced with all devices
+                                    
+                                    // First add all Master Units
+                                    for ($i = 1; $i <= $master_unit_quantity; $i++) {
+                                        if ($i === 1) {
+                                            // Use the original target for the first one
+                                            $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
+                                            $newTargets[] = $target;
+                                        } else {
+                                            $newTarget = $target;
+                                            $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
+                                            $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
+                                            $newTargets[] = $newTarget;
+                                        }
+                                    }
+                                    
+                                    // Then add all BDAs
+                                    for ($i = 1; $i <= $bda_quantity; $i++) {
+                                        $newTarget = $target;
+                                        $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA ' . $i, $hostFilter);
+                                        $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
+                                        $newTargets[] = $newTarget;
+                                    }
+                                }
+                                else {
+                                    // No PROPERTY_HOST placeholders, keep as is
+                                    $newTargets[] = $target;
+                                }
+                            }
+                            else {
+                                // No PROPERTY_HOST placeholders or unknown system_type, keep as is
+                                $newTargets[] = $target;
+                            }
+                        } 
+                        else {
+                            // No host filter, keep as is
+                            $newTargets[] = $target;
+                        }
+                    }
+                    
+                    // Replace the original targets with our processed ones
+                    $panel['targets'] = $newTargets;
+                }
+            }
+        }
+        
+        return $dashboard;
+    }
+
+    /**
+     * Generate a unique refId for a new target
+     */
+    private function generateUniqueRefId($targets)
+    {
+        $usedRefIds = [];
+        foreach ($targets as $target) {
+            if (isset($target['refId'])) {
+                $usedRefIds[] = $target['refId'];
+            }
+        }
+        
+        $letters = range('A', 'Z');
+        foreach ($letters as $letter) {
+            if (!in_array($letter, $usedRefIds)) {
+                return $letter;
+            }
+        }
+        
+        // If we've used up all letters, start using AA, AB, etc.
+        $prefixLetters = range('A', 'Z');
+        foreach ($prefixLetters as $prefix) {
+            foreach ($letters as $letter) {
+                $refId = $prefix . $letter;
+                if (!in_array($refId, $usedRefIds)) {
+                    return $refId;
+                }
+            }
+        }
+        
+        // Fallback
+        return 'Z' . count($targets);
     }
 
     private function substituteDashboardPlaceholders($data, $oem, $property_name) {
