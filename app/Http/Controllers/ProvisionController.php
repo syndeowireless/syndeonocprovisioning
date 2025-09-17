@@ -213,14 +213,12 @@ class ProvisionController extends Controller
                     [
                         'tag' => 'Site', 
                         'operator' => 0, 
-                        'value' => $property_name,
-                        'sortorder' => 0
+                        'value' => $property_name
                     ],
                     [
                         'tag' => 'System', 
                         'operator' => 0, 
-                        'value' => 'Status',
-                        'sortorder' => 1
+                        'value' => 'Status'
                     ]
                 ],
                 'tags' => [
