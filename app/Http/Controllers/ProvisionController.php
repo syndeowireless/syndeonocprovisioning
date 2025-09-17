@@ -207,23 +207,31 @@ class ProvisionController extends Controller
             // Create service for monitoring - FIXED with algorithm parameter
             $serviceResult = $this->zabbixApiRequest('service.create', [
                 'name' => $property_name,
-                'algorithm' => 1, // Problem calculation algorithm
+                'algorithm' => 1,
+                'status' => 0,  // Add explicit status (0 = normal)
+                'sortorder' => 1,  // Add global sortorder
+                'weight' => 1,  // Add weight parameter
+                'propagation_rule' => 0,  // Add propagation rule (0 = as is)
+                'propagation_value' => 0,  // Add propagation value
                 'problem_tags' => [
                     [
                         'tag' => 'Site', 
                         'operator' => 0, 
                         'value' => $property_name,
-                        'sortorder' => 0  // Added missing sortorder parameter
+                        'sortorder' => 0
                     ],
                     [
                         'tag' => 'System', 
                         'operator' => 0, 
                         'value' => 'Status',
-                        'sortorder' => 1  // Added missing sortorder parameter
+                        'sortorder' => 1
                     ]
                 ],
                 'tags' => [
-                    ['tag' => 'System', 'value' => 'Availability']
+                    [
+                        'tag' => 'System', 
+                        'value' => 'Availability'
+                    ]
                 ]
             ], $auth);
             
