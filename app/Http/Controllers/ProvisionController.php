@@ -204,9 +204,10 @@ class ProvisionController extends Controller
                 $currentIp = $this->ipIncrement($currentIp, 1);
             }
             
-            // Create service for monitoring
+            // Create service for monitoring - FIXED with algorithm parameter
             $serviceResult = $this->zabbixApiRequest('service.create', [
                 'name' => $property_name,
+                'algorithm' => 1, 
                 'problem_tags' => [
                     ['tag' => 'Site', 'operator' => 0, 'value' => $property_name],
                     ['tag' => 'System', 'operator' => 0, 'value' => 'Status']
