@@ -208,11 +208,7 @@ class ProvisionController extends Controller
             $serviceResult = $this->zabbixApiRequest('service.create', [
                 'name' => $property_name,
                 'algorithm' => 1,
-                'status' => 0,  // Add explicit status (0 = normal)
-                'sortorder' => 1,  // Add global sortorder
-                'weight' => 1,  // Add weight parameter
-                'propagation_rule' => 0,  // Add propagation rule (0 = as is)
-                'propagation_value' => 0,  // Add propagation value
+                'sortorder' => 0,
                 'problem_tags' => [
                     [
                         'tag' => 'Site', 
