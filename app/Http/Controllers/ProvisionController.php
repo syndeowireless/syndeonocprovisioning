@@ -375,12 +375,12 @@ class ProvisionController extends Controller
                 // Create user
                 $email_parts = explode('@', $customer_email);
                 $username_grafana = $email_parts[0];
-                
+
                 $newUserResp = $this->grafanaApiRequest('post', '/admin/users', [
                     'name' => $username_grafana,
                     'email' => $customer_email,
                     'login' => $username_grafana,
-                    'password' => '$ynd30@noc',
+                    'password' => $random_password,
                 ]);
                 Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
                 $newUserId = $newUserResp['id'] ?? null;
