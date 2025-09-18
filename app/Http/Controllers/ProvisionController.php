@@ -510,7 +510,7 @@ class ProvisionController extends Controller
                 "localid_netbits" => 24,
                 "remoteid_type" => "network",
                 "remoteid_address" => $Ip_Plan,
-                "remoteid_netbits" => 24,
+                "remoteid_netbits" => 26,
                 "protocol" => "esp",
                 "encryption_algorithm_option" => [
                     [
@@ -553,7 +553,7 @@ class ProvisionController extends Controller
                "localid_netbits" => 24,
                "remoteid_type" => "network",
                "remoteid_address" => $Ip_Plan,
-               "remoteid_netbits" => 24,
+               "remoteid_netbits" => 26,
                "protocol" => "esp",
                "encryption_algorithm_option" => [
                    [
