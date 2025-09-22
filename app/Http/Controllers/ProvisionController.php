@@ -425,7 +425,7 @@ class ProvisionController extends Controller
             ]);
         }
 
-        // pfSense API (unchanged - keeping your original implementation)
+        // pfSense API 
         try {
             $phase1Payload = [
                 "descr" => $property_name,
@@ -439,7 +439,7 @@ class ProvisionController extends Controller
                 "myid_type" => "keyid tag",
                 "myid_data" => $property_name,
                 "peerid_type" => "keyid tag",
-                "peerid_data" => $remote_gateway,
+                "peerid_data" => $property_name,
                 "lifetime" => 28800,
                 "rekey_time" => 28700,
                 "reauth_time" => 0,

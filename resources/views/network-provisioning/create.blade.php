@@ -875,14 +875,11 @@ body.loading-active {
 
     <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
     <div class="form-group">
-        <label class="form-label">Create Grafana Credentials</label>
-        <div class="switch-container">
-            <label class="switch">
-                <input type="checkbox" id="grafana_toggle" name="grafana_toggle" value="1" {{ old('grafana_toggle') ? 'checked' : '' }} onchange="toggleGrafanaEmail()">
-                <span class="slider"></span>
-            </label>
-        </div>
+        <label class="form-label">Remote unit</label>
+        <input class="form-input" type="number" id="remote_unit_quantity" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}" required
+               placeholder="Type the Remote Unit">
     </div>
+
 </div>
 
 <!-- Conditional Customer Email field (hidden until toggle is yes) -->
@@ -913,6 +910,19 @@ body.loading-active {
             </label>
         </div>
     </div>
+
+    <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
+    <div class="form-group">
+        <label class="form-label">Create Grafana Credentials</label>
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="grafana_toggle" name="grafana_toggle" value="1" {{ old('grafana_toggle') ? 'checked' : '' }} onchange="toggleGrafanaEmail()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+
 </div>
 
 <div id="static-ip-fields" class="{{ old('static_ip_check') ? '' : 'is-hidden' }}">
