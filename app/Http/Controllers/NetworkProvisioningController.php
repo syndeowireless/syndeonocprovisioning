@@ -176,7 +176,7 @@ class NetworkProvisioningController extends Controller
             $placeholders['#lan.ipaddr#'] = ip_add($ipRow->first_usable_ip, 0);
             $placeholders['#gateway#']    = $static_gateway;
         } else {
-            $placeholders['#wan.ipaddr#'] = '';
+            $placeholders['#wan.ipaddr#'] = 'DHCP';
             $placeholders['#wan.mask#']   = '';
             $placeholders['#lan.ipaddr#'] = ip_add($ipRow->first_usable_ip, 0); 
             ##$ipRows->first_usable_ip ?? '';
