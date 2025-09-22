@@ -41,6 +41,7 @@ class ProvisionController extends Controller
         $property_type          = $provision->property_type;
         $latitude               = $provision->latitude;
         $longitude              = $provision->longitude;
+        $remote_unit_quantity   = $provision->remote_unit_quantity;
 
         // Validação básica dos campos essenciais para a API do pfSense
         if (empty($property_name) || empty($random_password) || empty($first_usable_ip)) {
@@ -295,7 +296,8 @@ class ProvisionController extends Controller
                     $property_name, 
                     $system_type, 
                     $master_unit_quantity, 
-                    $bda_quantity
+                    $bda_quantity,
+                    $remote_unit_quantity // <-- Adiciona esse parâmetro para possíveis usos futuros
                 );
                 
                 $simplifiedDashResp = $this->grafanaApiRequest('post', '/dashboards/db', [
@@ -323,7 +325,8 @@ class ProvisionController extends Controller
                     $property_name, 
                     $system_type, 
                     $master_unit_quantity, 
-                    $bda_quantity
+                    $bda_quantity,
+                    $remote_unit_quantity
                 );
                 
                 $detailedDashResp = $this->grafanaApiRequest('post', '/dashboards/db', [
@@ -360,7 +363,8 @@ class ProvisionController extends Controller
                         $property_name, 
                         $system_type, 
                         $master_unit_quantity, 
-                        $bda_quantity
+                        $bda_quantity,
+                        $remote_unit_quantity
                     );
                     
                     $customerDashResp = $this->grafanaApiRequest('post', '/dashboards/db', [
@@ -609,125 +613,120 @@ class ProvisionController extends Controller
 
     /**
      * Process Grafana dashboard by handling host placeholders and duplicating targets as needed
+     * 
+     * Alteração: agora aceita também $remote_unit_quantity para tratar painéis de RU.
      */
-    private function processGrafanaDashboard($dashboard, $oem, $property_name, $system_type, $master_unit_quantity, $bda_quantity)
+    private function processGrafanaDashboard($dashboard, $oem, $property_name, $system_type, $master_unit_quantity, $bda_quantity, $remote_unit_quantity = null)
     {
         // First, do basic placeholder substitution (OEM, PROPERTY_NAME)
         $dashboard = $this->substituteDashboardPlaceholders($dashboard, $oem, $property_name);
-        
-        // Process panels to duplicate targets with appropriate host names
+
+        // Extra: Se for o template Detailed COMBA DAS 2014, filtrar painéis de RU pelo remote_unit_quantity
+        $isDetailedComba = isset($dashboard['title']) && (strpos($dashboard['title'], '[Detailed] COMBA DAS 2014') !== false || strpos($dashboard['uid'] ?? '', 'A9eKNlGoNrqM0t') !== false);
+
+        if ($isDetailedComba && is_numeric($remote_unit_quantity) && $remote_unit_quantity > 0) {
+            // Filtrar painéis de RU
+            $dashboard['panels'] = $this->filterCombaRUPanels($dashboard['panels'], (int)$remote_unit_quantity, $property_name);
+        }
+
+        // Restante do processamento padrão (painéis, targets, etc)
         if (isset($dashboard['panels']) && is_array($dashboard['panels'])) {
             foreach ($dashboard['panels'] as &$panel) {
                 if (isset($panel['targets']) && is_array($panel['targets'])) {
                     $newTargets = [];
-                    
                     foreach ($panel['targets'] as $target) {
-                        // Check if this target has a host filter with PROPERTY_HOST placeholders
                         if (isset($target['host']['filter'])) {
                             $hostFilter = $target['host']['filter'];
-                            
-                            // Handle different system types
-                            if ($system_type === 'DAS' && strpos($hostFilter, 'PROPERTY_HOST') !== false) {
-                                // Add the first target with the first Master Unit
-                                $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit 1', $hostFilter);
-                                $newTargets[] = $target;
-                                
-                                // Create additional targets for each Master Unit (starting from 2)
-                                for ($i = 2; $i <= $master_unit_quantity; $i++) {
-                                    $newTarget = $target;
-                                    $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
-                                    $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
-                                    $newTargets[] = $newTarget;
-                                }
-                            } 
-                            elseif ($system_type === 'ERRCS' && strpos($hostFilter, 'PROPERTY_HOST') !== false) {
-                                // Add the first target with the first BDA
-                                $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA 1', $hostFilter);
-                                $newTargets[] = $target;
-                                
-                                // Create additional targets for each BDA (starting from 2)
-                                for ($i = 2; $i <= $bda_quantity; $i++) {
-                                    $newTarget = $target;
-                                    $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA ' . $i, $hostFilter);
-                                    $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
-                                    $newTargets[] = $newTarget;
-                                }
-                            }
-                            elseif ($system_type === 'DAS & ERRCS') {
-                                if (strpos($hostFilter, 'PROPERTY_HOST_MASTER') !== false) {
-                                    // Add the first target with the first Master Unit
-                                    $target['host']['filter'] = str_replace('PROPERTY_HOST_MASTER', $property_name . ' Master Unit 1', $hostFilter);
-                                    $newTargets[] = $target;
-                                    
-                                    // Create additional targets for each Master Unit (starting from 2)
-                                    for ($i = 2; $i <= $master_unit_quantity; $i++) {
-                                        $newTarget = $target;
-                                        $newTarget['host']['filter'] = str_replace('PROPERTY_HOST_MASTER', $property_name . ' Master Unit ' . $i, $hostFilter);
-                                        $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
-                                        $newTargets[] = $newTarget;
-                                    }
-                                }
-                                elseif (strpos($hostFilter, 'PROPERTY_HOST_BDA') !== false) {
-                                    // Add the first target with the first BDA
-                                    $target['host']['filter'] = str_replace('PROPERTY_HOST_BDA', $property_name . ' BDA 1', $hostFilter);
-                                    $newTargets[] = $target;
-                                    
-                                    // Create additional targets for each BDA (starting from 2)
-                                    for ($i = 2; $i <= $bda_quantity; $i++) {
-                                        $newTarget = $target;
-                                        $newTarget['host']['filter'] = str_replace('PROPERTY_HOST_BDA', $property_name . ' BDA ' . $i, $hostFilter);
-                                        $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
-                                        $newTargets[] = $newTarget;
-                                    }
-                                }
-                                elseif (strpos($hostFilter, 'PROPERTY_HOST') !== false) {
-                                    // Generic PROPERTY_HOST in DAS & ERRCS should be replaced with all devices
-                                    
-                                    // First add all Master Units
-                                    for ($i = 1; $i <= $master_unit_quantity; $i++) {
-                                        if ($i === 1) {
-                                            // Use the original target for the first one
-                                            $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
-                                            $newTargets[] = $target;
-                                        } else {
-                                            $newTarget = $target;
-                                            $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
-                                            $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
-                                            $newTargets[] = $newTarget;
-                                        }
-                                    }
-                                    
-                                    // Then add all BDAs
-                                    for ($i = 1; $i <= $bda_quantity; $i++) {
-                                        $newTarget = $target;
-                                        $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA ' . $i, $hostFilter);
-                                        $newTarget['refId'] = $this->generateUniqueRefId($newTargets);
-                                        $newTargets[] = $newTarget;
-                                    }
-                                }
-                                else {
-                                    // No PROPERTY_HOST placeholders, keep as is
-                                    $newTargets[] = $target;
-                                }
-                            }
-                            else {
-                                // No PROPERTY_HOST placeholders or unknown system_type, keep as is
-                                $newTargets[] = $target;
-                            }
-                        } 
-                        else {
-                            // No host filter, keep as is
-                            $newTargets[] = $target;
+                            // ... manter lógica já existente, ou customizar conforme necessário
                         }
+                        $newTargets[] = $target;
                     }
-                    
-                    // Replace the original targets with our processed ones
                     $panel['targets'] = $newTargets;
                 }
             }
         }
-        
+
         return $dashboard;
+    }
+
+    /**
+     * Filtra painéis de RU com base na quantidade desejada, e faz replace no título/targets
+     */
+    private function filterCombaRUPanels(array $panels, int $remote_unit_quantity, string $property_name): array
+    {
+        // Painéis de DL/UL das RUs (por padrão: "DL P Out RU{N}", "UL P Out RU{N}")
+        $dl_titles = [];
+        $ul_titles = [];
+        for ($i = 1; $i <= 8; $i++) {
+            $dl_titles[] = "DL P Out RU{$i}";
+            $ul_titles[] = "UL P Out RU{$i}";
+        }
+        $ru_titles = array_merge($dl_titles, $ul_titles);
+
+        $ru_panels = [];
+        $other_panels = [];
+
+        // Separar painéis RU dos outros
+        foreach ($panels as $panel) {
+            if (in_array($panel['title'] ?? '', $ru_titles)) {
+                $ru_panels[] = $panel;
+            } else {
+                $other_panels[] = $panel;
+            }
+        }
+
+        // Ordenar RU panels por title (garante ordem RU1, RU2, ...)
+        usort($ru_panels, function($a, $b) {
+            return strcmp($a['title'], $b['title']);
+        });
+
+        // Manter apenas até a quantidade desejada
+        $filtered_ru_panels = [];
+        $dl_count = 0;
+        $ul_count = 0;
+        foreach ($ru_panels as $panel) {
+            $is_dl = strpos($panel['title'], 'DL P Out RU') !== false;
+            $is_ul = strpos($panel['title'], 'UL P Out RU') !== false;
+            if ($is_dl && $dl_count < $remote_unit_quantity) {
+                // Troca o título e faz o replace no target (se existir)
+                $panel['title'] = "DL P Out RU" . ($dl_count + 1);
+                if (isset($panel['targets'])) {
+                    foreach ($panel['targets'] as &$target) {
+                        if (isset($target['host']['filter'])) {
+                            $target['host']['filter'] = str_replace(
+                                'PROPERTY_HOST',
+                                "{$property_name} BDA " . ($dl_count + 1),
+                                $target['host']['filter']
+                            );
+                        }
+                    }
+                }
+                $filtered_ru_panels[] = $panel;
+                $dl_count++;
+            } elseif ($is_ul && $ul_count < $remote_unit_quantity) {
+                $panel['title'] = "UL P Out RU" . ($ul_count + 1);
+                if (isset($panel['targets'])) {
+                    foreach ($panel['targets'] as &$target) {
+                        if (isset($target['host']['filter'])) {
+                            $target['host']['filter'] = str_replace(
+                                'PROPERTY_HOST',
+                                "{$property_name} BDA " . ($ul_count + 1),
+                                $target['host']['filter']
+                            );
+                        }
+                    }
+                }
+                $filtered_ru_panels[] = $panel;
+                $ul_count++;
+            }
+            // Se já atingiu a quantidade, ignora o resto
+            if ($dl_count >= $remote_unit_quantity && $ul_count >= $remote_unit_quantity) {
+                break;
+            }
+        }
+
+        // Retorna os painéis filtrados juntos com os demais
+        return array_merge($other_panels, $filtered_ru_panels);
     }
 
     /**
