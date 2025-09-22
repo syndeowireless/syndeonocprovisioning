@@ -41,7 +41,7 @@ class ProvisionController extends Controller
         $property_type          = $provision->property_type;
         $latitude               = $provision->latitude;
         $longitude              = $provision->longitude;
-        $remote_unit_quantity   = $provision->remote_unit_quantity;
+        $remote_unit_quantity   = $provision->remote_unit_quantity; 
 
         // Validação básica dos campos essenciais para a API do pfSense
         if (empty($property_name) || empty($random_password) || empty($first_usable_ip)) {
@@ -611,59 +611,94 @@ class ProvisionController extends Controller
         ]);
     }
 
-private function processGrafanaDashboard($dashboard, $oem, $property_name, $system_type, $master_unit_quantity, $bda_quantity, $remote_unit_quantity = 8)
+// Modificação da função processGrafanaDashboard para incluir remote_unit_quantity
+private function processGrafanaDashboard($dashboard, $oem, $property_name, $system_type, $master_unit_quantity, $bda_quantity, $remote_unit_quantity = 0)
 {
-    // First, ensure all instances of PROPERTY_HOST in the entire dashboard are replaced properly
-    $dashboard = $this->replaceAllPropertyHostInstances($dashboard, $property_name, $system_type, $master_unit_quantity, $bda_quantity);
-    
-    // Then do basic placeholder substitution (OEM, PROPERTY_NAME)
-    $dashboard = $this->substituteDashboardPlaceholders($dashboard, $oem, $property_name);
-    
-    // Special handling for COMBA DAS 2014 detailed dashboard - limit remote units based on remote_unit_quantity
-    if (isset($dashboard['title']) && strpos($dashboard['title'], 'COMBA DAS 2014') !== false) {
-        Log::info("Processing COMBA DAS 2014 dashboard - limiting remote units to: " . $remote_unit_quantity);
+    // Primeiro, filtramos os painéis relacionados a RUs com base em remote_unit_quantity
+    if (isset($dashboard['panels']) && is_array($dashboard['panels']) && $remote_unit_quantity > 0) {
+        $filteredPanels = [];
         
-        // Keep track of panels to remove
-        $panelsToRemove = [];
-        
-        // First pass: identify panels to keep or remove
-        foreach ($dashboard['panels'] as $panelIndex => $panel) {
-            // Check if this is a remote unit panel beyond our quantity
+        foreach ($dashboard['panels'] as $panel) {
+            // Determinar se este painel está relacionado a uma RU específica
+            $isRUPanel = false;
+            $ruNumber = 0;
+            
             if (isset($panel['title'])) {
-                $title = $panel['title'];
+                // Verifica se o título contém padrões como "DL P Out RU3", "UL P Out RU5" etc.
+                if (preg_match('/RU(\d+)/', $panel['title'], $matches)) {
+                    $isRUPanel = true;
+                    $ruNumber = (int)$matches[1];
+                }
+            }
+            
+            // Se for um painel de RU com número maior que remote_unit_quantity, pule
+            if ($isRUPanel && $ruNumber > $remote_unit_quantity) {
+                continue;
+            }
+            
+            // Se for um row (linha) que contém subpainéis, verifica os subpainéis também
+            if (isset($panel['panels']) && is_array($panel['panels'])) {
+                $filteredSubPanels = [];
                 
-                // Extract RU number from panel titles like "DL P Out RU5", "UL P Out RU7", etc.
-                if (preg_match('/\b(DL|UL) P Out RU(\d+)\b/', $title, $matches)) {
-                    $ruNumber = (int)$matches[2];
+                foreach ($panel['panels'] as $subPanel) {
+                    $isSubRUPanel = false;
+                    $subRuNumber = 0;
                     
-                    // If RU number exceeds our quantity, mark for removal
-                    if ($ruNumber > $remote_unit_quantity) {
-                        $panelsToRemove[] = $panelIndex;
-                        Log::info("Marking RU panel for removal: " . $title);
+                    if (isset($subPanel['title'])) {
+                        if (preg_match('/RU(\d+)/', $subPanel['title'], $matches)) {
+                            $isSubRUPanel = true;
+                            $subRuNumber = (int)$matches[1];
+                        }
                     }
+                    
+                    // Se for um subpainel de RU com número maior que remote_unit_quantity, pule
+                    if ($isSubRUPanel && $subRuNumber > $remote_unit_quantity) {
+                        continue;
+                    }
+                    
+                    $filteredSubPanels[] = $subPanel;
                 }
+                
+                $panel['panels'] = $filteredSubPanels;
             }
+            
+            // Para targets em painéis que referenciamos items de RU maiores que remote_unit_quantity
+            if (isset($panel['targets']) && is_array($panel['targets'])) {
+                $filteredTargets = [];
+                
+                foreach ($panel['targets'] as $target) {
+                    $isRUTarget = false;
+                    $ruTargetNumber = 0;
+                    
+                    // Verifica se o target está filtrando um item específico de RU
+                    if (isset($target['item']['filter'])) {
+                        if (preg_match('/RU (\d+)/', $target['item']['filter'], $matches)) {
+                            $isRUTarget = true;
+                            $ruTargetNumber = (int)$matches[1];
+                        }
+                    }
+                    
+                    // Se for um target de RU com número maior que remote_unit_quantity, pule
+                    if ($isRUTarget && $ruTargetNumber > $remote_unit_quantity) {
+                        continue;
+                    }
+                    
+                    $filteredTargets[] = $target;
+                }
+                
+                $panel['targets'] = $filteredTargets;
+            }
+            
+            $filteredPanels[] = $panel;
         }
         
-        // Remove panels in reverse order to avoid index shifting problems
-        rsort($panelsToRemove);
-        foreach ($panelsToRemove as $index) {
-            Log::info("Removing panel: " . $dashboard['panels'][$index]['title'] ?? 'Unknown');
-            array_splice($dashboard['panels'], $index, 1);
-        }
-        
-        // For temperature gauge panel, limit the number of targets based on remote_unit_quantity
-        foreach ($dashboard['panels'] as &$panel) {
-            if (isset($panel['title']) && strpos($panel['title'], 'Temp RUs') !== false) {
-                if (isset($panel['targets']) && is_array($panel['targets'])) {
-                    // Keep only targets for the specified number of remote units
-                    $panel['targets'] = array_slice($panel['targets'], 0, $remote_unit_quantity);
-                }
-            }
-        }
+        $dashboard['panels'] = $filteredPanels;
     }
     
-    // Process panels to duplicate targets with appropriate host names
+    // Continua com a lógica existente - substituição básica de placeholders
+    $dashboard = $this->substituteDashboardPlaceholders($dashboard, $oem, $property_name);
+    
+    // Processa os painéis para duplicar targets com nomes de host apropriados
     if (isset($dashboard['panels']) && is_array($dashboard['panels'])) {
         foreach ($dashboard['panels'] as &$panel) {
             if (isset($panel['targets']) && is_array($panel['targets'])) {
@@ -776,51 +811,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
     }
     
     return $dashboard;
-}
-
-
-
-private function replaceAllPropertyHostInstances($dashboard, $property_name, $system_type, $master_unit_quantity, $bda_quantity)
-{
-    // Handle based on system type
-    if ($system_type === 'DAS') {
-        // For DAS, we replace PROPERTY_HOST with the first Master Unit
-        $replacement = $property_name . ' Master Unit 1';
-        $dashboard = $this->deepReplace($dashboard, 'PROPERTY_HOST', $replacement);
-    } 
-    elseif ($system_type === 'ERRCS') {
-        // For ERRCS, we replace PROPERTY_HOST with the first BDA
-        $replacement = $property_name . ' BDA 1';
-        $dashboard = $this->deepReplace($dashboard, 'PROPERTY_HOST', $replacement);
-    }
-    elseif ($system_type === 'DAS & ERRCS') {
-        // For combined systems, we replace with the first Master Unit
-        $replacement = $property_name . ' Master Unit 1';
-        $dashboard = $this->deepReplace($dashboard, 'PROPERTY_HOST', $replacement);
-        
-        // Also handle the specific placeholders
-        $dashboard = $this->deepReplace($dashboard, 'PROPERTY_HOST_MASTER', $property_name . ' Master Unit 1');
-        $dashboard = $this->deepReplace($dashboard, 'PROPERTY_HOST_BDA', $property_name . ' BDA 1');
-    }
-    
-    return $dashboard;
-}
-
-/**
- * Recursively replace strings in arrays and objects
- */
-private function deepReplace($data, $search, $replace)
-{
-    if (is_array($data)) {
-        foreach ($data as $key => $value) {
-            $data[$key] = $this->deepReplace($value, $search, $replace);
-        }
-        return $data;
-    } elseif (is_string($data)) {
-        return str_replace($search, $replace, $data);
-    } else {
-        return $data;
-    }
 }
 
     /**
