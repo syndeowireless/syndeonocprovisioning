@@ -16,14 +16,12 @@ class ProvisionController extends Controller
 
         $provisionId = $request->input('provision_id');
         
-        // 1. Recuperar o registro NetworkManagement
         $provision = NetworkManagement::find($provisionId);
         if (!$provision) {
             Log::error("ProvisionController: Provision ID não encontrado.", ['provision_id' => $provisionId]);
             return response()->json(['success' => false, 'error' => 'Provision not found'], 404);
         }
 
-        // 2. Extrair e validar os dados necessários do registro
         $property_name          = $provision->property_name;
         $hostname               = $provision->hostname;
         $static_ip              = $provision->static_ip;
@@ -43,7 +41,6 @@ class ProvisionController extends Controller
         $longitude              = $provision->longitude;
         $remote_unit_quantity   = $provision->remote_unit_quantity; 
 
-        // Validação básica dos campos essenciais para a API do pfSense
         if (empty($property_name) || empty($random_password) || empty($first_usable_ip)) {
             Log::error("ProvisionController: Dados essenciais ausentes ou inválidos do registro NetworkManagement.", [
                 'property_name' => $property_name,
@@ -53,7 +50,6 @@ class ProvisionController extends Controller
             return response()->json(['success' => false, 'error' => 'Dados de provisionamento incompletos ou inválidos.'], 400);
         }
 
-        // Determinar remote_gateway
         $remote_gateway = ($static_ip === null) ? $hostname : $static_ip;
         if (empty($remote_gateway)) {
              Log::error("ProvisionController: remote_gateway está vazio. static_ip: {$static_ip}, hostname: {$hostname}");
@@ -69,17 +65,14 @@ class ProvisionController extends Controller
             }
             Log::info("ZabbixController: Login realizado com sucesso no Zabbix.");
 
-            // 1. Create or get host group based on OEM
             $groupId = $this->getOrCreateHostGroup($oem, $auth);
             Log::info("ZabbixController: Grupo de hosts obtido/criado.", ['group_id' => $groupId]);
 
-            // Create company host group if grafana_toggle is not null
             if ($grafana_toggle !== null) {
                 $companyGroupId = $this->getOrCreateHostGroup($company_name, $auth);
                 Log::info("ZabbixController: Grupo de company hosts criado.", ['company_group_id' => $companyGroupId]);
             }
 
-            // 2. Get template IDs based on Equipment
             $templateId_Master_Unit_Equipment = $this->getTemplateIdByName($das_equipment, $auth);
             Log::info("ZabbixController: Template Master Unit encontrado.", [
                 'das_equipment' => $das_equipment,
@@ -92,12 +85,10 @@ class ProvisionController extends Controller
                 'template_id' => $templateId_BDA_Equipment
             ]);
 
-            // 3. Determine hosts to create
             $currentIp = $first_usable_ip;
             $hostNameBase = $property_name;
             $createdHosts = [];
 
-            // Create hosts for master units
             for ($i = 1; $i <= $master_unit_quantity; $i++) {
                 $hostName = "{$hostNameBase} Master Unit {$i}";
                 Log::info("ZabbixController: Criando host master unit.", [
@@ -106,7 +97,6 @@ class ProvisionController extends Controller
                     'template_id' => $templateId_Master_Unit_Equipment
                 ]);
                 
-                // Define host groups based on grafana_toggle
                 $groups = [['groupid' => $groupId]];
                 if ($grafana_toggle !== null) {
                     $groups[] = ['groupid' => $companyGroupId];
@@ -151,7 +141,6 @@ class ProvisionController extends Controller
                 $currentIp = $this->ipIncrement($currentIp, 1);
             }
 
-            // Create hosts for BDAs
             for ($i = 1; $i <= $bda_quantity; $i++) {
                 $hostName = "{$hostNameBase} BDA {$i}";
                 Log::info("ZabbixController: Criando host BDA.", [
@@ -160,7 +149,6 @@ class ProvisionController extends Controller
                     'template_id' => $templateId_BDA_Equipment
                 ]);
                 
-                // Define host groups based on grafana_toggle
                 $groups = [['groupid' => $groupId]];
                 if ($grafana_toggle !== null) {
                     $groups[] = ['groupid' => $companyGroupId];
@@ -205,7 +193,6 @@ class ProvisionController extends Controller
                 $currentIp = $this->ipIncrement($currentIp, 1);
             }
             
-            // Create service for monitoring - Ultra minimal approach
             $serviceResult = $this->zabbixApiRequest('service.create', [
                 'name' => $property_name,
                 'algorithm' => 1,
@@ -246,12 +233,10 @@ class ProvisionController extends Controller
 
         // Grafana 
         try {
-            // Determine template UIDs based on system_type
             $simplifiedTemplateUid = '';
             $detailedTemplateUid = '';
             $customerSimplifiedTemplateUid = '';
             
-            // Select simplified template based on system_type
             if ($system_type === 'DAS') {
                 $simplifiedTemplateUid = 'vpPaBAv5CTOp0k';  // [Simplified] DAS
                 $customerSimplifiedTemplateUid = '5QDJa9eZHEoaTV'; // [Simplified] DAS Customer
@@ -273,15 +258,12 @@ class ProvisionController extends Controller
                 }
             }
             
-            // Get Syndeo's Dashboards folder
             $syndeoFolderUid = 'bedmyrwbic7pce';
             $syndeoFolderResp = $this->grafanaApiRequest('get', '/folders/' . $syndeoFolderUid);
             $syndeoFolderId = $syndeoFolderResp['id'];
             
-            // Create dashboards in Syndeo's folder
             $createdDashboards = [];
             
-            // Create simplified dashboard
             if (!empty($simplifiedTemplateUid)) {
                 $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $simplifiedTemplateUid);
                 $templateDashboard = $templateResp['dashboard'];
@@ -289,7 +271,6 @@ class ProvisionController extends Controller
                 unset($templateDashboard['id'], $templateDashboard['uid']);
                 $templateDashboard['title'] = $property_name . ' - Simplified';
                 
-                // Process the dashboard JSON with the new advanced placeholder replacement
                 $processedDashboard = $this->processGrafanaDashboard(
                     $templateDashboard, 
                     $oem, 
@@ -310,7 +291,6 @@ class ProvisionController extends Controller
                 $createdDashboards[] = $simplifiedDashResp;
             }
             
-            // Create detailed dashboard if system_type contains DAS
             if (!empty($detailedTemplateUid) && (strpos($system_type, 'DAS') !== false)) {
                 $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $detailedTemplateUid);
                 $templateDashboard = $templateResp['dashboard'];
@@ -318,7 +298,6 @@ class ProvisionController extends Controller
                 unset($templateDashboard['id'], $templateDashboard['uid']);
                 $templateDashboard['title'] = $property_name . ' - Detailed';
                 
-                // Process the dashboard JSON with the new advanced placeholder replacement
                 $processedDashboard = $this->processGrafanaDashboard(
                     $templateDashboard, 
                     $oem, 
@@ -339,16 +318,13 @@ class ProvisionController extends Controller
                 $createdDashboards[] = $detailedDashResp;
             }
             
-            // If grafana_toggle is not null, create additional resources
             if ($grafana_toggle !== null) {
-                // Create new folder with property_name
                 $newFolderResp = $this->grafanaApiRequest('post', '/folders', [
                     'title' => $property_name,
                 ]);
                 $newFolderId = $newFolderResp['id'];
                 Log::info("Grafana: Nova pasta criada", ['folder' => $property_name, 'id' => $newFolderId]);
                 
-                // Create customer dashboards in the new folder
                 if (!empty($customerSimplifiedTemplateUid)) {
                     $templateResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $customerSimplifiedTemplateUid);
                     $templateDashboard = $templateResp['dashboard'];
@@ -356,7 +332,6 @@ class ProvisionController extends Controller
                     unset($templateDashboard['id'], $templateDashboard['uid']);
                     $templateDashboard['title'] = $property_name . ' - Dashboard';
                     
-                    // Process the dashboard JSON with the new advanced placeholder replacement
                     $processedDashboard = $this->processGrafanaDashboard(
                         $templateDashboard, 
                         $oem, 
@@ -389,18 +364,16 @@ class ProvisionController extends Controller
                 Log::info("Grafana: Usuário criado", ['newUserResp' => $newUserResp]);
                 $newUserId = $newUserResp['id'] ?? null;
                 
-                // Add permissions for the user to the new folder
                 if ($newUserId) {
                     $permissionResp = $this->grafanaApiRequest('post', "/folders/{$newFolderResp['uid']}/permissions", [
                         [
                             'userId' => $newUserId,
-                            'permission' => 1 // Viewer
+                            'permission' => 1
                         ]
                     ]);
                     Log::info("Grafana: Permissões adicionadas para o usuário", ['permissionResp' => $permissionResp]);
                 }
                 
-                // Also create overall network status dashboard
                 $modelUid = 'ceim11u2kzegwa'; // Affiliated Development Overview uid
                 $modelDashboardResp = $this->grafanaApiRequest('get', '/dashboards/uid/' . $modelUid);
                 $modelDashboard = $modelDashboardResp['dashboard'];
@@ -408,7 +381,6 @@ class ProvisionController extends Controller
                 unset($modelDashboard['id'], $modelDashboard['uid']);
                 $modelDashboard['title'] = $company_name;
                 
-                // This dashboard doesn't need the host-specific processing
                 $processedDashboard = $this->substituteDashboardPlaceholders($modelDashboard, $oem, $property_name);
                 
                 $dashboardResp = $this->grafanaApiRequest('post', '/dashboards/db', [
@@ -590,7 +562,6 @@ class ProvisionController extends Controller
                 'payload_enviado' => $phase2_2Payload
             ]);
         
-            // If all went well, return JSON
             return response()->json(['success' => true, 'pfsense' => 'Success']);
         
         } catch (\Throwable $e) {
@@ -602,7 +573,6 @@ class ProvisionController extends Controller
                 ->header('Content-Type', 'text/plain');
         }
 
-        // Return a normalized JSON response for the frontend to redirect
         return response()->json([
             'success' => count($errors) === 0,
             'provisioning_name' => $property_name,
@@ -611,32 +581,26 @@ class ProvisionController extends Controller
         ]);
     }
 
-// Modificação da função processGrafanaDashboard para incluir remote_unit_quantity
 private function processGrafanaDashboard($dashboard, $oem, $property_name, $system_type, $master_unit_quantity, $bda_quantity, $remote_unit_quantity = 0)
 {
-    // Primeiro, filtramos os painéis relacionados a RUs com base em remote_unit_quantity
     if (isset($dashboard['panels']) && is_array($dashboard['panels']) && $remote_unit_quantity > 0) {
         $filteredPanels = [];
         
         foreach ($dashboard['panels'] as $panel) {
-            // Determinar se este painel está relacionado a uma RU específica
             $isRUPanel = false;
             $ruNumber = 0;
             
             if (isset($panel['title'])) {
-                // Verifica se o título contém padrões como "DL P Out RU3", "UL P Out RU5" etc.
                 if (preg_match('/RU(\d+)/', $panel['title'], $matches)) {
                     $isRUPanel = true;
                     $ruNumber = (int)$matches[1];
                 }
             }
             
-            // Se for um painel de RU com número maior que remote_unit_quantity, pule
             if ($isRUPanel && $ruNumber > $remote_unit_quantity) {
                 continue;
             }
             
-            // Se for um row (linha) que contém subpainéis, verifica os subpainéis também
             if (isset($panel['panels']) && is_array($panel['panels'])) {
                 $filteredSubPanels = [];
                 
@@ -651,7 +615,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                         }
                     }
                     
-                    // Se for um subpainel de RU com número maior que remote_unit_quantity, pule
                     if ($isSubRUPanel && $subRuNumber > $remote_unit_quantity) {
                         continue;
                     }
@@ -662,7 +625,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                 $panel['panels'] = $filteredSubPanels;
             }
             
-            // Para targets em painéis que referenciamos items de RU maiores que remote_unit_quantity
             if (isset($panel['targets']) && is_array($panel['targets'])) {
                 $filteredTargets = [];
                 
@@ -670,7 +632,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                     $isRUTarget = false;
                     $ruTargetNumber = 0;
                     
-                    // Verifica se o target está filtrando um item específico de RU
                     if (isset($target['item']['filter'])) {
                         if (preg_match('/RU (\d+)/', $target['item']['filter'], $matches)) {
                             $isRUTarget = true;
@@ -678,7 +639,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                         }
                     }
                     
-                    // Se for um target de RU com número maior que remote_unit_quantity, pule
                     if ($isRUTarget && $ruTargetNumber > $remote_unit_quantity) {
                         continue;
                     }
@@ -695,27 +655,21 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
         $dashboard['panels'] = $filteredPanels;
     }
     
-    // Continua com a lógica existente - substituição básica de placeholders
     $dashboard = $this->substituteDashboardPlaceholders($dashboard, $oem, $property_name);
     
-    // Processa os painéis para duplicar targets com nomes de host apropriados
     if (isset($dashboard['panels']) && is_array($dashboard['panels'])) {
         foreach ($dashboard['panels'] as &$panel) {
             if (isset($panel['targets']) && is_array($panel['targets'])) {
                 $newTargets = [];
                 
                 foreach ($panel['targets'] as $target) {
-                    // Check if this target has a host filter with PROPERTY_HOST placeholders
                     if (isset($target['host']['filter'])) {
                         $hostFilter = $target['host']['filter'];
                         
-                        // Handle different system types
                         if ($system_type === 'DAS' && strpos($hostFilter, 'PROPERTY_HOST') !== false) {
-                            // Add the first target with the first Master Unit
                             $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit 1', $hostFilter);
                             $newTargets[] = $target;
                             
-                            // Create additional targets for each Master Unit (starting from 2)
                             for ($i = 2; $i <= $master_unit_quantity; $i++) {
                                 $newTarget = $target;
                                 $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
@@ -724,11 +678,9 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                             }
                         } 
                         elseif ($system_type === 'ERRCS' && strpos($hostFilter, 'PROPERTY_HOST') !== false) {
-                            // Add the first target with the first BDA
                             $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA 1', $hostFilter);
                             $newTargets[] = $target;
                             
-                            // Create additional targets for each BDA (starting from 2)
                             for ($i = 2; $i <= $bda_quantity; $i++) {
                                 $newTarget = $target;
                                 $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA ' . $i, $hostFilter);
@@ -738,11 +690,9 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                         }
                         elseif ($system_type === 'DAS & ERRCS') {
                             if (strpos($hostFilter, 'PROPERTY_HOST_MASTER') !== false) {
-                                // Add the first target with the first Master Unit
                                 $target['host']['filter'] = str_replace('PROPERTY_HOST_MASTER', $property_name . ' Master Unit 1', $hostFilter);
                                 $newTargets[] = $target;
                                 
-                                // Create additional targets for each Master Unit (starting from 2)
                                 for ($i = 2; $i <= $master_unit_quantity; $i++) {
                                     $newTarget = $target;
                                     $newTarget['host']['filter'] = str_replace('PROPERTY_HOST_MASTER', $property_name . ' Master Unit ' . $i, $hostFilter);
@@ -751,11 +701,9 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                                 }
                             }
                             elseif (strpos($hostFilter, 'PROPERTY_HOST_BDA') !== false) {
-                                // Add the first target with the first BDA
                                 $target['host']['filter'] = str_replace('PROPERTY_HOST_BDA', $property_name . ' BDA 1', $hostFilter);
                                 $newTargets[] = $target;
                                 
-                                // Create additional targets for each BDA (starting from 2)
                                 for ($i = 2; $i <= $bda_quantity; $i++) {
                                     $newTarget = $target;
                                     $newTarget['host']['filter'] = str_replace('PROPERTY_HOST_BDA', $property_name . ' BDA ' . $i, $hostFilter);
@@ -764,12 +712,9 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                                 }
                             }
                             elseif (strpos($hostFilter, 'PROPERTY_HOST') !== false) {
-                                // Generic PROPERTY_HOST in DAS & ERRCS should be replaced with all devices
                                 
-                                // First add all Master Units
                                 for ($i = 1; $i <= $master_unit_quantity; $i++) {
                                     if ($i === 1) {
-                                        // Use the original target for the first one
                                         $target['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' Master Unit ' . $i, $hostFilter);
                                         $newTargets[] = $target;
                                     } else {
@@ -780,7 +725,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                                     }
                                 }
                                 
-                                // Then add all BDAs
                                 for ($i = 1; $i <= $bda_quantity; $i++) {
                                     $newTarget = $target;
                                     $newTarget['host']['filter'] = str_replace('PROPERTY_HOST', $property_name . ' BDA ' . $i, $hostFilter);
@@ -789,22 +733,18 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
                                 }
                             }
                             else {
-                                // No PROPERTY_HOST placeholders, keep as is
                                 $newTargets[] = $target;
                             }
                         }
                         else {
-                            // No PROPERTY_HOST placeholders or unknown system_type, keep as is
                             $newTargets[] = $target;
                         }
                     } 
                     else {
-                        // No host filter, keep as is
                         $newTargets[] = $target;
                     }
                 }
                 
-                // Replace the original targets with our processed ones
                 $panel['targets'] = $newTargets;
             }
         }
@@ -813,9 +753,7 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
     return $dashboard;
 }
 
-    /**
-     * Generate a unique refId for a new target
-     */
+
     private function generateUniqueRefId($targets)
     {
         $usedRefIds = [];
@@ -832,7 +770,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
             }
         }
         
-        // If we've used up all letters, start using AA, AB, etc.
         $prefixLetters = range('A', 'Z');
         foreach ($prefixLetters as $prefix) {
             foreach ($letters as $letter) {
@@ -843,7 +780,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
             }
         }
         
-        // Fallback
         return 'Z' . count($targets);
     }
 
@@ -854,7 +790,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
             }
             return $data;
         } elseif (is_string($data)) {
-            // Replace both OEM and PROPERTY_NAME
             return str_replace(
                 ['OEM', 'PROPERTY_NAME'],
                 [$oem, $property_name],
@@ -880,7 +815,7 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
     {
         if (filter_var($ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
             Log::warning("ProvisionController: IP inválido passado para subtract_from_last_octet: {$ip_address}");
-            return null; // Retorna null para indicar IP inválido
+            return null; 
         }
 
         $parts = explode('.', $ip_address);
@@ -941,10 +876,8 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
         return $response->json();
     }
 
-    // Helper: Get or create host group
     private function getOrCreateHostGroup($groupName, $auth)
     {
-        // Zabbix espera string em filter.name, NÃO array!
         $result = $this->zabbixApiRequest('hostgroup.get', [
             'filter' => [
                 'name' => $groupName
@@ -962,7 +895,6 @@ private function processGrafanaDashboard($dashboard, $oem, $property_name, $syst
         return $create['groupids'][0];
     }
 
-    // Helper: Get template ID by name
     private function getTemplateIdByName($templateName, $auth)
     {
         \Log::info('Buscando template pelo nome exato no search', [

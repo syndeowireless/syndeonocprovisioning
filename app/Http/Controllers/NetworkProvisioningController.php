@@ -19,10 +19,8 @@ class NetworkProvisioningController extends Controller
     {
         $randomPassword = \Illuminate\Support\Str::random(12);
 
-        // Check if this is a duplicate submission using session
         $submissionKey = 'network_provisioning_' . md5(serialize($request->all()));
         if (session()->has($submissionKey)) {
-            // If this is a duplicate submission, get the stored data and return view without storing
             $storedData = session($submissionKey);
 
             session()->forget($submissionKey);
@@ -60,7 +58,6 @@ class NetworkProvisioningController extends Controller
         
         
 
-        // Additional validation based on system type
         $systemType = $validated['system_type'] ?? '';
         if (strtolower($systemType) === 'das') {
             if (empty($validated['master_unit_quantity']) && $validated['master_unit_quantity'] !== 0) {
@@ -87,7 +84,6 @@ class NetworkProvisioningController extends Controller
             return back()->with('error', 'No available IP ranges.');
         }
         
-        // Ensure the IP row has a valid first_usable_ip
         if (empty($ipRow->first_usable_ip)) {
             return back()->with('error', 'Invalid IP range configuration.');
         }
@@ -97,23 +93,19 @@ class NetworkProvisioningController extends Controller
         $ipRow->in_use = true;
         $ipRow->save();
 
-        // Get quantities from form (default to 0 if not set)
         $masterQty = (int) $request->input('master_unit_quantity', 0);
         $bdaQty = (int) $request->input('bda_quantity', 0);
 
         
 
-        // Helper to increment IP
         function ip_add($ip, $increment) {
             $ipLong = ip2long($ip);
             return long2ip($ipLong + $increment);
         }
 
-        // Build assignments array
         $ipAssignments = [];
         $currentIncrement = 1;
 
-        // Master Unit Sectors
         for ($i = 1; $i <= $masterQty; $i++) {
             $ipAssignments[] = [
                 'label' => "Master Unit Sector $i",
@@ -123,7 +115,6 @@ class NetworkProvisioningController extends Controller
             $currentIncrement++;
         }
 
-        // ERRCS BDA
         for ($i = 1; $i <= $bdaQty; $i++) {
             $ipAssignments[] = [
                 'label' => "ERRCS BDA $i",
@@ -133,18 +124,15 @@ class NetworkProvisioningController extends Controller
             $currentIncrement++;
         }
         
-        // Log the IP assignments for debugging
         Log::info('IP Assignments created:', $ipAssignments);
 
         
-        // Novos campos do formulário
         $dyndnsHostname = $request->input('hostname', '');
         $isStaticIp = $request->has('static_ip_check');
         $staticIp = $request->input('static_ip', '');
         $staticMask = $request->input('static_mask', '');
         $static_gateway = $request->input('static_gateway', '');
 
-        // Busca o template XML sempre pelo registro de id=1
         $templateRow = \App\Models\xmlTemplate::find(1);
         $templateString = $templateRow ? $templateRow->content : '<config>#propertyName#</config>';
 
@@ -160,7 +148,6 @@ class NetworkProvisioningController extends Controller
 
         $hostname = str_replace(' ', '_', $hostname_trimmed);
         
-        // Substituição dos placeholders conforme regras
         $placeholders = [
             '#system.hostname#'   => $hostname,
             '#ipsec.hostname#'    => $validated['property_name'],
@@ -182,25 +169,20 @@ class NetworkProvisioningController extends Controller
             ##$ipRows->first_usable_ip ?? '';
         }
 
-        // Substituir todos os placeholders
         foreach ($placeholders as $key => $value) {
             $templateString = str_replace($key, $value, $templateString);
         }
 
-        // Salvar arquivo XML
         $xmlFileName = 'config_file_' . $validated['property_name'] . '.xml';
         \Illuminate\Support\Facades\Storage::disk('local')->put('xml/' . $xmlFileName, $templateString);
 
-        // Determine the first_usable_ip based on system type
         $firstUsableIp = null;
         $systemType = $validated['system_type'] ?? '';
         
-        // Log the system type and quantities for debugging
         Log::info('System Type: ' . $systemType . ', Master Qty: ' . $masterQty . ', BDA Qty: ' . $bdaQty);
         Log::info('IP Assignments count: ' . count($ipAssignments));
         
         if (strtolower($systemType) === 'das' || strtolower($systemType) === 'das and errcs') {
-            // For DAS or DAS and ERRCS, use Master Unit Sector 1 IP
             if (!empty($ipAssignments)) {
                 foreach ($ipAssignments as $assignment) {
                     if (strpos($assignment['label'], 'Master Unit Sector 1') !== false) {
@@ -211,14 +193,11 @@ class NetworkProvisioningController extends Controller
                 }
             }
             
-            // If no IP assignment found in the array (e.g., quantities are 0), 
-            // use the first usable IP from the IP range
             if ($firstUsableIp === null) {
                 $firstUsableIp = ip_add($ipRow->first_usable_ip, 1);
                 Log::info('Using fallback IP for DAS/DAS & ERRCS: ' . $firstUsableIp);
             }
         } elseif (strtolower($systemType) === 'errcs') {
-            // For ERRCS only, use ERRCS BDA 1 IP
             if (!empty($ipAssignments)) {
                 foreach ($ipAssignments as $assignment) {
                     if (strpos($assignment['label'], 'ERRCS BDA 1') !== false) {
@@ -229,8 +208,7 @@ class NetworkProvisioningController extends Controller
                 }
             }
             
-            // If no IP assignment found in the array (e.g., quantities are 0), 
-            // use the first usable IP from the IP range
+
             if ($firstUsableIp === null) {
                 $firstUsableIp = ip_add($ipRow->first_usable_ip, 1);
                 Log::info('Using fallback IP for ERRCS: ' . $firstUsableIp);
@@ -239,20 +217,17 @@ class NetworkProvisioningController extends Controller
         
         Log::info('Final first_usable_ip: ' . $firstUsableIp);
         
-        // Ensure first_usable_ip is never null
         if ($firstUsableIp === null) {
             Log::error('first_usable_ip is still null after all logic. Using fallback.');
             $firstUsableIp = ip_add($ipRow->first_usable_ip, 1);
         }
 
-        // Update the NetworkManagement record with the generated data
         $networkManagement->update([
             'first_usable_ip' => $firstUsableIp,
             'xml_config_file' => $templateString,
             'random_password' => $randomPassword
         ]);
 
-        // Store the data in session to prevent duplicate submissions
         session([$submissionKey => [
             'propertyName' => $validated['property_name'],
             'ipAssignments' => $ipAssignments,
@@ -261,7 +236,6 @@ class NetworkProvisioningController extends Controller
             'provisionId' => $provisionId
         ]]);
 
-        // Return the view directly to keep user on /network-provisioning/store
         return view('network-provisioning.pfsense', [
             'propertyName' => $validated['property_name'],
             'ipAssignments' => $ipAssignments,
@@ -278,9 +252,7 @@ class NetworkProvisioningController extends Controller
         return \Illuminate\Support\Facades\Storage::disk('local')->download('xml/' . $fileName, $fileName);
     }
 
-    /**
-     * Download XML config file from database
-     */
+
     public function downloadXmlFromDatabase($id)
     {
         try {
@@ -290,7 +262,6 @@ class NetworkProvisioningController extends Controller
                 return redirect()->back()->with('error', 'No XML configuration file found for this record.');
             }
 
-            // Build a safe base filename and then append the extension so the dot isn't sanitized away
             $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $networkManagement->property_name . '_config');
             $fileName = $baseName . '.xml';
             
@@ -305,9 +276,7 @@ class NetworkProvisioningController extends Controller
         }
     }
 
-    /**
-     * Get all network management data for the provisioning table
-     */
+
     public function getNetworkManagementData()
     {
         try {
@@ -337,9 +306,7 @@ class NetworkProvisioningController extends Controller
         }
     }
 
-    /**
-     * Show detailed view of a specific network management record
-     */
+
     public function showDetails($id)
     {
         try {

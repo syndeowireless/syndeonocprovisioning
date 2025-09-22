@@ -12,14 +12,12 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+
     public function edit(Request $request): View
     {
         $user = $request->user();
         
-        // Debug information
+
         \Log::info('ProfileController@edit - User:', [
             'user' => $user,
             'authenticated' => Auth::check(),
@@ -37,9 +35,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
@@ -49,17 +45,14 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
-        // Handle optional profile picture upload
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
 
-            // Basic security checks
             $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
             if (!in_array($file->getMimeType(), $allowedMimes)) {
                 return Redirect::route('profile.edit')->withErrors(['profile_picture' => 'Invalid file type. Only JPEG, PNG, JPG, and GIF files are allowed.']);
             }
 
-            // Check file size (5MB max)
             if ($file->getSize() > 5 * 1024 * 1024) {
                 return Redirect::route('profile.edit')->withErrors(['profile_picture' => 'File size too large. Maximum size is 5MB.']);
             }
@@ -77,9 +70,7 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
+
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
