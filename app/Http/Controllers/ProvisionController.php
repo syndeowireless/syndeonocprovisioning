@@ -409,7 +409,7 @@ class ProvisionController extends Controller
                 "mode" => "main",
                 "protocol" => "inet",
                 "interface" => "wan",
-                "remote_gateway" => $remote_gateway,
+                "remote_gateway" => $hostname,//$remote_gateway,
                 "authentication_method" => "pre_shared_key",
                 "pre_shared_key" => $random_password,
                 "myid_type" => "keyid tag",
