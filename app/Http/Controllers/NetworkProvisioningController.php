@@ -148,7 +148,9 @@ class NetworkProvisioningController extends Controller
 
         $hostname = str_replace(' ', '_', $hostname_trimmed);
 
-        $property_name_nospace = str_replace(' ', '', $property_name);
+        
+
+        $property_name_nospace = str_replace(' ', '', $validated['property_name']);
         
         $placeholders = [
             '#system.hostname#'   => $hostname,
