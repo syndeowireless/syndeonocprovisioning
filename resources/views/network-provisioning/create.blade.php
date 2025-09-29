@@ -849,7 +849,15 @@ body.loading-active {
                         </select>
                     </div>
                 </div>
+                <div class="grid-container">
+                    <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
+                    <div class="form-group">
+                        <label class="form-label">Remote unit</label>
+                        <input class="form-input" type="number" id="remote_unit_quantity" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}"
+                               placeholder="Type the Remote Unit">
+                    </div>
 
+                </div>
                 <!-- Linha 4: Latitude / Longitude -->
                 <div class="grid-container">
                     <div class="form-group">
@@ -873,12 +881,6 @@ body.loading-active {
                placeholder="Type the hostname">
     </div>
 
-    <!-- Create Grafana Credentials toggle now comes in place of Remote Unit Quantity -->
-    <div class="form-group">
-        <label class="form-label">Remote unit</label>
-        <input class="form-input" type="number" id="remote_unit_quantity" name="remote_unit_quantity" value="{{ old('remote_unit_quantity') }}" required
-               placeholder="Type the Remote Unit">
-    </div>
 
 </div>
 
