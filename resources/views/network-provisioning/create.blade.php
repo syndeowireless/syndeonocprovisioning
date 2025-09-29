@@ -884,21 +884,6 @@ body.loading-active {
 
 </div>
 
-<!-- Conditional Customer Email field (hidden until toggle is yes) -->
-<div id="grafana-email-field" class="{{ old('grafana_toggle') ? '' : 'is-hidden' }}">
-    <div class="grid-container">
-        <div class="form-group">
-            <label class="form-label" for="company_name">Company Name</label>
-            <input class="form-input" type="text" id="company_name" name="company_name"
-                   value="{{ old('company_name') }}" placeholder="Enter the Company Name">
-        </div>
-        <div class="form-group">
-            <label class="form-label" for="customer_email">Customer Email ID</label>
-            <input class="form-input" type="email" id="customer_email" name="customer_email"
-                   value="{{ old('customer_email') }}" placeholder="Enter a valid email address">
-        </div>
-    </div>
-</div>
 
 <!-- Linha 6: Static IP toggle now comes in place of Hostname -->
 <div class="grid-container">
@@ -923,8 +908,6 @@ body.loading-active {
             </label>
         </div>
     </div>
-
-
 </div>
 
 <div id="static-ip-fields" class="{{ old('static_ip_check') ? '' : 'is-hidden' }}">
@@ -948,6 +931,22 @@ body.loading-active {
         </div> 
     </div>
 </div>
+<!-- Conditional Customer Email field (hidden until toggle is yes) -->
+<div id="grafana-email-field" class="{{ old('grafana_toggle') ? '' : 'is-hidden' }}">
+    <div class="grid-container">
+        <div class="form-group">
+            <label class="form-label" for="company_name">Company Name</label>
+            <input class="form-input" type="text" id="company_name" name="company_name"
+                   value="{{ old('company_name') }}" placeholder="Enter the Company Name">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="customer_email">Customer Email ID</label>
+            <input class="form-input" type="email" id="customer_email" name="customer_email"
+                   value="{{ old('customer_email') }}" placeholder="Enter a valid email address">
+        </div>
+    </div>
+</div>
+
 
                 <!-- Submit Button -->
                 <div class="text-center">
