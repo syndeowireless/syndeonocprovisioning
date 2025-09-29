@@ -402,6 +402,7 @@ class ProvisionController extends Controller
         }
 
         // pfSense API 
+        $property_name_nospace = str_replace(' ', '', $property_name);
         try {
             $phase1Payload = [
                 "descr" => $property_name,
@@ -413,9 +414,9 @@ class ProvisionController extends Controller
                 "authentication_method" => "pre_shared_key",
                 "pre_shared_key" => $random_password,
                 "myid_type" => "keyid tag",
-                "myid_data" => $property_name,
+                "myid_data" => $property_name_nospace,
                 "peerid_type" => "keyid tag",
-                "peerid_data" => $property_name,
+                "peerid_data" => $property_name_nospace,
                 "lifetime" => 28800,
                 "rekey_time" => 28700,
                 "reauth_time" => 0,

@@ -147,10 +147,12 @@ class NetworkProvisioningController extends Controller
         $hostname_trimmed = trim($hostname_clean);
 
         $hostname = str_replace(' ', '_', $hostname_trimmed);
+
+        $property_name_nospace = str_replace(' ', '', $property_name);
         
         $placeholders = [
             '#system.hostname#'   => $hostname,
-            '#ipsec.hostname#'    => $validated['property_name'],
+            '#ipsec.hostname#'    => $property_name_nospace,
             '#dyndns.hostname#'   => $dyndnsHostname,
             '#random.password#'   => $randomPassword,
             '#dhcp_ip_from#'      => $dhcp_ip_from,
@@ -163,7 +165,7 @@ class NetworkProvisioningController extends Controller
             $placeholders['#lan.ipaddr#'] = ip_add($ipRow->first_usable_ip, 0);
             $placeholders['#gateway#']    = $static_gateway;
         } else {
-            $placeholders['#wan.ipaddr#'] = 'DHCP';
+            $placeholders['#wan.ipaddr#'] = 'dhcp';
             $placeholders['#wan.mask#']   = '';
             $placeholders['#lan.ipaddr#'] = ip_add($ipRow->first_usable_ip, 0); 
             ##$ipRows->first_usable_ip ?? '';
