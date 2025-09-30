@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class OtpVerificationController extends Controller
@@ -127,7 +128,7 @@ class OtpVerificationController extends Controller
         // Send new OTP
         $user = User::where('email', $email)->first();
         try {
-            Mail::send('emails.password-reset-otp', [
+            \Illuminate\Support\Facades\Mail::send('emails.password-reset-otp', [
                 'otp' => $otp,
                 'user' => $user
             ], function ($message) use ($email, $user) {
